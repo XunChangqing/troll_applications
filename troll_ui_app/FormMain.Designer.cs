@@ -32,11 +32,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.notify_icon_main = new System.Windows.Forms.NotifyIcon(this.components);
             this.context_menu_main = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.tool_strip_menu_item_toggle_onff = new System.Windows.Forms.ToolStripMenuItem();
             this.RecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToolStripMenuItemAutoStartToggleOnff = new System.Windows.Forms.ToolStripMenuItem();
             this.QuitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.button_main_switch = new System.Windows.Forms.Button();
-            this.ToolStripMenuItemAutoStartToggleOnff = new System.Windows.Forms.ToolStripMenuItem();
-            this.tool_strip_menu_item_toggle_onff = new System.Windows.Forms.ToolStripMenuItem();
             this.context_menu_main.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -58,12 +58,27 @@
             this.context_menu_main.Name = "context_menu_main";
             this.context_menu_main.Size = new System.Drawing.Size(153, 114);
             // 
+            // tool_strip_menu_item_toggle_onff
+            // 
+            this.tool_strip_menu_item_toggle_onff.Name = "tool_strip_menu_item_toggle_onff";
+            this.tool_strip_menu_item_toggle_onff.Size = new System.Drawing.Size(152, 22);
+            this.tool_strip_menu_item_toggle_onff.Text = "开启防护";
+            this.tool_strip_menu_item_toggle_onff.Click += new System.EventHandler(this.tool_strip_menu_item_toggle_onff_Click);
+            // 
             // RecordToolStripMenuItem
             // 
             this.RecordToolStripMenuItem.Name = "RecordToolStripMenuItem";
             this.RecordToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.RecordToolStripMenuItem.Text = "拦截记录";
             this.RecordToolStripMenuItem.Click += new System.EventHandler(this.RecordToolStripMenuItem_Click);
+            // 
+            // ToolStripMenuItemAutoStartToggleOnff
+            // 
+            this.ToolStripMenuItemAutoStartToggleOnff.CheckOnClick = true;
+            this.ToolStripMenuItemAutoStartToggleOnff.Name = "ToolStripMenuItemAutoStartToggleOnff";
+            this.ToolStripMenuItemAutoStartToggleOnff.Size = new System.Drawing.Size(152, 22);
+            this.ToolStripMenuItemAutoStartToggleOnff.Text = "开机启动";
+            this.ToolStripMenuItemAutoStartToggleOnff.Click += new System.EventHandler(this.tool_strip_menu_item_auto_start_Click);
             // 
             // QuitToolStripMenuItem
             // 
@@ -82,21 +97,6 @@
             this.button_main_switch.TabIndex = 1;
             this.button_main_switch.Text = "button1";
             this.button_main_switch.UseVisualStyleBackColor = true;
-            // 
-            // ToolStripMenuItemAutoStartToggleOnff
-            // 
-            this.ToolStripMenuItemAutoStartToggleOnff.CheckOnClick = true;
-            this.ToolStripMenuItemAutoStartToggleOnff.Name = "ToolStripMenuItemAutoStartToggleOnff";
-            this.ToolStripMenuItemAutoStartToggleOnff.Size = new System.Drawing.Size(152, 22);
-            this.ToolStripMenuItemAutoStartToggleOnff.Text = "自动启动";
-            this.ToolStripMenuItemAutoStartToggleOnff.Click += new System.EventHandler(this.tool_strip_menu_item_auto_start_Click);
-            // 
-            // tool_strip_menu_item_toggle_onff
-            // 
-            this.tool_strip_menu_item_toggle_onff.Name = "tool_strip_menu_item_toggle_onff";
-            this.tool_strip_menu_item_toggle_onff.Size = new System.Drawing.Size(152, 22);
-            this.tool_strip_menu_item_toggle_onff.Text = "开启防护";
-            this.tool_strip_menu_item_toggle_onff.Click += new System.EventHandler(this.tool_strip_menu_item_toggle_onff_Click);
             // 
             // FormMain
             // 

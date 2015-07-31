@@ -15,11 +15,15 @@ namespace troll_ui_app
         public const int INTERNET_OPTION_SETTINGS_CHANGED = 39;
         public const int INTERNET_OPTION_REFRESH = 37;
         static bool settingsReturn, refreshReturn;
+        static object origin_proxy_enable;
+        static object origin_proxy_server;
 
         public static void SetProxy(string proxy = "http=127.0.0.1:8090")
         {
             //return;
             RegistryKey registry = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", true);
+            origin_proxy_enable = registry.GetValue("ProxyEnable");
+            origin_proxy_server = registry.GetValue("ProxyServer");
             registry.SetValue("ProxyEnable", 1);
             registry.SetValue("ProxyServer", proxy);
 
@@ -34,7 +38,8 @@ namespace troll_ui_app
             //return;
             RegistryKey registry = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", true);
             registry.SetValue("ProxyEnable", 0);
-            //registry.SetValue("ProxyServer", proxy);
+            //registry.SetValue("ProxyEnable", origin_proxy_enable);
+            //registry.SetValue("ProxyServer", origin_proxy_server);
 
             // These lines implement the Interface in the beginning of program 
             // They cause the OS to refresh the settings, causing IP to realy update
