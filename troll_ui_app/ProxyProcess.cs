@@ -42,7 +42,7 @@ namespace troll_ui_app
                 //check if the proxy server is still alive
                 process.StartInfo.FileName = process_name;
                 process.Exited += new EventHandler(myProcess_Exited);
-                //process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 process.StartInfo.UseShellExecute = true;
                 process.Start();
             }

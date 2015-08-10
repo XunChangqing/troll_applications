@@ -28,4 +28,10 @@
 		</TaggedOutputs> -->
 	</ItemGroup>
 	<Import Project="$(MSBuildExtensionsPath32)\InstallShield\2013Limited\InstallShield.targets"/>
+	<ItemGroup>
+		<ProjectReference Include="..\troll_ui_app\troll_ui_app.csproj">
+			<Name>troll_ui_app</Name>
+			<Project>{C98FC932-5ED9-41C5-B7DE-C17DD2EDBE43}</Project>
+		</ProjectReference>
+	</ItemGroup>
 </Project>

@@ -20,21 +20,23 @@ namespace troll_ui_app
         private bool onoff = true;
         private const int MOD_CTRL = 0x0002;
         private const int MOD_ALT = 0x0001;
+        const String kAutoRunRegisstryKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
+        const String kAutoRunKey = "trollwiz";
         public FormMain(String []args)
         {
             InitializeComponent();
+            notify_icon_main.Icon = Properties.Resources.on;
             if (args.Contains("-notvisible"))
                 notify_icon_main.Visible = false;
             //set hotkey as ctrl+alt+backspace
             Boolean success = FormMain.RegisterHotKey(this.Handle, this.GetType().GetHashCode(), MOD_CTRL | MOD_ALT, 0x08);//Set hotkey as 'b'
-            //record_display_form.Show();
+
             Proxies.SetProxy();
             tool_strip_menu_item_toggle_onff.Text = "停止保护";
 
             //ShowInTaskbar = false;
-            RegistryKey registryKey = Registry.CurrentUser.OpenSubKey
-                ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-            var autostart = registryKey.GetValue("troll_guard");
+            RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
+            var autostart = autorun_registry_key.GetValue(kAutoRunKey);
             if (autostart == null)
                 ToolStripMenuItemAutoStartToggleOnff.Checked = false;
             else
@@ -82,18 +84,16 @@ namespace troll_ui_app
 
         private void tool_strip_menu_item_toggle_onff_Click(object sender, EventArgs e)
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             if (onoff)
             {
                 Proxies.UnsetProxy();
-                //notify_icon_main.Icon = new Icon("Resources/on.ico");
-                notify_icon_main.Icon = ((System.Drawing.Icon)(resources.GetObject("off.Icon")));
+                notify_icon_main.Icon = Properties.Resources.off;
                 tool_strip_menu_item_toggle_onff.Text = "开始保护";
             }
             else
             {
                 Proxies.SetProxy();
-                notify_icon_main.Icon = ((System.Drawing.Icon)(resources.GetObject("on.Icon")));
+                notify_icon_main.Icon = Properties.Resources.on;
                 tool_strip_menu_item_toggle_onff.Text = "停止保护";
             }
             onoff = !onoff;
@@ -102,15 +102,14 @@ namespace troll_ui_app
         private void tool_strip_menu_item_auto_start_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem mi = (ToolStripMenuItem)sender;
-            RegistryKey registryKey = Registry.CurrentUser.OpenSubKey
-                ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
             if(mi.Checked)
             {
-                registryKey.SetValue("troll_guard", Application.ExecutablePath+" -notvisible");
+                autorun_registry_key.SetValue(kAutoRunKey, Application.ExecutablePath+" -notvisible");
             }
             else
             {
-                registryKey.DeleteValue("troll_guard");
+                autorun_registry_key.DeleteValue(kAutoRunKey);
             }
         }
 

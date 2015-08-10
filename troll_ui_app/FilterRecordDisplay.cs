@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using System.Data.SQLite;
 using System.Data.SqlClient;
 using System.Web;
+using System.Diagnostics;
+using System.IO;
 
 namespace troll_ui_app
 {
@@ -130,6 +132,9 @@ namespace troll_ui_app
                 string value2 = data_grid_view_porn_pics.SelectedRows[0].Cells["url"].Value.ToString();
                 //...
                 string filename = "images/" + HttpUtility.UrlEncode(value2);
+                Trace.WriteLine(Directory.GetCurrentDirectory());
+                System.Diagnostics.Trace.WriteLine(filename);
+                Trace.Flush();
                 picture_box.ImageLocation = filename;
                 //picture_box.SizeMode = PictureBoxSizeMode.AutoSize;
                 picture_box.SizeMode = PictureBoxSizeMode.Zoom;
