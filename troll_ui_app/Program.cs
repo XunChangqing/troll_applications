@@ -5,17 +5,31 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
 using System.Diagnostics;
+using System.Configuration;
 
 namespace troll_ui_app
 {
     static class Program
     {
+        public const String kEventSource = "trollwiz";
+        public const String kEventLog = "Application";
         /// <summary>
         /// 应用程序的主入口点。
         /// </summary>
         [STAThread]
         static void Main(String[] args)
         {
+            //Properties.Settings.Default.Reset();
+            //int i = Properties.Settings.Default.lastid;
+            //Properties.Settings.Default.lastid = 20;
+            //Properties.Settings.Default.Save();
+
+            if (!EventLog.SourceExists(kEventSource))
+                EventLog.CreateEventSource(kEventSource, kEventLog);
+            //EventLog.WriteEntry(kEventSource, "first");
+            //EventLog.WriteEntry(kEventSource, "second", EventLogEntryType.Information);
+
+            //System.Diagnostd
             bool result;
             //using named system mutex to ensure single instance of application
             var mutex = new System.Threading.Mutex(true, "masa_troll_guard_mutex", out result);
