@@ -37,7 +37,7 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://192.168.0.105:3000/domain_update_logs.json")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://121.40.144.14:8080/domain_admin/domain_update_logs.json")]
         public string update_domain_url {
             get {
                 return ((string)(this["update_domain_url"]));

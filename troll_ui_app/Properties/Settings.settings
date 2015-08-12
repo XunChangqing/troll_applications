@@ -6,7 +6,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="update_domain_url" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://192.168.0.105:3000/domain_update_logs.json</Value>
+      <Value Profile="(Default)">http://121.40.144.14:8080/domain_admin/domain_update_logs.json</Value>
     </Setting>
   </Settings>
 </SettingsFile>

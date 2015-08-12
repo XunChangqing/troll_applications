@@ -46,9 +46,10 @@ namespace troll_ui_app
                 // Specify a connection string. Replace the given value with a  
                 // valid connection string for a Northwind SQL Server sample 
                 // database accessible to your system.
-                String connectionString =
-                    "Integrated Security=SSPI;Persist Security Info=False;" +
-                    "Initial Catalog=Northwind;Data Source=porn.db";
+                //String connectionString =
+                //    "Integrated Security=SSPI;Persist Security Info=False;" +
+                //    "Initial Catalog=Northwind;Data Source=porn.db";
+                String connectionString = Program.connectionString;
 
                 // Create a new data adapter based on the specified query.
                 //porn_pics_data_adapter = new SQLiteDataAdapter("select id, url, type, datetime(created_at,'localtime') from porn_pics", connectionString);
@@ -98,11 +99,9 @@ namespace troll_ui_app
                 //table.Rows.Find();
                 //dataAdapter.Update(table);
             }
-            catch (SqlException)
+            catch (SqlException e)
             {
-                MessageBox.Show("To run this example, replace the value of the " +
-                    "connectionString variable with a connection string that is " +
-                    "valid for your system.");
+                EventLog.WriteEntry(Program.kEventSource, "Exception to get history data: "+e.ToString(), EventLogEntryType.Warning);
             }
         }
 
@@ -131,13 +130,15 @@ namespace troll_ui_app
             {
                 string value2 = data_grid_view_porn_pics.SelectedRows[0].Cells["url"].Value.ToString();
                 //...
-                string filename = "images/" + HttpUtility.UrlEncode(value2);
-                Trace.WriteLine(Directory.GetCurrentDirectory());
-                System.Diagnostics.Trace.WriteLine(filename);
-                Trace.Flush();
+                string filename = Program.kImagesDir + "\\" + HttpUtility.UrlEncode(value2);
+                //Trace.WriteLine(Directory.GetCurrentDirectory());
+                //Trace.WriteLine(filename);
+                //Trace.Flush();
                 picture_box.ImageLocation = filename;
                 //picture_box.SizeMode = PictureBoxSizeMode.AutoSize;
                 picture_box.SizeMode = PictureBoxSizeMode.Zoom;
+                if(picture_box.Image == null)
+                    EventLog.WriteEntry(Program.kEventSource, "Cannot open history image: "+ filename, EventLogEntryType.Warning);
                 //picture_box.SizeMode = PictureBoxSizeMode.StretchImage;
             }
         }
