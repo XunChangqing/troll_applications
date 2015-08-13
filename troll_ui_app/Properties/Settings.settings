@@ -8,5 +8,14 @@
     <Setting Name="update_domain_url" Type="System.String" Scope="User">
       <Value Profile="(Default)">http://121.40.144.14:8080/domain_admin/domain_update_logs.json</Value>
     </Setting>
+    <Setting Name="modelFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">nin/deploy.prototxt</Value>
+    </Setting>
+    <Setting Name="trainedFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">nin/20150726/model_256__iter_50000.caffemodel</Value>
+    </Setting>
+    <Setting Name="meanFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">nin/imagenet_mean.binaryproto</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

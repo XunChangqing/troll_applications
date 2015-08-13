@@ -46,5 +46,41 @@ namespace troll_ui_app.Properties {
                 this["update_domain_url"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("nin/deploy.prototxt")]
+        public string modelFile {
+            get {
+                return ((string)(this["modelFile"]));
+            }
+            set {
+                this["modelFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("nin/20150726/model_256__iter_50000.caffemodel")]
+        public string trainedFile {
+            get {
+                return ((string)(this["trainedFile"]));
+            }
+            set {
+                this["trainedFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("nin/imagenet_mean.binaryproto")]
+        public string meanFile {
+            get {
+                return ((string)(this["meanFile"]));
+            }
+            set {
+                this["meanFile"] = value;
+            }
+        }
     }
 }
