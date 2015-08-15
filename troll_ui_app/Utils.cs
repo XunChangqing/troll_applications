@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace TrotiNet.Example
+namespace troll_ui_app
 {
     public static class Utils
     {

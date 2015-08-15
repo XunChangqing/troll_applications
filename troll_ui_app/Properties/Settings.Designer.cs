@@ -82,5 +82,89 @@ namespace troll_ui_app.Properties {
                 this["meanFile"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("8090")]
+        public int bindPort {
+            get {
+                return ((int)(this["bindPort"]));
+            }
+            set {
+                this["bindPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int maxNumDomainList {
+            get {
+                return ((int)(this["maxNumDomainList"]));
+            }
+            set {
+                this["maxNumDomainList"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        public int maxHistoryDays {
+            get {
+                return ((int)(this["maxHistoryDays"]));
+            }
+            set {
+                this["maxHistoryDays"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://121.40.144.14:8080/domain_admin/tmp_domain_names.json")]
+        public string submitTmpDomainUrl {
+            get {
+                return ((string)(this["submitTmpDomainUrl"]));
+            }
+            set {
+                this["submitTmpDomainUrl"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public int thdPornPicsOfDomain {
+            get {
+                return ((int)(this["thdPornPicsOfDomain"]));
+            }
+            set {
+                this["thdPornPicsOfDomain"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("porn.db")]
+        public string pornDbFileName {
+            get {
+                return ((string)(this["pornDbFileName"]));
+            }
+            set {
+                this["pornDbFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("images")]
+        public string imagesDir {
+            get {
+                return ((string)(this["imagesDir"]));
+            }
+            set {
+                this["imagesDir"] = value;
+            }
+        }
     }
 }

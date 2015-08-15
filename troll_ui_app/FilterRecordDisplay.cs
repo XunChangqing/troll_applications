@@ -12,15 +12,16 @@ using System.Data.SqlClient;
 using System.Web;
 using System.Diagnostics;
 using System.IO;
+using log4net;
 
 namespace troll_ui_app
 {
     public partial class FilterRecordDisplay : Form
     {
+        static readonly ILog log = Log.Get();
         private BindingSource porn_pics_binding_source = new BindingSource();
-        private SQLiteDataAdapter porn_pics_data_adapter = new SQLiteDataAdapter();
         private BindingSource blocked_pages_binding_source = new BindingSource();
-        private SQLiteDataAdapter blocked_pages_data_adapter = new SQLiteDataAdapter();
+        private PornDatabase PornDB;
 
         public FilterRecordDisplay()
         {
@@ -43,31 +44,8 @@ namespace troll_ui_app
         {
             try
             {
-                // Specify a connection string. Replace the given value with a  
-                // valid connection string for a Northwind SQL Server sample 
-                // database accessible to your system.
-                //String connectionString =
-                //    "Integrated Security=SSPI;Persist Security Info=False;" +
-                //    "Initial Catalog=Northwind;Data Source=porn.db";
-                String connectionString = Program.connectionString;
-
-                // Create a new data adapter based on the specified query.
-                //porn_pics_data_adapter = new SQLiteDataAdapter("select id, url, type, datetime(created_at,'localtime') from porn_pics", connectionString);
-                //blocked_pages_data_adapter = new SQLiteDataAdapter("select id, url, datetime(created_at, 'localtime') from blocked_pages", connectionString);
-                porn_pics_data_adapter = new SQLiteDataAdapter("select id, url, type, created_at from porn_pics", connectionString);
-                blocked_pages_data_adapter = new SQLiteDataAdapter("select id, url, created_at from blocked_pages", connectionString);
-
-                // Create a command builder to generate SQL update, insert, and 
-                // delete commands based on selectCommand. These are used to 
-                // update the database.
-                SQLiteCommandBuilder porn_pics_command_builder = new SQLiteCommandBuilder(porn_pics_data_adapter);
-                SQLiteCommandBuilder blocked_pages_command_builder = new SQLiteCommandBuilder(blocked_pages_data_adapter);
-
-                // Populate a new data table and bind it to the BindingSource.
-                DataTable porn_pics_table = new DataTable();
-                porn_pics_table.Locale = System.Globalization.CultureInfo.InvariantCulture;
-                porn_pics_data_adapter.Fill(porn_pics_table);
-                porn_pics_binding_source.DataSource = porn_pics_table;
+                PornDB = new PornDatabase();
+                porn_pics_binding_source.DataSource = PornDB.CreatePornPicsDataTable();
 
                 // Resize the DataGridView columns to fit the newly loaded content.
                 data_grid_view_porn_pics.Columns["id"].Visible = false;
@@ -78,10 +56,7 @@ namespace troll_ui_app
 
                 data_grid_view_porn_pics.Sort(data_grid_view_porn_pics.Columns["created_at"], ListSortDirection.Descending);
 
-                DataTable blocked_pages_table = new DataTable();
-                blocked_pages_table.Locale = System.Globalization.CultureInfo.InvariantCulture;
-                blocked_pages_data_adapter.Fill(blocked_pages_table);
-                blocked_pages_binding_source.DataSource = blocked_pages_table;
+                blocked_pages_binding_source.DataSource = PornDB.CreateBlockedPagesDataTable();
 
                 data_grid_view_pages.Columns["id"].Visible = false;
                 data_grid_view_pages.Columns["created_at"].DefaultCellStyle.Format = "HH:mm:ss MMMM dd, yyyy (dddd)";
@@ -92,16 +67,10 @@ namespace troll_ui_app
 
                 data_grid_view_porn_pics.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
                 data_grid_view_pages.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-
-                //DataRow myrow = table.NewRow();
-                //myrow["url"] = "abcdef";
-                //table.Rows.Add(myrow);
-                //table.Rows.Find();
-                //dataAdapter.Update(table);
             }
             catch (SqlException e)
             {
-                EventLog.WriteEntry(Program.kEventSource, "Exception to get history data: "+e.ToString(), EventLogEntryType.Warning);
+                log.Error(e.ToString());
             }
         }
 
@@ -129,17 +98,9 @@ namespace troll_ui_app
             if (data_grid_view_porn_pics.SelectedRows.Count > 0)
             {
                 string value2 = data_grid_view_porn_pics.SelectedRows[0].Cells["url"].Value.ToString();
-                //...
-                string filename = Program.kImagesDir + "\\" + HttpUtility.UrlEncode(value2);
-                //Trace.WriteLine(Directory.GetCurrentDirectory());
-                //Trace.WriteLine(filename);
-                //Trace.Flush();
+                string filename = Properties.Settings.Default.imagesDir + "\\" + HttpUtility.UrlEncode(value2);
                 picture_box.ImageLocation = filename;
-                //picture_box.SizeMode = PictureBoxSizeMode.AutoSize;
                 picture_box.SizeMode = PictureBoxSizeMode.Zoom;
-                if(picture_box.Image == null)
-                    EventLog.WriteEntry(Program.kEventSource, "Cannot open history image: "+ filename, EventLogEntryType.Warning);
-                //picture_box.SizeMode = PictureBoxSizeMode.StretchImage;
             }
         }
 
@@ -156,10 +117,10 @@ namespace troll_ui_app
             }
             else if (e.ColumnIndex == dgView.Columns["type"].Index)
             {
-                Int64 type = (Int64)e.Value;
-                if (type == 3)
+                PornClassifier.ImageType type = (PornClassifier.ImageType)(Int64)e.Value;
+                if (type == PornClassifier.ImageType.Porn)
                     e.Value = "色情";
-                else if (type == 2)
+                else if (type == PornClassifier.ImageType.Disguise)
                     e.Value = "暴露";
             }
         }

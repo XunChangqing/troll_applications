@@ -45,7 +45,7 @@ namespace troll_ui_app
                 process.Exited += new EventHandler(myProcess_Exited);
                 process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 process.StartInfo.UseShellExecute = true;
-                process.StartInfo.Arguments = "--workdir " + Program.kWorkDir;
+                //process.StartInfo.Arguments = "--workdir " + Program.kWorkDir;
                 var fi = new FileInfo(Application.ExecutablePath);
                 process.StartInfo.WorkingDirectory = fi.DirectoryName;
                 process.Start();
@@ -53,7 +53,7 @@ namespace troll_ui_app
             catch(Exception e)
             {
                 process = null;
-                EventLog.WriteEntry(Program.kEventSource, "Cannot start proxy process: "+e.ToString(), EventLogEntryType.Warning);
+                //EventLog.WriteEntry(Program.kEventSource, "Cannot start proxy process: "+e.ToString(), EventLogEntryType.Warning);
             }
             //record the id
         }
@@ -87,7 +87,7 @@ namespace troll_ui_app
         // Handle Exited event and display process information.
         private void myProcess_Exited(object sender, System.EventArgs e)
         {
-            EventLog.WriteEntry(Program.kEventSource, "Proxy process exit!", EventLogEntryType.Information);
+            //EventLog.WriteEntry(Program.kEventSource, "Proxy process exit!", EventLogEntryType.Information);
             //eventHandled = true;
             //Console.WriteLine("Exit time:    {0}\r\n" + "Exit code:    {1}\r\n", process.ExitTime, process.ExitCode);
         }

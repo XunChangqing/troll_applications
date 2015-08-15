@@ -17,16 +17,18 @@ namespace troll_ui_app
         [DllImport("caffe.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         extern static int ClassifyImage(IntPtr classifier, IntPtr img, int width, int height, int stride, int channels,
             int types, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 7)] float[] ratio);
+        [DllImport("caffe.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        extern static void ReleaseClassifier(IntPtr classifier);
 
         public enum ImageType{Normal, Disguise, Porn};
         private enum InternalImageType{Other, Man, Sexy, Porn};
-        extern static void ReleaseClassifier(IntPtr classifier);
         private static object syncRoot = new Object();
         private static PornClassifier instance;
 
         private IntPtr classifier_handle_;
         public static void Init()
         {
+            InitLib();
             instance = new PornClassifier(Properties.Settings.Default.modelFile,
                 Properties.Settings.Default.trainedFile,
                 Properties.Settings.Default.meanFile);
@@ -46,7 +48,7 @@ namespace troll_ui_app
         {
             lock (syncRoot)
             {
-                // Lock the bitmap's bits.  
+                // Lock the bitmap's bits.
                 Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
                 System.Drawing.Imaging.BitmapData bmpData =
                     bmp.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite,
@@ -61,7 +63,15 @@ namespace troll_ui_app
                     4, ratio);
                 // Unlock the bits.
                 bmp.UnlockBits(bmpData);
-                return ImageType.Normal;
+                int[] indices = new int[ratio.Length];
+                for (int i = 0; i < indices.Length; i++) indices[i] = i;
+                Array.Sort(ratio, indices);
+                if (indices[3] == 3)
+                    return ImageType.Porn;
+                else if (indices[3] == 2)
+                    return ImageType.Disguise;
+                else
+                    return ImageType.Normal;
             }
         }
     }

@@ -13,6 +13,7 @@ using System.Runtime.Serialization.Json;
 using System.Configuration;
 using System.Windows.Forms;
 using System.Diagnostics;
+using log4net;
 //using System.Json;
 
 namespace troll_ui_app
@@ -48,155 +49,422 @@ namespace troll_ui_app
     //}
     class PornDatabase
     {
+        static readonly ILog log = Log.Get();
         //select * from porn_pics where date(created_at)<date('now', '-10 day');
-        const string kHistorySelect = "select * from {0} where date(created_at)<=date('now', '-{1} day')";
-        const string kHistoryDelete = "delete from {0} where date(created_at)<=date('now', '-{1} day')";
-        const String kDomainListSelect = "select * from {0}";
-        const String kDomainListInsert = "insert or ignore into {0} (domain_name) values (@domain_name)";
-        const int kHistoryDays = 30;
-        PornDatabase()
+        static readonly String kConnectionString = "Data Source=porn.db";
+        static readonly String kGeneralSelect = "select * from {0}";
+        static readonly String kDomainListInsert = "insert or ignore into domain_list (domain_name, type) values ('{0}', {1})";
+        static readonly String kDomainListGetType = "select type from domain_list where domain_name='{0}'";
+        static readonly String kDomainListDelete = "delete from domain_list where domain_name='{0}'";
+        static readonly String kDomainListInsertOrReplace = "insert or replace into domain_list (domain_name, type) values ('{0}', {1})";
+        static readonly String kPornPicsInsert = "insert or ignore into porn_pics (url, type) values ('{0}', {1})";
+        static readonly String kPornPagesInsert = "insert or  ignore into porn_pages (domain_name, page_url, porn_pic_url) values ('{0}', '{1}', '{2}')";
+        static readonly String kPornPagesCountSelect = "select count(*) from porn_pages where domain_name='{0}'";
+        static readonly String kPornPagesDelete = "delete from porn_pages where domain_name='{0}'";
+        static readonly String kBlockedPagesInsert = "insert or ignore into blocked_pages (url) values ('{0}')";
+
+        static readonly String kHistoryPornPicSelect = "select url from porn_pics where date(created_at)<=date('now', '-{0} day')";
+        static readonly String kHistoryDelete = "delete from {0} where date(created_at)<=date('now', '-{1} day')";
+
+        //static readonly String kBlackListTableName = "black_list";
+        public enum DomainType {Undefined, White, Black, TmpBlack };
+
+        //static private PornDatabase instance;
+        //public static PornDatabase Instance
+        //{
+        //    get { return instance; }
+        //}
+        //private DataSet PornDataset = new DataSet();
+        private SQLiteConnection PornDBConnection;
+
+        //private DataTable WhiteDomainTable;
+        //private DataTable BlackDomainTable;
+        //private DataTable TmpDomainTable;
+        //private DataTable DomainTable;
+        //private DataTable PornPagesTable;
+
+        //private DataTable PornPicsTable;
+        //private DataTable BlockedPagesTable;
+
+        //private SQLiteDataAdapter DomainDataAdapter;
+        //private SQLiteDataAdapter PornPagesDataAdatper;
+        //private SQLiteDataAdapter WhiteDataAdapter;
+        //private SQLiteDataAdapter BlackDataAdapter;
+        //private SQLiteDataAdapter TmpBlackDataAdapter;
+        //private SQLiteDataAdapter PornPicsDataAdapter;
+        //private SQLiteDataAdapter BlockedPagesDataAdapter;
+        public PornDatabase()
         {
+            PornDBConnection = new SQLiteConnection(kConnectionString);
+            PornDBConnection.Open();
+
+            //{
+            //    DomainTable = new DataTable();
+            //    DomainDataAdapter = new SQLiteDataAdapter(String.Format(kGeneralSelect, "domain_list"), PornDBConnection);
+            //    SQLiteCommand cmd = new SQLiteCommand(String.Format(kDomainListInsert, "domain_list"));
+            //    cmd.Parameters.Add("@domain_name", DbType.String, 1024, "domain_name");
+            //    cmd.Parameters.Add("@type", DbType.Int64, 8, "type");
+            //    DomainDataAdapter.InsertCommand = cmd;
+            //    SQLiteCommandBuilder cmdBuilder = new SQLiteCommandBuilder(DomainDataAdapter);
+            //    DomainDataAdapter.Fill(DomainTable);
+            //    //UniqueConstraint custUnique = new UniqueConstraint(TmpDomainTable.Columns["domain_name"]);
+            //    //TmpDomainTable.Constraints.Add(custUnique);
+            //    DomainTable.PrimaryKey = new DataColumn[] { DomainTable.Columns["domain_name"] };
+            //    Int64 x = 1;
+            //    DomainTable.Columns["type"].DataType = x.GetType();
+            //}
+
+            //{
+            //    PornPagesTable = new DataTable();
+            //    PornPagesDataAdatper = new SQLiteDataAdapter(String.Format(kGeneralSelect, "porn_pages"), PornDBConnection);
+            //    SQLiteCommand porn_pages_cmd = new SQLiteCommand(kPornPagesInsert);
+            //    porn_pages_cmd.Parameters.Add("@domain_name", DbType.String, 1024, "domain_name");
+            //    porn_pages_cmd.Parameters.Add("@page_url", DbType.String, 1024, "page_url");
+            //    porn_pages_cmd.Parameters.Add("@porn_pic_url", DbType.String, 1024, "porn_pic_url");
+            //    PornPagesDataAdatper.InsertCommand = porn_pages_cmd;
+            //    SQLiteCommandBuilder porn_pages_cmd_builder = new SQLiteCommandBuilder(PornPagesDataAdatper);
+            //    PornPagesDataAdatper.Fill(PornPagesTable);
+            //    UniqueConstraint custUnique = new UniqueConstraint(
+            //        new DataColumn[]{PornPagesTable.Columns["page_url"], PornPagesTable.Columns["porn_pic_url"]});
+            //    PornPagesTable.Constraints.Add(custUnique);
+            //}
+
+            //{
+            //    PornPicsTable = new DataTable();
+            //    PornPicsDataAdapter = new SQLiteDataAdapter(String.Format(kGeneralSelect, "porn_pics"), PornDBConnection);
+            //    SQLiteCommand porn_pics_cmd = new SQLiteCommand(kPornPicsInsert);
+            //    porn_pics_cmd.Parameters.Add("@url", DbType.String, 1024, "url");
+            //    porn_pics_cmd.Parameters.Add("@type", DbType.Int64, 8, "type");
+            //    PornPicsDataAdapter.InsertCommand = porn_pics_cmd;
+            //    SQLiteCommandBuilder porn_pics_cmd_builder = new SQLiteCommandBuilder(PornPicsDataAdapter);
+            //    PornPicsDataAdapter.Fill(PornPicsTable);
+            //}
+
+            //{
+            //    BlockedPagesTable = new DataTable();
+            //    BlockedPagesDataAdapter = new SQLiteDataAdapter(String.Format(kGeneralSelect, "blocked_pages"), PornDBConnection);
+            //    SQLiteCommand blocked_pages_cmd = new SQLiteCommand(kBlockedPagesInsert);
+            //    blocked_pages_cmd.Parameters.Add("@url", DbType.String, 1024, "url");
+            //    BlockedPagesDataAdapter.InsertCommand = blocked_pages_cmd;
+            //    SQLiteCommandBuilder cmdBuilder = new SQLiteCommandBuilder(BlockedPagesDataAdapter);
+            //    BlockedPagesDataAdapter.Fill(BlockedPagesTable);
+            //}
         }
-        static public void InitWorkDir()
+        public DataTable CreatePornPicsDataTable()
+        {
+            DataTable pornPicsTable = new DataTable();
+            SQLiteDataAdapter pornPicsDataAdapter = new SQLiteDataAdapter(String.Format(kGeneralSelect, "porn_pics"), PornDBConnection);
+            //SQLiteCommand porn_pics_cmd = new SQLiteCommand(kPornPicsInsert);
+            //porn_pics_cmd.Parameters.Add("@url", DbType.String, 1024, "url");
+            //porn_pics_cmd.Parameters.Add("@type", DbType.Int64, 8, "type");
+            //pornPicsDataAdapter.InsertCommand = porn_pics_cmd;
+            //SQLiteCommandBuilder porn_pics_cmd_builder = new SQLiteCommandBuilder(PornPicsDataAdapter);
+            pornPicsDataAdapter.Fill(pornPicsTable);
+            return pornPicsTable;
+        }
+
+        public DataTable CreateBlockedPagesDataTable()
+        {
+            DataTable blockedPagesTable = new DataTable();
+            SQLiteDataAdapter blockedPagesDataAdapter = new SQLiteDataAdapter(String.Format(kGeneralSelect, "blocked_pages"), PornDBConnection);
+            //SQLiteCommand blocked_pages_cmd = new SQLiteCommand(kBlockedPagesInsert);
+            //blocked_pages_cmd.Parameters.Add("@url", DbType.String, 1024, "url");
+            //BlockedPagesDataAdapter.InsertCommand = blocked_pages_cmd;
+            //SQLiteCommandBuilder cmdBuilder = new SQLiteCommandBuilder(BlockedPagesDataAdapter);
+            blockedPagesDataAdapter.Fill(blockedPagesTable);
+            return blockedPagesTable;
+        }
+
+        public void InsertBlockedPage(String url)
         {
             try
             {
-                if (!Directory.Exists(Program.kWorkDir))
-                    Directory.CreateDirectory(Program.kWorkDir);
-                if (!File.Exists(Program.kPornDBPath))
+                SQLiteCommand cmd = new SQLiteCommand(String.Format(kBlockedPagesInsert, url), PornDBConnection);
+                cmd.ExecuteNonQuery();
+                //lock (BlockedPagesTable)
+                //{
+                //    BlockedPagesTable.Rows.Add(null, url);
+                //    BlockedPagesDataAdapter.Update(BlockedPagesTable);
+                //}
+            }
+            catch(Exception e)
+            {
+                log.Error(e.ToString());
+            }
+        }
+        public void InsertPornPic(String url, PornClassifier.ImageType prop)
+        {
+            try
+            {
+                SQLiteCommand cmd = new SQLiteCommand(String.Format(kPornPicsInsert, url, (Int64)prop), PornDBConnection);
+                cmd.ExecuteNonQuery();
+                //lock (PornPicsTable)
+                //{
+                //    PornPicsTable.Rows.Add(null, url, (int)prop);
+                //    PornPicsDataAdapter.Update(PornPicsTable);
+                //}
+            }
+            catch(Exception e)
+            {
+                log.Error(e.ToString());
+            }
+        }
+
+        public void InsertPornPage(String domainName, String pageUrl, String pornUrl)
+        {
+            try
+            {
+                SQLiteCommand cmd = new SQLiteCommand(String.Format(kPornPagesInsert, domainName, pageUrl, pornUrl), PornDBConnection);
+                cmd.ExecuteNonQuery();
+
+                SQLiteCommand countCmd = new SQLiteCommand(String.Format(kPornPagesCountSelect, domainName), PornDBConnection);
+                Object row = countCmd.ExecuteScalar();
+                Int64 count = (Int64)row;
+                log.Info("Domain: " + domainName + " contains porn: " + count);
+                if (count > Properties.Settings.Default.thdPornPicsOfDomain)
+                {
+                    log.Info("Add domain to tmp black: " + domainName);
+                    InsertBlackDomainDeteced(domainName);
+                    DeletePagesInList(domainName);
+                }
+                
+                //lock (PornPagesTable.Rows.SyncRoot)
+                //{
+                //    PornPagesTable.Rows.Add(null, domainName, pageUrl, pornUrl);
+                //    PornPagesDataAdatper.Update(PornPagesTable);
+                //}
+                //check if the number of porn pics of this domain exceed the threshold
+                //DataRow[] rows = PornPagesTable.Select(String.Format("domain_name='{0}'", domainName));
+                //log.Info("Domain name: " + domainName + " times: " + rows.Length);
+                //if (rows.Length > Properties.Settings.Default.thdPornPicsOfDomain)
+                //    InsertBlackDomainDeteced(domainName);
+            }
+            catch(Exception e)
+            {
+                log.Error(e.ToString());
+            }
+        }
+        //delete porn pages belongs to a domain name which is already in black, white or tmp black
+        private void DeletePagesInList(String domainName)
+        {
+            try
+            {
+                SQLiteCommand cmd = new SQLiteCommand(String.Format(kPornPagesDelete, domainName), PornDBConnection);
+                cmd.ExecuteNonQuery();
+                //lock (PornPagesTable.Rows.SyncRoot)
+                //{
+                //    DataRow[] rows = PornPagesTable.Select(String.Format("domain_name='{0}'", domainName));
+                //    foreach (DataRow eachrow in rows)
+                //        eachrow.Delete();
+                //    PornPagesDataAdatper.Update(PornPagesTable);
+                //}
+            }
+            catch (Exception e)
+            {
+                log.Error(e.ToString());
+            }
+        }
+        public void InsertBlackDomainDeteced(String domainName)
+        {
+            try
+            {
+                SQLiteCommand cmd = new SQLiteCommand(String.Format(kDomainListInsert, domainName, (Int64)DomainType.TmpBlack), PornDBConnection);
+                cmd.ExecuteNonQuery();
+                //lock (DomainTable)
+                //{
+                //    DomainTable.Rows.Add(null, domainName, DomainType.TmpBlack);
+                //    DomainDataAdapter.Update(DomainTable);
+                //}
+
+                HttpClientHandler handler = new HttpClientHandler() { UseProxy = false };
+                HttpClient client = new HttpClient(handler);
+                //var builder = new UriBuilder(Properties.Settings.Default.submitTmpDomainUrl);
+                //string url = builder.ToString();
+                
+                DomainSubmitItem submit_item = new DomainSubmitItem();
+                submit_item.dni = new DomainNameItem();
+                submit_item.dni.domain_name = domainName;
+                DataContractJsonSerializer submit_serializer = new DataContractJsonSerializer(submit_item.GetType());
+                MemoryStream ms = new MemoryStream();
+                submit_serializer.WriteObject(ms, submit_item);
+                String request_str = Encoding.Default.GetString(ms.ToArray());
+                //Task<HttpResponseMessage> task = client.PostAsync(Properties.Settings.Default.submitTmpDomainUrl,
+                //    new StringContent(request_str, Encoding.UTF8, "application/json"));
+                //Task.Run(() => {client.PostAsync(Properties.Settings.Default.submitTmpDomainUrl,
+                //    new StringContent(request_str, Encoding.UTF8, "application/json")); });
+                //wait here 
+                HttpResponseMessage response = client.PostAsync(Properties.Settings.Default.submitTmpDomainUrl, new StringContent(request_str, Encoding.UTF8, "application/json")).Result;
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception e)
+            {
+                log.Error(e.ToString());
+            }
+        }
+        public DomainType GetDomainType(String domainName)
+        {
+            SQLiteCommand cmd = new SQLiteCommand(String.Format(kDomainListGetType, domainName), PornDBConnection);
+            Object t = cmd.ExecuteScalar();
+            if (t == null)
+                return DomainType.Undefined;
+            return (DomainType)(Int64)t;
+            
+            //DataRow row = DomainTable.Rows.Find(domainName);
+            //if (row == null)
+            //    return DomainType.Undefined;
+            //return (DomainType)(Int64)row["type"];
+        }
+
+        static public void Test()
+        {
+            PornDatabase porndb = new PornDatabase();
+            //DomainType t = porndb.GetDomainType("haoskys.com");
+            //PornDatabase.DeleteHistroy(null);
+            //porndb.InsertPornPage("feng.com", "sdfsdf", "xxxx");
+
+            //porndb.MaintainDatabase();
+            porndb.InsertBlackDomainDeteced("kkk.com");
+        }
+        static public void Init()
+        {
+            try
+            {
+                //if (!Directory.Exists(Program.kWorkDir))
+                //    Directory.CreateDirectory(Program.kWorkDir);
+                if (!File.Exists(Properties.Settings.Default.pornDbFileName))
                 {
                     //reset lastid for new database
-                    Properties.Settings.Default.Reset();
+                    //Properties.Settings.Default.Reset();
                     //copy database
-                    if (File.Exists(Program.kConstPornDBPath))
-                    {
-                        EventLog.WriteEntry(Program.kEventSource, "Copy porn db", EventLogEntryType.Information);
-                        File.Copy(Program.kConstPornDBPath, Program.kPornDBPath);
-                    }
-                    else//create new database
-                    {
-                        EventLog.WriteEntry(Program.kEventSource, "Create new porn db", EventLogEntryType.Information);
-                        //create database
-                        SQLiteConnection.CreateFile(Program.kPornDBPath);
-                        SQLiteConnection conn = new SQLiteConnection(Program.connectionString);
-                        conn.Open();
+                    //if (File.Exists(Program.kConstPornDBPath))
+                    //create database
+                    SQLiteConnection.CreateFile(Properties.Settings.Default.pornDbFileName);
+                    SQLiteConnection conn = new SQLiteConnection(kConnectionString);
+                    conn.Open();
 
-                        String sql =
-        "create table porn_pics(id integer primary key autoincrement, url text not null unique, type integer not null default 0, created_at datetime default current_timestamp);" +
-        "create index porn_pics_created_at_index on porn_pics(created_at);" +
-        "create table blocked_pages(id integer primary key autoincrement, url text not null, created_at datetime default current_timestamp);" +
-        "create index blocked_pages_created_at_index on blocked_pages(created_at);" +
-        "create table porn_pages(id integer primary key autoincrement, domain_name text not null, page_url text not null, porn_pic_id integer references porn_pics(id) on delete set null, created_at datetime default current_timestamp, unique(page_url, porn_pic_id));" +
-        "create table white_list(id integer primary key autoincrement, domain_name text not null unique, created_at datetime default current_timestamp);" +
-        "create index white_list_created_at_index on white_list(created_at);" +
-        "create table black_list(id integer primary key autoincrement, domain_name text not null unique, created_at datetime default current_timestamp);" +
-        "create index black_list_created_at_index on black_list(created_at);" +
-        "create table tmp_black_list(id integer primary key autoincrement, domain_name text not null unique, created_at datetime default current_timestamp);" +
-        "create index tmp_black_list_created_at_index on tmp_black_list(created_at);";
+                    String sql =
+    "create table porn_pics(id integer primary key autoincrement, url text not null, type integer not null default 0, created_at datetime default current_timestamp);" +
+    "create index porn_pics_created_at_index on porn_pics(created_at);" +
+    "create table blocked_pages(id integer primary key autoincrement, url text not null, created_at datetime default current_timestamp);" +
+    "create index blocked_pages_created_at_index on blocked_pages(created_at);" +
+    "create table porn_pages(id integer primary key autoincrement, domain_name text not null, page_url text not null, porn_pic_url text not null, created_at datetime default current_timestamp, unique(page_url, porn_pic_url));" +
+    "create table domain_list(id integer primary key autoincrement, domain_name text not null unique, type integer not null default 0, created_at datetime default current_timestamp);";
 
-                        SQLiteCommand command = new SQLiteCommand(sql, conn);
-                        command.ExecuteNonQuery();
-                        conn.Close();
-                    }
+                    //"create table white_list(id integer primary key autoincrement, domain_name text not null unique, created_at datetime default current_timestamp);" +
+                    //"create table black_list(id integer primary key autoincrement, domain_name text not null unique, created_at datetime default current_timestamp);" +
+                    //"create table tmp_black_list(id integer primary key autoincrement, domain_name text not null unique, created_at datetime default current_timestamp);" +
 
+                    SQLiteCommand command = new SQLiteCommand(sql, conn);
+                    command.ExecuteNonQuery();
+                    conn.Close();
                 }
-
+                //instance = new PornDatabase();
             }
             catch (Exception e)
             {
-                EventLog.WriteEntry(Program.kEventLog, e.ToString(), EventLogEntryType.Error);
+                log.Error(e.ToString());
             }
         }
-        static public void DeleteHistoryPornPics()
+        public void DeleteHistoryPornPics()
         {
-            SQLiteDataAdapter porn_pics_data_adapter = new SQLiteDataAdapter(String.Format(kHistorySelect, "porn_pics", kHistoryDays), Program.connectionString);
-            SQLiteCommandBuilder cmd_builder = new SQLiteCommandBuilder(porn_pics_data_adapter);
-            DataTable dt = new DataTable();
-            porn_pics_data_adapter.Fill(dt);
-            foreach (DataRow each_row in dt.Rows)
+            try
             {
-                String url = (String)each_row["url"];
-                String url_encoded = Program.kImagesDir + "\\" + HttpUtility.UrlEncode(url);
-                try
+                SQLiteCommand cmd = new SQLiteCommand(String.Format(kHistoryPornPicSelect, Properties.Settings.Default.maxHistoryDays), PornDBConnection);
+                SQLiteDataReader reader = cmd.ExecuteReader();
+                if(reader.HasRows)
                 {
-                    File.Delete(url_encoded);
+                    while(reader.Read())
+                    {
+                        String url = reader.GetString(0);
+                        String url_encoded = Properties.Settings.Default.imagesDir + "\\" + HttpUtility.UrlEncode(url);
+                        try { File.Delete(url_encoded); }
+                        catch { }
+                    }
                 }
-                catch
-                {
-                }
-                each_row.Delete();
+                SQLiteCommand dcmd = new SQLiteCommand(String.Format(kHistoryDelete, "porn_pics", Properties.Settings.Default.maxHistoryDays), PornDBConnection);
+                dcmd.ExecuteNonQuery();
+                //lock (PornPicsTable)
+                //{
+                //    DateTime nt = DateTime.Now.ToUniversalTime().AddDays(-Properties.Settings.Default.maxHistoryDays);
+                //    DataRow[] rows = PornPicsTable.Select(String.Format("created_at<#{0}#", nt.ToString()));
+                //    foreach (DataRow each_row in rows)
+                //    {
+                //        String url = (String)each_row["url"];
+                //        String url_encoded = Properties.Settings.Default.imagesDir + "\\" + HttpUtility.UrlEncode(url);
+                //        try { File.Delete(url_encoded); }
+                //        catch { }
+                //        each_row.Delete();
+                //    }
+                //    PornPicsDataAdapter.Update(PornPicsTable);
+                //}
             }
-            porn_pics_data_adapter.Update(dt);
+            catch (Exception e)
+            {
+                log.Error(e.ToString());
+            }
         }
 
-        static public void DeleteHistoryBlockedPages()
+        public void DeleteHistoryBlockedPages()
         {
-            using (SQLiteConnection conn = new SQLiteConnection(Program.connectionString))
+            try
             {
-                SQLiteCommand cmd = new SQLiteCommand(String.Format(kHistoryDelete, "blocked_pages", kHistoryDays), conn);
-                conn.Open();
+                SQLiteCommand cmd = new SQLiteCommand(String.Format(kHistoryDelete, "blocked_pages", Properties.Settings.Default.maxHistoryDays), PornDBConnection);
                 cmd.ExecuteNonQuery();
+                //lock (BlockedPagesTable)
+                //{
+                //    DateTime nt = DateTime.Now.ToUniversalTime().AddDays(-Properties.Settings.Default.maxHistoryDays);
+                //    DataRow[] rows = BlockedPagesTable.Select(String.Format("created_at<#{0}#", nt.ToString()));
+                //    foreach (DataRow each_row in rows)
+                //        each_row.Delete();
+                //    BlockedPagesDataAdapter.Update(BlockedPagesTable);
+                //}
+            }
+            catch (Exception e)
+            {
+                log.Error(e.ToString());
             }
         }
 
-        static public void UpdateWhiteList()
-        {
-
-        }
-
-        static public void UpdateBlackList()
-        {
-        }
-
-        static public void DeleteSpecificRow(DataTable dt, String domain_name)
-        {
-            DataRow[] result_rows;
-            result_rows = dt.Select("domain_name='" + domain_name + "'");
-            if (result_rows.Length > 0)
-                result_rows[0].Delete();
-        }
         static public void DeleteHistroy(Object state)
         {
-            EventLog.WriteEntry(Program.kEventSource, "Delete history", EventLogEntryType.Information);
+            log.Info("Delete history!");
             try
             {
-                //delete too old histories
-                DeleteHistoryPornPics();
-                DeleteHistoryBlockedPages();
+                PornDatabase db = new PornDatabase();
+                db.DeleteHistoryPornPics();
+                db.DeleteHistoryBlockedPages();
             }
             catch (Exception e)
             {
-                EventLog.WriteEntry(Program.kEventSource, e.ToString(), EventLogEntryType.Error);
+                log.Error(e.ToString());
             }
         }
-        static public void MaintainDatabase(Object state)
+        static public void UpdateDatabase(Object state)
+        {
+            PornDatabase db = new PornDatabase();
+            db.MaintainDatabase();
+        }
+        public void MaintainDatabase()
         {
             try
             {
-                //int last_id = int.Parse(ConfigurationManager.AppSettings["last_id"]);
                 int last_id = Properties.Settings.Default.lastid;
                 //update black, white and tmp lists
-                HttpClientHandler handler = new HttpClientHandler()
-                {
-                    UseProxy = false
-                };
+                HttpClientHandler handler = new HttpClientHandler() { UseProxy = false };
                 HttpClient client = new HttpClient(handler);
-                var builder = new UriBuilder(ConfigurationManager.AppSettings["domain_update_logs_url"]);
-                //builder.Host = "192.168.0.105";
-                //builder.Port = 3000;
-                //builder.Path = "domain_update_logs.json";
+                var builder = new UriBuilder(Properties.Settings.Default.update_domain_url);
                 var query = HttpUtility.ParseQueryString(builder.Query);
                 query["start_id"] = last_id.ToString();
                 builder.Query = query.ToString();
                 string url = builder.ToString();
 
-                EventLog.WriteEntry(Program.kEventSource, "Try to update domains, url: " + url, EventLogEntryType.Information);
+                log.Info("Try to update domain, url: " + url);
 
-                //HttpResponseMessage response = await client.GetAsync(builder.Uri);
+                ////HttpResponseMessage response = await client.GetAsync(builder.Uri);
+                List<DomainUpdateLogItem> log_items = new List<DomainUpdateLogItem>();
                 HttpResponseMessage response = client.GetAsync(builder.Uri).Result;
                 response.EnsureSuccessStatusCode();
                 String response_body = response.Content.ReadAsStringAsync().Result;
-                List<DomainUpdateLogItem> log_items = new List<DomainUpdateLogItem>();
 
                 DataContractJsonSerializer json_serializer = new DataContractJsonSerializer(log_items.GetType());
                 using (MemoryStream stream = new MemoryStream(Encoding.Unicode.GetBytes(response_body)))
@@ -217,7 +485,7 @@ namespace troll_ui_app
                 //new_item = new DomainUpdateLogItem();
                 //new_item.Id = 3;
                 //new_item.DomainName = "add_white.com";
-                //new_item.Operation = Operations.DeleteWhite;
+                //new_item.Operation = Operations.AddBlack;
                 //log_items.Add(new_item);
 
                 //new_item = new DomainUpdateLogItem();
@@ -233,34 +501,11 @@ namespace troll_ui_app
                 //new_item = new DomainUpdateLogItem();
                 //new_item.Id = 6;
                 //new_item.DomainName = "add_black.com";
-                //new_item.Operation = Operations.DeleteBlack;
+                //new_item.Operation = Operations.AddWhite;
                 //log_items.Add(new_item);
                 if (log_items.Count > 0)
                 {
-                    SQLiteDataAdapter white_data_adapter = new SQLiteDataAdapter(String.Format(kDomainListSelect, "white_list"), Program.connectionString);
-                    SQLiteCommand white_insert_cmd = new SQLiteCommand(String.Format(kDomainListInsert, "white_list"));
-                    white_insert_cmd.Parameters.Add("@domain_name", DbType.String, 40, "domain_name");
-                    white_data_adapter.InsertCommand = white_insert_cmd;
-                    SQLiteCommandBuilder white_cmd_builder = new SQLiteCommandBuilder(white_data_adapter);
-                    DataTable white_table = new DataTable();
-                    white_data_adapter.Fill(white_table);
-
-                    SQLiteDataAdapter black_data_adapter = new SQLiteDataAdapter(String.Format(kDomainListSelect, "black_list"), Program.connectionString);
-                    SQLiteCommand black_insert_cmd = new SQLiteCommand(String.Format(kDomainListInsert, "black_list"));
-                    black_insert_cmd.Parameters.Add("@domain_name", DbType.String, 40, "domain_name");
-                    black_data_adapter.InsertCommand = black_insert_cmd;
-                    SQLiteCommandBuilder black_cmd_builder = new SQLiteCommandBuilder(black_data_adapter);
-                    DataTable black_table = new DataTable();
-                    black_data_adapter.Fill(black_table);
-
-                    SQLiteDataAdapter tmp_black_data_adapter = new SQLiteDataAdapter(String.Format(kDomainListSelect, "tmp_black_list"), Program.connectionString);
-                    SQLiteCommand tmp_black_insert_cmd = new SQLiteCommand(String.Format(kDomainListInsert, "tmp_black_list"));
-                    tmp_black_insert_cmd.Parameters.Add("@domain_name", DbType.String, 40, "domain_name");
-                    tmp_black_data_adapter.InsertCommand = tmp_black_insert_cmd;
-                    SQLiteCommandBuilder tmp_black_cmd_builder = new SQLiteCommandBuilder(tmp_black_data_adapter);
-                    DataTable tmp_black_table = new DataTable();
-                    tmp_black_data_adapter.Fill(tmp_black_table);
-
+                    SQLiteCommand cmd;
                     foreach (DomainUpdateLogItem item in log_items)
                     {
                         if (item.Id > last_id)
@@ -268,64 +513,58 @@ namespace troll_ui_app
                         switch (item.Operation)
                         {
                             case Operations.AddWhite:
-                                EventLog.WriteEntry(Program.kEventSource, "Add white: " + item.DomainName, EventLogEntryType.Information);
-                                white_table.Rows.Add(null, item.DomainName);
-                                DeleteSpecificRow(tmp_black_table, item.DomainName);
+                                log.Info("Add white: " + item.DomainName);
+                                DeletePagesInList(item.DomainName);
+                                cmd = new SQLiteCommand(String.Format(kDomainListInsertOrReplace, item.DomainName, (Int64)DomainType.White), PornDBConnection);
+                                cmd.ExecuteNonQuery();
+                                //row = DomainTable.Rows.Find(item.DomainName);
+                                //if (row != null)
+                                //    row["type"] = DomainType.White;
+                                //else
+                                //    DomainTable.Rows.Add(null, item.DomainName, DomainType.White);
                                 break;
                             case Operations.DeleteWhite:
-                                EventLog.WriteEntry(Program.kEventSource, "Delete white: " + item.DomainName, EventLogEntryType.Information);
-                                DeleteSpecificRow(white_table, item.DomainName);
+                                log.Info("Delete white: " + item.DomainName);
+                                cmd = new SQLiteCommand(String.Format(kDomainListDelete, item.DomainName), PornDBConnection);
+                                cmd.ExecuteNonQuery();
+                                //row = DomainTable.Rows.Find(item.DomainName);
+                                //if (row != null)
+                                //    row.Delete();
                                 break;
                             case Operations.AddBlack:
-                                EventLog.WriteEntry(Program.kEventSource, "Add black: " + item.DomainName, EventLogEntryType.Information);
-                                black_table.Rows.Add(null, item.DomainName);
-                                DeleteSpecificRow(tmp_black_table, item.DomainName);
+                                log.Info("Add black: " + item.DomainName);
+                                DeletePagesInList(item.DomainName);
+                                cmd = new SQLiteCommand(String.Format(kDomainListInsertOrReplace, item.DomainName, (Int64)DomainType.Black), PornDBConnection);
+                                cmd.ExecuteNonQuery();
+                                //row = DomainTable.Rows.Find(item.DomainName);
+                                //if (row != null)
+                                //    row["type"] = DomainType.Black;
+                                //else
+                                //    DomainTable.Rows.Add(null, item.DomainName, DomainType.Black);
                                 break;
                             case Operations.DeleteBlack:
-                                EventLog.WriteEntry(Program.kEventSource, "Delete black: " + item.DomainName, EventLogEntryType.Information);
-                                DeleteSpecificRow(black_table, item.DomainName);
+                                log.Info("Delete black: " + item.DomainName);
+                                cmd = new SQLiteCommand(String.Format(kDomainListDelete, item.DomainName), PornDBConnection);
+                                cmd.ExecuteNonQuery();
+                                //row = DomainTable.Rows.Find(item.DomainName);
+                                //if (row != null)
+                                //    row.Delete();
                                 break;
                             default:
                                 break;
                         }
-
                     }
-                    white_data_adapter.Update(white_table);
-                    black_data_adapter.Update(black_table);
-                    tmp_black_data_adapter.Update(tmp_black_table);
+                    //DomainDataAdapter.Update(DomainTable);
 
-                    //modify readonly app settings
-                    //Configuration config = ConfigurationManager.OpenExeConfiguration(Application.ExecutablePath);
-                    //config.AppSettings.Settings["last_id"].Value = last_id.ToString();
-                    //config.Save();
-                    EventLog.WriteEntry(Program.kEventSource, "Last ID after update: " + last_id.ToString(), EventLogEntryType.Information);
+                    log.Info("Last id after update: " + last_id);
                     Properties.Settings.Default.lastid = last_id;
                     Properties.Settings.Default.Save();
                 }
-
-                //String data = "{\"domain_update_log\":{\"operation\":\"10\",\"domain_name\":\"sjk.com\"}}";
-                //DomainSubmitItem submit_item = new DomainSubmitItem();
-                //submit_item.dni = new DomainNameItem();
-                //submit_item.dni.domain_name = "iii.com";
-                //DataContractJsonSerializer submit_serializer = new DataContractJsonSerializer(submit_item.GetType());
-                //MemoryStream ms = new MemoryStream();
-                //submit_serializer.WriteObject(ms, submit_item);
-                //String request_str = Encoding.Default.GetString(ms.ToArray());
-                //////client.PostAsync("domain_update_logs.json", new StringContent();myObject.ToString()
-                //HttpResponseMessage post_response = await client.PostAsync("tmp_domain_names.json", new StringContent(request_str, Encoding.UTF8, "application/json"));
-                //post_response.EnsureSuccessStatusCode();
-                //String post_response_body = await post_response.Content.ReadAsStringAsync();
             }
             catch (Exception e)
             {
-                //String x = e.ToString();
-                EventLog.WriteEntry(Program.kEventSource, "Exception to update domain: " + e.ToString(), EventLogEntryType.Warning);
+                log.Error(e.ToString());
             }
         }
-
-        //static public void SubmitPornHost(String hostname)
-        //{
-
-        //}
     }
 }

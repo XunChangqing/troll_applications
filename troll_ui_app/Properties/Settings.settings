@@ -17,5 +17,26 @@
     <Setting Name="meanFile" Type="System.String" Scope="User">
       <Value Profile="(Default)">nin/imagenet_mean.binaryproto</Value>
     </Setting>
+    <Setting Name="bindPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">8090</Value>
+    </Setting>
+    <Setting Name="maxNumDomainList" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="maxHistoryDays" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">15</Value>
+    </Setting>
+    <Setting Name="submitTmpDomainUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://121.40.144.14:8080/domain_admin/tmp_domain_names.json</Value>
+    </Setting>
+    <Setting Name="thdPornPicsOfDomain" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">50</Value>
+    </Setting>
+    <Setting Name="pornDbFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">porn.db</Value>
+    </Setting>
+    <Setting Name="imagesDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)">images</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
