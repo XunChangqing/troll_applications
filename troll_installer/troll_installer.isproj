@@ -29,9 +29,13 @@
 	</ItemGroup>
 	<Import Project="$(MSBuildExtensionsPath32)\InstallShield\2013Limited\InstallShield.targets"/>
 	<ItemGroup>
-		<ProjectReference Include="..\..\azure-http-proxy\proxy-console.vcxproj">
-			<Name>proxy-console</Name>
-			<Project>{B432EA52-53A1-4E22-AF94-B81562D5D4A8}</Project>
+		<ProjectReference Include="..\..\TrotiNet\Lib\TrotiNet.Lib.csproj">
+			<Name>TrotiNet.Lib</Name>
+			<Project>{7FEDA61E-ED0A-4357-932E-746C697E464E}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\caffe\caffe.vcxproj">
+			<Name>caffe</Name>
+			<Project>{2674BA05-4CEF-4383-8E5D-2E890B62E800}</Project>
 		</ProjectReference>
 		<ProjectReference Include="..\troll_ui_app\troll_ui_app.csproj">
 			<Name>troll_ui_app</Name>

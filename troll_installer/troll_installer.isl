@@ -341,22 +341,19 @@
 		<col def="S0">ISDotNetInstallerArgsCommit</col>
 		<col def="S0">ISDotNetInstallerArgsUninstall</col>
 		<col def="S0">ISDotNetInstallerArgsRollback</col>
-		<row><td>Component</td><td>{99C8A624-D568-4C6D-94B5-F75962506930}</td><td>INSTALLDIR</td><td>2</td><td/><td>File</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>Component1</td><td>{E6D58685-0EE3-41DC-AA2A-FAA021F9A854}</td><td>INSTALLDIR</td><td>2</td><td/><td>File1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>Component4</td><td>{6402D9C2-4817-4247-9314-630A73C481DA}</td><td>INSTALLDIR</td><td>2</td><td/><td>File4</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>Component5</td><td>{29C48E65-535D-4298-9567-BA0FFC9CC052}</td><td>INSTALLDIR</td><td>2</td><td/><td>File5</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>Component6</td><td>{A12CDFF0-BFA2-4C4D-A8DF-BDB5CB41F22E}</td><td>INSTALLDIR</td><td>2</td><td/><td>File6</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT</td><td>{ADF0744F-D881-4E66-9403-670E18A10D71}</td><td>INSTALLDIR</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT1</td><td>{A162DC6F-2D0F-4B7A-874C-E33AD1AA47EF}</td><td>NIN</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT10</td><td>{9540BC0B-951F-45EE-A158-6BE3D1C2AE65}</td><td>X86</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT2</td><td>{53E2FB33-757B-4504-80EB-C894F2D2CB30}</td><td>_0150726</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT3</td><td>{E3D323FC-D4E7-45B1-9EA7-5D857A89B9A3}</td><td>AppDataFolder</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT4</td><td>{BFE2618A-8EEC-45DE-818B-9CB0946BE649}</td><td>LocalAppDataFolder</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>ISX_DEFAULTCOMPONENT5</td><td>{1FE28C2D-C3D8-48A2-A0FD-41AC45E0A484}</td><td>MASA1</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>ISX_DEFAULTCOMPONENT6</td><td>{35A0772F-2664-4EAB-A567-C4812D752607}</td><td>IMAGES</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>ISX_DEFAULTCOMPONENT7</td><td>{29B07495-6771-41BC-81B4-4489900D224E}</td><td>LOGS</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>ISX_DEFAULTCOMPONENT8</td><td>{0E4E86DC-8DE5-4A85-9135-F2F11CC3DF1F}</td><td>TROLLWIZ1</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT9</td><td>{55E6AC1E-C62D-4440-9EEA-58D720F26C63}</td><td>X64</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>SQLite.Interop.dll</td><td>{C0F1605E-A2B5-48A2-B672-21ED0F1C8B0F}</td><td>X64</td><td>2</td><td/><td>sqlite.interop.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>SQLite.Interop.dll1</td><td>{DC5A51F1-BA5D-4D74-BAF6-46C1F38E292D}</td><td>X86</td><td>2</td><td/><td>sqlite.interop.dll1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>libiomp5md.dll</td><td>{15DCF547-B942-47F1-8BEF-67B1932FF60B}</td><td>INSTALLDIR</td><td>2</td><td/><td>libiomp5md.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>libiomp5md.dll1</td><td>{4D9B7309-3367-4BC2-AD2F-72AB0FE89245}</td><td>INSTALLDIR</td><td>2</td><td/><td>libiomp5md.dll1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 	</table>
 
 	<table name="Condition">
@@ -1067,11 +1064,7 @@
 		<col key="yes" def="s72">Directory_</col>
 		<col key="yes" def="s72">Component_</col>
 		<row><td>AppDataFolder</td><td>ISX_DEFAULTCOMPONENT3</td></row>
-		<row><td>IMAGES</td><td>ISX_DEFAULTCOMPONENT6</td></row>
-		<row><td>LOGS</td><td>ISX_DEFAULTCOMPONENT7</td></row>
 		<row><td>LocalAppDataFolder</td><td>ISX_DEFAULTCOMPONENT4</td></row>
-		<row><td>MASA1</td><td>ISX_DEFAULTCOMPONENT5</td></row>
-		<row><td>TROLLWIZ1</td><td>ISX_DEFAULTCOMPONENT8</td></row>
 		<row><td>X64</td><td>ISX_DEFAULTCOMPONENT9</td></row>
 		<row><td>X86</td><td>ISX_DEFAULTCOMPONENT10</td></row>
 	</table>
@@ -1167,16 +1160,14 @@
 		<row><td>FavoritesFolder</td><td>TARGETDIR</td><td>.:FAVORI~1|Favorites</td><td/><td>0</td><td/></row>
 		<row><td>FontsFolder</td><td>TARGETDIR</td><td>.:Fonts</td><td/><td>0</td><td/></row>
 		<row><td>GlobalAssemblyCache</td><td>TARGETDIR</td><td>.:Global~1|GlobalAssemblyCache</td><td/><td>0</td><td/></row>
-		<row><td>IMAGES</td><td>TROLLWIZ1</td><td>images</td><td/><td>0</td><td/></row>
-		<row><td>INSTALLDIR</td><td>TROLLWIZ</td><td>.</td><td/><td>0</td><td/></row>
+		<row><td>INSTALLDIR</td><td>TROLLWIZ2</td><td>.</td><td/><td>0</td><td/></row>
 		<row><td>ISCommonFilesFolder</td><td>CommonFilesFolder</td><td>Instal~1|InstallShield</td><td/><td>0</td><td/></row>
 		<row><td>ISMyCompanyDir</td><td>ProgramFilesFolder</td><td>MYCOMP~1|My Company Name</td><td/><td>0</td><td/></row>
 		<row><td>ISMyProductDir</td><td>ISMyCompanyDir</td><td>MYPROD~1|My Product Name</td><td/><td>0</td><td/></row>
 		<row><td>ISYourDataBaseDir</td><td>INSTALLDIR</td><td>Database</td><td/><td>0</td><td/></row>
-		<row><td>LOGS</td><td>TROLLWIZ1</td><td>logs</td><td/><td>0</td><td/></row>
 		<row><td>LocalAppDataFolder</td><td>TARGETDIR</td><td>.:LocalA~1|LocalAppData</td><td/><td>0</td><td/></row>
 		<row><td>MASA</td><td>ProgramFilesFolder</td><td>masa</td><td/><td>0</td><td/></row>
-		<row><td>MASA1</td><td>LocalAppDataFolder</td><td>masa</td><td/><td>0</td><td/></row>
+		<row><td>MASATEK</td><td>LocalAppDataFolder</td><td>masatek</td><td/><td>0</td><td/></row>
 		<row><td>MY_PRODUCT_NAME</td><td>DIRECTORY</td><td>MYPROD~1|My Product Name</td><td/><td>0</td><td/></row>
 		<row><td>MY_PRODUCT_NAME1</td><td>DIRECTORY1</td><td>MYPROD~1|My Product Name</td><td/><td>0</td><td/></row>
 		<row><td>MyPicturesFolder</td><td>TARGETDIR</td><td>.:MyPict~1|MyPictures</td><td/><td>0</td><td/></row>
@@ -1197,7 +1188,7 @@
 		<row><td>SystemFolder</td><td>TARGETDIR</td><td>.:System32</td><td/><td>0</td><td/></row>
 		<row><td>TARGETDIR</td><td/><td>SourceDir</td><td/><td>0</td><td/></row>
 		<row><td>TROLLWIZ</td><td>MASA</td><td>trollwiz</td><td/><td>0</td><td/></row>
-		<row><td>TROLLWIZ1</td><td>MASA1</td><td>trollwiz</td><td/><td>0</td><td/></row>
+		<row><td>TROLLWIZ2</td><td>MASATEK</td><td>trollwiz</td><td/><td>0</td><td/></row>
 		<row><td>TempFolder</td><td>TARGETDIR</td><td>.:Temp</td><td/><td>0</td><td/></row>
 		<row><td>TemplateFolder</td><td>TARGETDIR</td><td>.:ShellNew</td><td/><td>0</td><td/></row>
 		<row><td>USERPROFILE</td><td>TARGETDIR</td><td>.:USERPR~1|UserProfile</td><td/><td>0</td><td/></row>
@@ -1897,22 +1888,19 @@
 	<table name="FeatureComponents">
 		<col key="yes" def="s38">Feature_</col>
 		<col key="yes" def="s72">Component_</col>
-		<row><td>AlwaysInstall</td><td>Component</td></row>
-		<row><td>AlwaysInstall</td><td>Component1</td></row>
+		<row><td>AlwaysInstall</td><td>Component4</td></row>
+		<row><td>AlwaysInstall</td><td>Component5</td></row>
+		<row><td>AlwaysInstall</td><td>Component6</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT1</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT10</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT2</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT3</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT4</td></row>
-		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT5</td></row>
-		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT6</td></row>
-		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT7</td></row>
-		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT8</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT9</td></row>
 		<row><td>AlwaysInstall</td><td>SQLite.Interop.dll</td></row>
 		<row><td>AlwaysInstall</td><td>SQLite.Interop.dll1</td></row>
-		<row><td>AlwaysInstall</td><td>libiomp5md.dll</td></row>
+		<row><td>AlwaysInstall</td><td>libiomp5md.dll1</td></row>
 	</table>
 
 	<table name="File">
@@ -1927,14 +1915,15 @@
 		<col def="S255">ISBuildSourcePath</col>
 		<col def="I4">ISAttributes</col>
 		<col def="S72">ISComponentSubFolder_</col>
-		<row><td>File</td><td>Component</td><td>troll_ui_app.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;troll_ui_app&gt;|Built</td><td>3</td><td/></row>
-		<row><td>File1</td><td>Component1</td><td>proxy-console.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;proxy-console&gt;|Built</td><td>3</td><td/></row>
+		<row><td>File4</td><td>Component4</td><td>caffe.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;caffe&gt;|Built</td><td>3</td><td/></row>
+		<row><td>File5</td><td>Component5</td><td>troll_ui_app.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;troll_ui_app&gt;|Built</td><td>3</td><td/></row>
+		<row><td>File6</td><td>Component6</td><td>TrotiNet.Lib.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;TrotiNet.Lib&gt;|Built</td><td>3</td><td/></row>
 		<row><td>deploy.prototxt</td><td>ISX_DEFAULTCOMPONENT1</td><td>DEPLOY~1.PRO|deploy.prototxt</td><td>0</td><td/><td/><td/><td>1</td><td>D:\gitwork\troll_applications\installed_files\nin\deploy.prototxt</td><td>1</td><td/></row>
 		<row><td>imagenet_mean.binaryproto</td><td>ISX_DEFAULTCOMPONENT1</td><td>IMAGEN~1.BIN|imagenet_mean.binaryproto</td><td>0</td><td/><td/><td/><td>1</td><td>D:\gitwork\troll_applications\installed_files\nin\imagenet_mean.binaryproto</td><td>1</td><td/></row>
 		<row><td>jpeg_place_holder.jpg</td><td>ISX_DEFAULTCOMPONENT1</td><td>JPEG_P~1.JPG|jpeg_place_holder.jpg</td><td>0</td><td/><td/><td/><td>1</td><td>D:\gitwork\troll_applications\installed_files\nin\jpeg_place_holder.jpg</td><td>1</td><td/></row>
-		<row><td>libiomp5md.dll</td><td>libiomp5md.dll</td><td>LIBIOM~1.DLL|libiomp5md.dll</td><td>0</td><td/><td/><td/><td>1</td><td>D:\gitwork\troll_applications\installed_files\libiomp5md.dll</td><td>1</td><td/></row>
+		<row><td>libiomp5md.dll1</td><td>libiomp5md.dll1</td><td>LIBIOM~1.DLL|libiomp5md.dll</td><td>0</td><td/><td/><td/><td>1</td><td>D:\gitwork\troll_applications\installed_files\libiomp5md.dll</td><td>1</td><td/></row>
 		<row><td>model_256__iter_50000.caffem</td><td>ISX_DEFAULTCOMPONENT2</td><td>MODEL_~1.CAF|model_256__iter_50000.caffemodel</td><td>0</td><td/><td/><td/><td>1</td><td>D:\gitwork\troll_applications\installed_files\nin\20150726\model_256__iter_50000.caffemodel</td><td>1</td><td/></row>
-		<row><td>porn.db</td><td>ISX_DEFAULTCOMPONENT</td><td>porn.db</td><td>0</td><td/><td/><td/><td>1</td><td>D:\gitwork\troll_applications\installed_files\porn.db</td><td>1</td><td/></row>
+		<row><td>porn.db1</td><td>ISX_DEFAULTCOMPONENT</td><td>porn.db</td><td>0</td><td/><td/><td/><td>1</td><td>D:\gitwork\troll_applications\installed_files\porn.db</td><td>1</td><td/></row>
 		<row><td>sqlite.interop.dll</td><td>SQLite.Interop.dll</td><td>SQLITE~1.DLL|SQLite.Interop.dll</td><td>0</td><td/><td/><td/><td>1</td><td>D:\gitwork\troll_applications\installed_files\x64\SQLite.Interop.dll</td><td>1</td><td/></row>
 		<row><td>sqlite.interop.dll1</td><td>SQLite.Interop.dll1</td><td>SQLITE~1.DLL|SQLite.Interop.dll</td><td>0</td><td/><td/><td/><td>1</td><td>D:\gitwork\troll_applications\installed_files\x86\SQLite.Interop.dll</td><td>1</td><td/></row>
 	</table>
@@ -2081,22 +2070,19 @@
 		<col def="S0">FTPLocation</col>
 		<col def="S0">HTTPLocation</col>
 		<col def="S0">Miscellaneous</col>
-		<row><td>Component</td><td/><td/><td>_43EF9521_4058_4E98_8A6C_2C548143F47B_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>Component1</td><td/><td/><td>_889E65DE_DF20_469D_BFD3_0ECB1853F494_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>Component4</td><td/><td/><td>_1ED7EF63_DDBA_4552_83CE_9CD35B5BFCA2_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>Component5</td><td/><td/><td>_E2FF0096_36D1_4EFE_860F_1013407913CE_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>Component6</td><td/><td/><td>_19DD1C6C_EC85_4BE2_94AB_5531BC936C2D_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT</td><td/><td/><td>_2FEE84A1_B334_4D24_9717_FA5A292AA54A_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT1</td><td/><td/><td>_222BC435_19C1_43E8_9E51_CFC1709846C3_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT10</td><td/><td/><td>_6196CFA1_177D_43B3_968B_B0D5274C570F_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT2</td><td/><td/><td>_275D040F_3287_4BD9_91C2_B7D0BBC0EB52_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT3</td><td/><td/><td>_22F92904_0945_4944_878E_3E5D5EE5E843_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT4</td><td/><td/><td>_D4A43A5F_2BB1_40A1_B804_0C840CB495CD_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>ISX_DEFAULTCOMPONENT5</td><td/><td/><td>_D28746F7_80DF_41D2_B53D_74A8A3E09834_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>ISX_DEFAULTCOMPONENT6</td><td/><td/><td>_E4D27400_8565_4D46_B768_D89AD9F1C592_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>ISX_DEFAULTCOMPONENT7</td><td/><td/><td>_73B1EF4B_8165_465C_9164_3A440B3993B4_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>ISX_DEFAULTCOMPONENT8</td><td/><td/><td>_B31ACCCC_2390_4887_B7FE_DA14989D0F9A_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT9</td><td/><td/><td>_200ACC84_5F2A_4EE0_9101_8DA2E7CD8AC6_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>SQLite.Interop.dll</td><td/><td/><td>_9B6F1BB1_9E12_472B_9E5A_83AF46FF90D1_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>SQLite.Interop.dll1</td><td/><td/><td>_4031D24B_BB0A_464C_BB5B_77D986D34B03_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>libiomp5md.dll</td><td/><td/><td>_DF04AB55_552E_493E_8661_F0411763FBA1_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>libiomp5md.dll1</td><td/><td/><td>_3FD503F1_9B6C_4CA9_9EF3_3CD1806B81C7_FILTER</td><td/><td/><td/><td/></row>
 	</table>
 
 	<table name="ISCustomActionReference">
@@ -2407,7 +2393,9 @@
 		<row><td>ISProjectFolder</td><td/><td/><td>1</td></row>
 		<row><td>ProgramFilesFolder</td><td/><td/><td>1</td></row>
 		<row><td>SystemFolder</td><td/><td/><td>1</td></row>
+		<row><td>TrotiNet.Lib</td><td>..\TrotiNet\Lib\TrotiNet.Lib.csproj</td><td/><td>2</td></row>
 		<row><td>WindowsFolder</td><td/><td/><td>1</td></row>
+		<row><td>caffe</td><td>..\caffe\caffe.vcxproj</td><td/><td>2</td></row>
 		<row><td>proxy-console</td><td>..\azure-http-proxy\proxy-console.vcxproj</td><td/><td>2</td></row>
 		<row><td>troll_ui_app</td><td>troll_ui_app\troll_ui_app.csproj</td><td/><td>2</td></row>
 	</table>
@@ -3825,6 +3813,10 @@
 		<row><td>ID_STRING2</td><td>2052</td><td>马沙科技</td><td>0</td><td/><td>1680020257</td></row>
 		<row><td>ID_STRING3</td><td>1033</td><td>=-NewEnvironment1</td><td>0</td><td/><td>1680049076</td></row>
 		<row><td>ID_STRING3</td><td>2052</td><td>=-NewEnvironment1</td><td>0</td><td/><td>1680049076</td></row>
+		<row><td>ID_STRING4</td><td>1033</td><td>NEWSHO~1|NewShortcut1</td><td>0</td><td/><td>2082698549</td></row>
+		<row><td>ID_STRING4</td><td>2052</td><td>山妖卫士</td><td>0</td><td/><td>2082684277</td></row>
+		<row><td>ID_STRING5</td><td>1033</td><td>NEWSHO~1|NewShortcut2</td><td>0</td><td/><td>2082708789</td></row>
+		<row><td>ID_STRING5</td><td>2052</td><td>山妖卫士</td><td>0</td><td/><td>2082680181</td></row>
 		<row><td>IIDS_UITEXT_FeatureUninstalled</td><td>2052</td><td>系统将不安装此功能。</td><td>0</td><td/><td>1680020257</td></row>
 	</table>
 
@@ -3933,6 +3925,7 @@
 		<col def="S255">ISBuildSourcePath</col>
 		<col def="I2">ISIconIndex</col>
 		<row><td>ARPPRODUCTICON.exe</td><td/><td>&lt;VSSolutionFolder&gt;\troll_ui_app\20150728010913511_easyicon_net_128.ico</td><td>0</td></row>
+		<row><td>NewShortcut2_A2514F554C344F59A3CFF24C24AD67A8.exe</td><td/><td>&lt;VSSolutionFolder&gt;\troll_ui_app\20150728010913511_easyicon_net_128.ico</td><td>0</td></row>
 	</table>
 
 	<table name="IniFile">
@@ -4065,7 +4058,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>ISTheme</td><td>InstallShield Blue.theme</td></row>
 		<row><td>ISUSLock</td><td>{764ABD44-5FAA-4762-B390-7DC64034F266}</td></row>
 		<row><td>ISUSSignature</td><td>{717BBD71-4032-44BE-B79D-8AFE9FD90E3C}</td></row>
-		<row><td>ISVisitedViews</td><td>viewAssistant,viewProject,viewRealSetupDesign,viewSetupDesign,viewSetupTypes,viewUpgradePaths,viewUpdateService,viewAppFiles,viewFeatureFiles,viewObjects,viewDependencies,viewUI,viewBillboards,viewTextMessages,viewSystemSearch,viewInstallScriptStd,viewCustomActions,viewSupportFiles,viewRelease,viewDesignPatches,viewRegistry,viewEnvironmentVariables</td></row>
+		<row><td>ISVisitedViews</td><td>viewAssistant,viewProject,viewRealSetupDesign,viewSetupDesign,viewSetupTypes,viewUpgradePaths,viewUpdateService,viewAppFiles,viewFeatureFiles,viewObjects,viewDependencies,viewUI,viewBillboards,viewTextMessages,viewSystemSearch,viewInstallScriptStd,viewCustomActions,viewSupportFiles,viewRelease,viewDesignPatches,viewRegistry,viewEnvironmentVariables,viewAppV,viewShortcuts,viewIniFiles,viewVRoots</td></row>
 		<row><td>Limited</td><td>1</td></row>
 		<row><td>LockPermissionMode</td><td>1</td></row>
 		<row><td>MsiExecCmdLineOptions</td><td/></row>
@@ -4078,6 +4071,8 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>SccEnabled</td><td>0</td></row>
 		<row><td>SccPath</td><td/></row>
 		<row><td>SchemaVersion</td><td>774</td></row>
+		<row><td>SwidtagLocalComponent</td><td/></row>
+		<row><td>SwidtagSystemComponent</td><td/></row>
 		<row><td>Type</td><td>MSIE</td></row>
 	</table>
 
@@ -4513,13 +4508,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<col def="S0">Value</col>
 		<col def="s72">Component_</col>
 		<col def="I4">ISAttributes</col>
-		<row><td>Registry1</td><td>2</td><td>Software\Microsoft\Windows\CurrentVersion\App Paths\|Built</td><td/><td/><td>Component</td><td>1</td></row>
-		<row><td>Registry2</td><td>2</td><td>Software\Microsoft\Windows\CurrentVersion\App Paths\|Built</td><td>Path</td><td>[INSTALLDIR]</td><td>Component</td><td>0</td></row>
 		<row><td>Registry3</td><td>1</td><td>Software\Microsoft\Windows\CurrentVersion\Run</td><td>trollwiz</td><td>[INSTALLDIR]troll_ui_app.exe -notvisible</td><td>ISX_DEFAULTCOMPONENT</td><td>0</td></row>
-		<row><td>Registry4</td><td>2</td><td>Software\Microsoft\Windows\CurrentVersion\App Paths\|Built</td><td/><td>[!File]</td><td>Component</td><td>0</td></row>
-		<row><td>Registry5</td><td>2</td><td>Software\Microsoft\Windows\CurrentVersion\App Paths\|Built</td><td/><td/><td>Component1</td><td>1</td></row>
-		<row><td>Registry6</td><td>2</td><td>Software\Microsoft\Windows\CurrentVersion\App Paths\|Built</td><td>Path</td><td>[INSTALLDIR]</td><td>Component1</td><td>0</td></row>
-		<row><td>Registry7</td><td>2</td><td>Software\Microsoft\Windows\CurrentVersion\App Paths\|Built</td><td/><td>[!File1]</td><td>Component1</td><td>0</td></row>
 	</table>
 
 	<table name="RemoveFile">
@@ -4613,6 +4602,8 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<col def="S255">ISComments</col>
 		<col def="S255">ISShortcutName</col>
 		<col def="I4">ISAttributes</col>
+		<row><td>NewShortcut1</td><td>StartupFolder</td><td>##ID_STRING4##</td><td>Component5</td><td>AlwaysInstall</td><td/><td/><td/><td/><td/><td>1</td><td>INSTALLDIR</td><td/><td/><td/><td/><td/><td/><td/></row>
+		<row><td>NewShortcut2</td><td>DesktopFolder</td><td>##ID_STRING5##</td><td>Component5</td><td>AlwaysInstall</td><td/><td/><td/><td>NewShortcut2_A2514F554C344F59A3CFF24C24AD67A8.exe</td><td>0</td><td>1</td><td>INSTALLDIR</td><td/><td/><td/><td/><td/><td/><td/></row>
 	</table>
 
 	<table name="Signature">

@@ -40,7 +40,11 @@ namespace troll_ui_app
             if (autostart == null)
                 ToolStripMenuItemAutoStartToggleOnff.Checked = false;
             else
+            {
+                //if(autostart == )
+                autorun_registry_key.SetValue(kAutoRunKey, Application.ExecutablePath+" -notvisible");
                 ToolStripMenuItemAutoStartToggleOnff.Checked = true;
+            }
 
             //set the owner to avoid the main form in atl-table window
             Form form1 = new Form();
@@ -48,13 +52,13 @@ namespace troll_ui_app
             form1.ShowInTaskbar = false;
             Owner = form1;
 
-            //if(Properties.Settings.Default.firstTime)
+            if (Program.FirstTime)
             {
-                //if( DialogResult.Yes == MessageBox.Show("是否扫描浏览器记录？", "本地扫描", MessageBoxButtons.YesNo))
-                //{
+                if (DialogResult.Yes == MessageBox.Show("是否扫描浏览器记录？", "本地扫描", MessageBoxButtons.YesNo))
+                {
                     Form scan = new TemporaryFileScan();
                     scan.Show();
-                //}
+                }
             }
         }
         //protected override CreateParams CreateParams

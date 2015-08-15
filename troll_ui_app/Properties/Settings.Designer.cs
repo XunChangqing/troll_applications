@@ -49,7 +49,7 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("nin/deploy.prototxt")]
+        [global::System.Configuration.DefaultSettingValueAttribute("data/deploy.prototxt")]
         public string modelFile {
             get {
                 return ((string)(this["modelFile"]));
@@ -61,7 +61,7 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("nin/20150726/model_256__iter_50000.caffemodel")]
+        [global::System.Configuration.DefaultSettingValueAttribute("data/model_256__iter_50000.caffemodel")]
         public string trainedFile {
             get {
                 return ((string)(this["trainedFile"]));
@@ -73,7 +73,7 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("nin/imagenet_mean.binaryproto")]
+        [global::System.Configuration.DefaultSettingValueAttribute("data/imagenet_mean.binaryproto")]
         public string meanFile {
             get {
                 return ((string)(this["meanFile"]));

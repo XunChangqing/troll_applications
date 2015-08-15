@@ -57,18 +57,21 @@ namespace troll_ui_app
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            //IE temp files
-            List<string> totalFilesList = new List<string>();
             String iecachepath = Environment.GetFolderPath(Environment.SpecialFolder.InternetCache);
-            var files = Directory.EnumerateFiles(iecachepath, "*.*", SearchOption.AllDirectories).Where<String>(s => (s.EndsWith(".jpg") || s.EndsWith(".png")));
-            log.Info("Files of IE: " + files.Count());
-            totalFilesList.AddRange(files);
+            var totalfiles = Directory.EnumerateFiles(iecachepath, "*.*", SearchOption.AllDirectories).Where<String>(s => (s.EndsWith(".jpg") || s.EndsWith(".png")));
 
+            string roamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var dirs = SafeFileEnumerator.EnumerateDirectories(roamingPath, "Cache", SearchOption.AllDirectories);
+            string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            dirs = dirs.Concat(SafeFileEnumerator.EnumerateDirectories(localAppDataPath, "Cache", SearchOption.AllDirectories));
+            foreach(var dir in dirs)
+                totalfiles = totalfiles.Concat(SafeFileEnumerator.EnumerateFiles(dir, "*.*", SearchOption.AllDirectories));
 
-            int tcount = totalFilesList.Count();
+            int tcount = totalfiles.Count();
             int num = 0;
-            foreach (String file in totalFilesList)
+            foreach (var file in totalfiles)
             {
+                log.Info("Scan: " + file);
                 PornClassifier.ImageType t = PornClassifier.Instance.Classify(file);
                 num++;
                 backgroundWorker.ReportProgress(100 * num / tcount, new PornFile(file, t));
@@ -82,7 +85,7 @@ namespace troll_ui_app
             progressBar.Value = e.ProgressPercentage;
             PornFile pf = (PornFile)e.UserState;
             currentFileName.Text = pf.path;
-            if(pf.type == PornClassifier.ImageType.Porn)
+            if (pf.type == PornClassifier.ImageType.Porn)
                 bindingSource.Add(pf);
         }
     }

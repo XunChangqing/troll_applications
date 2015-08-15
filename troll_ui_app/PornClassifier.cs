@@ -46,8 +46,15 @@ namespace troll_ui_app
 
         public ImageType Classify(String fname)
         {
-            Bitmap bmp = new Bitmap(fname);
-            return Classify(bmp);
+            try
+            {
+                Bitmap bmp = new Bitmap(fname);
+                return Classify(bmp);
+            }
+            catch(Exception e)
+            {
+                return ImageType.Normal;
+            }
         }
         public ImageType Classify(Bitmap bmp)
         {

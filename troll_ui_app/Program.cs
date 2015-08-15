@@ -18,6 +18,7 @@ namespace troll_ui_app
     static class Program
     {
         static readonly ILog log = Log.Get();
+        public static bool FirstTime = false;
         /// <summary>
         /// 应用程序的主入口点。
 
@@ -31,27 +32,17 @@ namespace troll_ui_app
         {
             try
             {
+                if(Properties.Settings.Default.firstTime)
+                {
+                    FirstTime = true;
+                    Properties.Settings.Default.firstTime = false;
+                    Properties.Settings.Default.Save();
+                }
                 Init();
                 Utils.Log_Init();
-                string roamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                var dirs = SafeFileEnumerator.EnumerateDirectories(roamingPath, "Cache", SearchOption.AllDirectories);
-                foreach(var dir in dirs)
-                {
-                    log.Info(dir);
-                }
-                log.Info("end");
-
-                string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                dirs = SafeFileEnumerator.EnumerateDirectories(localAppDataPath, "Cache", SearchOption.AllDirectories);
-                foreach(var dir in dirs)
-                {
-                    log.Info(dir);
-                }
-                log.Info("end");
-
-                return;
-
                 PornDatabase.Init();
+                //var path = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
+                //return;
                 //PornDatabase.Test();
                 //return;
                 PornClassifier.Init();
@@ -95,7 +86,6 @@ namespace troll_ui_app
                     wh.WaitOne();
                 Server.Stop();
 
-                Properties.Settings.Default.firstTime = false;
             }
             catch (Exception e)
             {
@@ -109,8 +99,8 @@ namespace troll_ui_app
             AllocConsole();
 #endif
             ////change workdir to the path of executable
-            //var fi = new FileInfo(Application.ExecutablePath);
-            //Directory.SetCurrentDirectory(fi.DirectoryName);
+            var fi = new FileInfo(Application.ExecutablePath);
+            Directory.SetCurrentDirectory(fi.DirectoryName);
 
             ////check if the first time running
             //Configuration configuration = ConfigurationManager.OpenExeConfiguration(Assembly.GetExecutingAssembly().Location);

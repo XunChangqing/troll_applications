@@ -11,6 +11,8 @@
     <AssemblyName>troll_ui_app</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
     <PublishUrl>发布\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -21,12 +23,18 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <SupportUrl>http://www.shanyaows.com</SupportUrl>
+    <ErrorReportUrl>http://www.shanyaows.com</ErrorReportUrl>
+    <TargetCulture>zh-Hans</TargetCulture>
+    <ProductName>山妖卫士</ProductName>
+    <PublisherName>masatek</PublisherName>
+    <SuiteName>kidguard</SuiteName>
+    <AutorunEnabled>true</AutorunEnabled>
+    <ApplicationRevision>14</ApplicationRevision>
+    <ApplicationVersion>0.9.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -49,6 +57,24 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>20150728010913511_easyicon_net_128.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>A6606CC2FBBB69EC07D83313FC6573B3F459FBCB</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>troll_ui_app_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="HtmlAgilityPack">
@@ -109,6 +135,7 @@
     <Compile Include="Proxies.cs" />
     <Compile Include="ProxyProcess.cs" />
     <Compile Include="SafeFileEnumerator.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="TemporaryFileScan.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -116,6 +143,10 @@
       <DependentUpon>TemporaryFileScan.cs</DependentUpon>
     </Compile>
     <Compile Include="Utils.cs" />
+    <Content Include="x64\SQLite.Interop.dll" />
+    <Content Include="x86\SQLite.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <EmbeddedResource Include="FilterRecordDisplay.resx">
       <DependentUpon>FilterRecordDisplay.cs</DependentUpon>
     </EmbeddedResource>
@@ -138,7 +169,26 @@
     <EmbeddedResource Include="TemporaryFileScan.resx">
       <DependentUpon>TemporaryFileScan.cs</DependentUpon>
     </EmbeddedResource>
+    <Content Include="data\deploy.prototxt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\imagenet_mean.binaryproto">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\model_256__iter_50000.caffemodel">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
+    <Content Include="caffe.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libiomp5md.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="porn.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -148,6 +198,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="troll_ui_app_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -172,6 +223,11 @@
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Visual.C++.12.0.x86">
+      <Visible>False</Visible>
+      <ProductName>Visual C++ 2013 运行库%28x86%29</ProductName>
+      <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
