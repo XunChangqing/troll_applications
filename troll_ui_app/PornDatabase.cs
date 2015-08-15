@@ -333,10 +333,6 @@ namespace troll_ui_app
                 //    Directory.CreateDirectory(Program.kWorkDir);
                 if (!File.Exists(Properties.Settings.Default.pornDbFileName))
                 {
-                    //reset lastid for new database
-                    //Properties.Settings.Default.Reset();
-                    //copy database
-                    //if (File.Exists(Program.kConstPornDBPath))
                     //create database
                     SQLiteConnection.CreateFile(Properties.Settings.Default.pornDbFileName);
                     SQLiteConnection conn = new SQLiteConnection(kConnectionString);

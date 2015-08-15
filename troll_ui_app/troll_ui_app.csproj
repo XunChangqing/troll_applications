@@ -108,6 +108,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Proxies.cs" />
     <Compile Include="ProxyProcess.cs" />
+    <Compile Include="SafeFileEnumerator.cs" />
+    <Compile Include="TemporaryFileScan.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TemporaryFileScan.Designer.cs">
+      <DependentUpon>TemporaryFileScan.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utils.cs" />
     <EmbeddedResource Include="FilterRecordDisplay.resx">
       <DependentUpon>FilterRecordDisplay.cs</DependentUpon>
@@ -128,6 +135,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="TemporaryFileScan.resx">
+      <DependentUpon>TemporaryFileScan.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

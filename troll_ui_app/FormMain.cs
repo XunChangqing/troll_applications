@@ -26,10 +26,10 @@ namespace troll_ui_app
         {
             InitializeComponent();
             notify_icon_main.Icon = Properties.Resources.on;
-            if (args.Contains("-notvisible"))
-                notify_icon_main.Visible = false;
+            //if (args.Contains("-notvisible"))
+            //    notify_icon_main.Visible = false;
             //set hotkey as ctrl+alt+backspace
-            Boolean success = FormMain.RegisterHotKey(this.Handle, this.GetType().GetHashCode(), MOD_CTRL | MOD_ALT, 0x08);//Set hotkey as 'b'
+            //Boolean success = FormMain.RegisterHotKey(this.Handle, this.GetType().GetHashCode(), MOD_CTRL | MOD_ALT, 0x08);//Set hotkey as 'b'
 
             Proxies.SetProxy();
             tool_strip_menu_item_toggle_onff.Text = "停止保护";
@@ -47,6 +47,15 @@ namespace troll_ui_app
             form1.FormBorderStyle = FormBorderStyle.FixedToolWindow;
             form1.ShowInTaskbar = false;
             Owner = form1;
+
+            //if(Properties.Settings.Default.firstTime)
+            {
+                //if( DialogResult.Yes == MessageBox.Show("是否扫描浏览器记录？", "本地扫描", MessageBoxButtons.YesNo))
+                //{
+                    Form scan = new TemporaryFileScan();
+                    scan.Show();
+                //}
+            }
         }
         //protected override CreateParams CreateParams
         //{

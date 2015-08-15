@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using TrotiNet;
 using log4net;
+using System.Reflection;
 
 namespace troll_ui_app
 {
@@ -23,6 +24,7 @@ namespace troll_ui_app
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool AllocConsole();
+
         /// </summary>
         [STAThread]
         static void Main(String[] args)
@@ -31,6 +33,24 @@ namespace troll_ui_app
             {
                 Init();
                 Utils.Log_Init();
+                string roamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                var dirs = SafeFileEnumerator.EnumerateDirectories(roamingPath, "Cache", SearchOption.AllDirectories);
+                foreach(var dir in dirs)
+                {
+                    log.Info(dir);
+                }
+                log.Info("end");
+
+                string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                dirs = SafeFileEnumerator.EnumerateDirectories(localAppDataPath, "Cache", SearchOption.AllDirectories);
+                foreach(var dir in dirs)
+                {
+                    log.Info(dir);
+                }
+                log.Info("end");
+
+                return;
+
                 PornDatabase.Init();
                 //PornDatabase.Test();
                 //return;
@@ -74,6 +94,8 @@ namespace troll_ui_app
                 foreach (WaitHandle wh in whs)
                     wh.WaitOne();
                 Server.Stop();
+
+                Properties.Settings.Default.firstTime = false;
             }
             catch (Exception e)
             {
@@ -84,12 +106,27 @@ namespace troll_ui_app
         static private void Init()
         {
 #if DEBUG
-                AllocConsole();
+            AllocConsole();
 #endif
-                //var fi = new FileInfo(Application.ExecutablePath);
-                //Directory.SetCurrentDirectory(fi.DirectoryName);
-                if (!Directory.Exists(Properties.Settings.Default.imagesDir))
-                    Directory.CreateDirectory(Properties.Settings.Default.imagesDir);
+            ////change workdir to the path of executable
+            //var fi = new FileInfo(Application.ExecutablePath);
+            //Directory.SetCurrentDirectory(fi.DirectoryName);
+
+            ////check if the first time running
+            //Configuration configuration = ConfigurationManager.OpenExeConfiguration(Assembly.GetExecutingAssembly().Location);
+            //if (configuration.AppSettings.Settings["FirstTime"].Value == "yes")
+            //{
+            //    configuration.AppSettings.Settings["FirstTime"].Value = "no";
+            //    configuration.Save();
+            //    ConfigurationManager.RefreshSection("appSettings");
+
+            //    //reset user settings
+            //    Properties.Settings.Default.Reset();
+            //}
+
+            //create directory for images
+            if (!Directory.Exists(Properties.Settings.Default.imagesDir))
+                Directory.CreateDirectory(Properties.Settings.Default.imagesDir);
         }
     }
 }

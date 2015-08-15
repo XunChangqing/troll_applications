@@ -166,5 +166,17 @@ namespace troll_ui_app.Properties {
                 this["imagesDir"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool firstTime {
+            get {
+                return ((bool)(this["firstTime"]));
+            }
+            set {
+                this["firstTime"] = value;
+            }
+        }
     }
 }

@@ -38,5 +38,8 @@
     <Setting Name="imagesDir" Type="System.String" Scope="User">
       <Value Profile="(Default)">images</Value>
     </Setting>
+    <Setting Name="firstTime" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -44,6 +44,11 @@ namespace troll_ui_app
                 mean_file);
         }
 
+        public ImageType Classify(String fname)
+        {
+            Bitmap bmp = new Bitmap(fname);
+            return Classify(bmp);
+        }
         public ImageType Classify(Bitmap bmp)
         {
             lock (syncRoot)
