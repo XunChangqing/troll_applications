@@ -2,11 +2,8 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="troll_ui_app.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="lastid" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
     <Setting Name="update_domain_url" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://121.40.144.14:8080/domain_admin/domain_update_logs.json</Value>
+      <Value Profile="(Default)">http://112.126.80.28/domain_admin/domain_update_logs.json</Value>
     </Setting>
     <Setting Name="modelFile" Type="System.String" Scope="User">
       <Value Profile="(Default)">data/deploy.prototxt</Value>
@@ -27,7 +24,7 @@
       <Value Profile="(Default)">15</Value>
     </Setting>
     <Setting Name="submitTmpDomainUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://121.40.144.14:8080/domain_admin/tmp_domain_names.json</Value>
+      <Value Profile="(Default)">http://112.126.80.28/domain_admin/tmp_domain_names.json</Value>
     </Setting>
     <Setting Name="thdPornPicsOfDomain" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">50</Value>
@@ -40,6 +37,18 @@
     </Setting>
     <Setting Name="firstTime" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="minWidth" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">400</Value>
+    </Setting>
+    <Setting Name="minHeight" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">400</Value>
+    </Setting>
+    <Setting Name="upgraded" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="email" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

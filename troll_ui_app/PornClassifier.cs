@@ -58,6 +58,10 @@ namespace troll_ui_app
         }
         public ImageType Classify(Bitmap bmp)
         {
+            if (bmp.Width < Properties.Settings.Default.minWidth ||
+                bmp.Height < Properties.Settings.Default.minHeight)
+                return ImageType.Normal;
+
             lock (syncRoot)
             {
                 // Lock the bitmap's bits.
@@ -65,7 +69,7 @@ namespace troll_ui_app
                 System.Drawing.Imaging.BitmapData bmpData =
                     bmp.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite,
                     System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-                //PixelF
+                //PixelF 
                 //bmp.PixelFormat);
 
                 // Get the address of the first line.

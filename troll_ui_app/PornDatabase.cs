@@ -51,7 +51,7 @@ namespace troll_ui_app
     {
         static readonly ILog log = Log.Get();
         //select * from porn_pics where date(created_at)<date('now', '-10 day');
-        static readonly String kConnectionString = "Data Source=porn.db";
+        static readonly String kConnectionString = "Data Source={0}porn.db";
         static readonly String kGeneralSelect = "select * from {0}";
         static readonly String kDomainListInsert = "insert or ignore into domain_list (domain_name, type) values ('{0}', {1})";
         static readonly String kDomainListGetType = "select type from domain_list where domain_name='{0}'";
@@ -65,6 +65,9 @@ namespace troll_ui_app
 
         static readonly String kHistoryPornPicSelect = "select url from porn_pics where date(created_at)<=date('now', '-{0} day')";
         static readonly String kHistoryDelete = "delete from {0} where date(created_at)<=date('now', '-{1} day')";
+
+        static readonly String kGetLastIDSelect = "select value from configs where name='last_id'";
+        static readonly String kUpdateLastIDInsert = "insert or replace into configs (name, value) values ('last_id', '{0}')";
 
         //static readonly String kBlackListTableName = "black_list";
         public enum DomainType {Undefined, White, Black, TmpBlack };
@@ -95,7 +98,7 @@ namespace troll_ui_app
         //private SQLiteDataAdapter BlockedPagesDataAdapter;
         public PornDatabase()
         {
-            PornDBConnection = new SQLiteConnection(kConnectionString);
+            PornDBConnection = new SQLiteConnection(string.Format(kConnectionString, Program.AppLocalDir));
             PornDBConnection.Open();
 
             //{
@@ -318,6 +321,10 @@ namespace troll_ui_app
         static public void Test()
         {
             PornDatabase porndb = new PornDatabase();
+            SQLiteCommand ncmd = new SQLiteCommand(kGetLastIDSelect, porndb.PornDBConnection);
+            int last_id = int.Parse(ncmd.ExecuteScalar().ToString());
+            ncmd = new SQLiteCommand(String.Format(kUpdateLastIDInsert, 2), porndb.PornDBConnection);
+            ncmd.ExecuteNonQuery();
             //DomainType t = porndb.GetDomainType("haoskys.com");
             //PornDatabase.DeleteHistroy(null);
             //porndb.InsertPornPage("feng.com", "sdfsdf", "xxxx");
@@ -331,28 +338,30 @@ namespace troll_ui_app
             {
                 //if (!Directory.Exists(Program.kWorkDir))
                 //    Directory.CreateDirectory(Program.kWorkDir);
-                if (!File.Exists(Properties.Settings.Default.pornDbFileName))
+                if (!File.Exists(Program.AppLocalDir+Properties.Settings.Default.pornDbFileName))
                 {
-                    //create database
-                    SQLiteConnection.CreateFile(Properties.Settings.Default.pornDbFileName);
-                    SQLiteConnection conn = new SQLiteConnection(kConnectionString);
-                    conn.Open();
+                    File.Copy(Properties.Settings.Default.pornDbFileName, Program.AppLocalDir + Properties.Settings.Default.pornDbFileName);
+    //                //create database
+    //                SQLiteConnection.CreateFile(Properties.Settings.Default.pornDbFileName);
+    //                SQLiteConnection conn = new SQLiteConnection(kConnectionString);
+    //                conn.Open();
 
-                    String sql =
-    "create table porn_pics(id integer primary key autoincrement, url text not null, type integer not null default 0, created_at datetime default current_timestamp);" +
-    "create index porn_pics_created_at_index on porn_pics(created_at);" +
-    "create table blocked_pages(id integer primary key autoincrement, url text not null, created_at datetime default current_timestamp);" +
-    "create index blocked_pages_created_at_index on blocked_pages(created_at);" +
-    "create table porn_pages(id integer primary key autoincrement, domain_name text not null, page_url text not null, porn_pic_url text not null, created_at datetime default current_timestamp, unique(page_url, porn_pic_url));" +
-    "create table domain_list(id integer primary key autoincrement, domain_name text not null unique, type integer not null default 0, created_at datetime default current_timestamp);";
+    //                String sql =
+    //"create table porn_pics(id integer primary key autoincrement, url text not null, type integer not null default 0, created_at datetime default current_timestamp);" +
+    //"create index porn_pics_created_at_index on porn_pics(created_at);" +
+    //"create table blocked_pages(id integer primary key autoincrement, url text not null, created_at datetime default current_timestamp);" +
+    //"create index blocked_pages_created_at_index on blocked_pages(created_at);" +
+    //"create table porn_pages(id integer primary key autoincrement, domain_name text not null, page_url text not null, porn_pic_url text not null, created_at datetime default current_timestamp, unique(page_url, porn_pic_url));" +
+    //"create table domain_list(id integer primary key autoincrement, domain_name text not null unique, type integer not null default 0, created_at datetime default current_timestamp);";
 
-                    //"create table white_list(id integer primary key autoincrement, domain_name text not null unique, created_at datetime default current_timestamp);" +
-                    //"create table black_list(id integer primary key autoincrement, domain_name text not null unique, created_at datetime default current_timestamp);" +
-                    //"create table tmp_black_list(id integer primary key autoincrement, domain_name text not null unique, created_at datetime default current_timestamp);" +
+    //                //"create table white_list(id integer primary key autoincrement, domain_name text not null unique, created_at datetime default current_timestamp);" +
+    //                //"create table black_list(id integer primary key autoincrement, domain_name text not null unique, created_at datetime default current_timestamp);" +
+    //                //"create table tmp_black_list(id integer primary key autoincrement, domain_name text not null unique, created_at datetime default current_timestamp);" +
+                    //create table configs (id integer primary key autoincrement, name text not null unique, value text)
 
-                    SQLiteCommand command = new SQLiteCommand(sql, conn);
-                    command.ExecuteNonQuery();
-                    conn.Close();
+    //                SQLiteCommand command = new SQLiteCommand(sql, conn);
+    //                command.ExecuteNonQuery();
+    //                conn.Close();
                 }
                 //instance = new PornDatabase();
             }
@@ -372,7 +381,7 @@ namespace troll_ui_app
                     while(reader.Read())
                     {
                         String url = reader.GetString(0);
-                        String url_encoded = Properties.Settings.Default.imagesDir + "\\" + HttpUtility.UrlEncode(url);
+                        String url_encoded = Program.AppLocalDir + Properties.Settings.Default.imagesDir + "\\" + HttpUtility.UrlEncode(url);
                         try { File.Delete(url_encoded); }
                         catch { }
                     }
@@ -444,7 +453,9 @@ namespace troll_ui_app
         {
             try
             {
-                int last_id = Properties.Settings.Default.lastid;
+                //SQLiteCommand ncmd = new SQLiteCommand(String.Format(kGetLastIDSelect, item.DomainName, (Int64)DomainType.White), PornDBConnection);
+                SQLiteCommand ncmd = new SQLiteCommand(kGetLastIDSelect, PornDBConnection);
+                int last_id = int.Parse(ncmd.ExecuteScalar().ToString());
                 //update black, white and tmp lists
                 HttpClientHandler handler = new HttpClientHandler() { UseProxy = false };
                 HttpClient client = new HttpClient(handler);
@@ -553,8 +564,10 @@ namespace troll_ui_app
                     //DomainDataAdapter.Update(DomainTable);
 
                     log.Info("Last id after update: " + last_id);
-                    Properties.Settings.Default.lastid = last_id;
-                    Properties.Settings.Default.Save();
+                    ncmd = new SQLiteCommand(String.Format(kUpdateLastIDInsert, last_id), PornDBConnection);
+                    ncmd.ExecuteNonQuery();
+                    //int last_id = int.Parse(ncmd.ExecuteScalar().ToString());
+                    //Properties.Settings.Default.Save();
                 }
             }
             catch (Exception e)

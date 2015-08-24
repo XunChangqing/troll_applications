@@ -25,19 +25,7 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int lastid {
-            get {
-                return ((int)(this["lastid"]));
-            }
-            set {
-                this["lastid"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://121.40.144.14:8080/domain_admin/domain_update_logs.json")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://112.126.80.28/domain_admin/domain_update_logs.json")]
         public string update_domain_url {
             get {
                 return ((string)(this["update_domain_url"]));
@@ -121,7 +109,7 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://121.40.144.14:8080/domain_admin/tmp_domain_names.json")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://112.126.80.28/domain_admin/tmp_domain_names.json")]
         public string submitTmpDomainUrl {
             get {
                 return ((string)(this["submitTmpDomainUrl"]));
@@ -176,6 +164,54 @@ namespace troll_ui_app.Properties {
             }
             set {
                 this["firstTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("400")]
+        public int minWidth {
+            get {
+                return ((int)(this["minWidth"]));
+            }
+            set {
+                this["minWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("400")]
+        public int minHeight {
+            get {
+                return ((int)(this["minHeight"]));
+            }
+            set {
+                this["minHeight"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool upgraded {
+            get {
+                return ((bool)(this["upgraded"]));
+            }
+            set {
+                this["upgraded"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string email {
+            get {
+                return ((string)(this["email"]));
+            }
+            set {
+                this["email"] = value;
             }
         }
     }

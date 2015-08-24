@@ -10,11 +10,15 @@ using System.Windows.Forms;
 using System.Windows;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
+using log4net;
+using TrotiNet;
+using System.Threading;
 
 namespace troll_ui_app
 {
     public partial class FormMain : Form
     {
+        static readonly ILog log = Log.Get();
         private FilterRecordDisplay record_display_form = new FilterRecordDisplay();
         //= new FilterRecordDisplay();
         private bool onoff = true;
@@ -22,6 +26,9 @@ namespace troll_ui_app
         private const int MOD_ALT = 0x0001;
         const String kAutoRunRegisstryKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
         const String kAutoRunKey = "trollwiz";
+        private TcpServer Server;
+        System.Threading.Timer delete_history_timer;
+        System.Threading.Timer update_domain_list_timer;
         public FormMain(String []args)
         {
             InitializeComponent();
@@ -30,36 +37,12 @@ namespace troll_ui_app
             //    notify_icon_main.Visible = false;
             //set hotkey as ctrl+alt+backspace
             //Boolean success = FormMain.RegisterHotKey(this.Handle, this.GetType().GetHashCode(), MOD_CTRL | MOD_ALT, 0x08);//Set hotkey as 'b'
-
-            Proxies.SetProxy();
-            tool_strip_menu_item_toggle_onff.Text = "停止保护";
-
-            //ShowInTaskbar = false;
-            RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
-            var autostart = autorun_registry_key.GetValue(kAutoRunKey);
-            if (autostart == null)
-                ToolStripMenuItemAutoStartToggleOnff.Checked = false;
-            else
-            {
-                //if(autostart == )
-                autorun_registry_key.SetValue(kAutoRunKey, Application.ExecutablePath+" -notvisible");
-                ToolStripMenuItemAutoStartToggleOnff.Checked = true;
-            }
-
             //set the owner to avoid the main form in atl-table window
             Form form1 = new Form();
             form1.FormBorderStyle = FormBorderStyle.FixedToolWindow;
             form1.ShowInTaskbar = false;
             Owner = form1;
 
-            if (Program.FirstTime)
-            {
-                if (DialogResult.Yes == MessageBox.Show("是否扫描浏览器记录？", "本地扫描", MessageBoxButtons.YesNo))
-                {
-                    Form scan = new TemporaryFileScan();
-                    scan.Show();
-                }
-            }
         }
         //protected override CreateParams CreateParams
         //{
@@ -86,7 +69,11 @@ namespace troll_ui_app
 
         private void QuitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.Close();
+            if (DialogResult.Yes == MessageBox.Show("关闭、退出等操作会记录在日志中哦，确认退出吗？", "退出提醒", MessageBoxButtons.YesNo))
+            {
+                Application.Exit();
+                //this.Close();
+            }
         }
 
         private void FormMain_SizeChanged(object sender, EventArgs e)
@@ -99,26 +86,34 @@ namespace troll_ui_app
         {
             if (onoff)
             {
-                Proxies.UnsetProxy();
-                notify_icon_main.Icon = Properties.Resources.off;
-                tool_strip_menu_item_toggle_onff.Text = "开始保护";
+                if (DialogResult.Yes == MessageBox.Show("关闭、退出等操作会记录在日志中哦，确认退出吗？", "退出提醒", MessageBoxButtons.YesNo))
+                {
+                    ProxyRoutines.SetProxy(false);
+                    //ProxyRoutines.SetProxy("");
+                    //Proxies.UnsetProxy();
+                    notify_icon_main.Icon = Properties.Resources.off;
+                    tool_strip_menu_item_toggle_onff.Text = "开始保护";
+                    onoff = !onoff;
+                }
             }
             else
             {
-                Proxies.SetProxy();
+                //Proxies.SetProxy();
+                ProxyRoutines.SetProxy("http=127.0.0.1:8090", null);
+                //ProxyRoutines.SetProxy("127.0.0.1:8090");
                 notify_icon_main.Icon = Properties.Resources.on;
                 tool_strip_menu_item_toggle_onff.Text = "停止保护";
+                onoff = !onoff;
             }
-            onoff = !onoff;
         }
 
         private void tool_strip_menu_item_auto_start_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem mi = (ToolStripMenuItem)sender;
             RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
-            if(mi.Checked)
+            if (mi.Checked)
             {
-                autorun_registry_key.SetValue(kAutoRunKey, Application.ExecutablePath+" -notvisible");
+                autorun_registry_key.SetValue(kAutoRunKey, Application.ExecutablePath + " -notvisible");
             }
             else
             {
@@ -126,9 +121,24 @@ namespace troll_ui_app
             }
         }
 
+        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+        }
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Proxies.UnsetProxy();
+            ProxyRoutines.SetProxy(false);
+            log.Info("FormMain_FormClosed Unset Proxy!");
+            //dispose timer and wait for callback complete
+            WaitHandle[] whs = new WaitHandle[]{
+                new AutoResetEvent(false),
+                new AutoResetEvent(false) };
+            //WaitHandle wh = new AutoResetEvent(false);
+            delete_history_timer.Dispose(whs[0]);
+            update_domain_list_timer.Dispose(whs[1]);
+            foreach (WaitHandle wh in whs)
+                wh.WaitOne();
+            Server.Stop();
+            log.Info("Exit gracefully!");
         }
 
         [DllImport("user32.dll")]
@@ -145,5 +155,51 @@ namespace troll_ui_app
             }
             base.WndProc(ref m);
         }
+
+        private void toolStripMenuItemLocalScan_Click(object sender, EventArgs e)
+        {
+            Form scan = new TemporaryFileScan();
+            scan.Show();
+        }
+
+        private void FormMain_Load(object sender, EventArgs e)
+        {
+            log.Info("Load FormMain!");
+            const bool bUseIPv6 = false;
+            Server = new TcpServer(Properties.Settings.Default.bindPort, bUseIPv6);
+
+            Server.Start(GreenProxy.CreateProxy);
+
+            Server.InitListenFinished.WaitOne();
+            if (Server.InitListenException != null)
+                throw Server.InitListenException;
+
+            delete_history_timer = new System.Threading.Timer(PornDatabase.DeleteHistroy, null, new TimeSpan(0, 0, 10), System.Threading.Timeout.InfiniteTimeSpan);
+            update_domain_list_timer = new System.Threading.Timer(PornDatabase.UpdateDatabase, null, new TimeSpan(0, 0, 20), new TimeSpan(0, 60, 0));
+
+            ProxyRoutines.SetProxy("http=127.0.0.1:8090", null);
+            tool_strip_menu_item_toggle_onff.Text = "停止保护";
+
+            //ShowInTaskbar = false;
+            RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
+            var autostart = autorun_registry_key.GetValue(kAutoRunKey);
+            if (autostart == null)
+                ToolStripMenuItemAutoStartToggleOnff.Checked = false;
+            else
+            {
+                autorun_registry_key.SetValue(kAutoRunKey, Application.ExecutablePath+" -notvisible");
+                ToolStripMenuItemAutoStartToggleOnff.Checked = true;
+            }
+
+            if (Program.FirstTime)
+            {
+                if (DialogResult.Yes == MessageBox.Show("是否扫描浏览器记录？", "本地扫描", MessageBoxButtons.YesNo))
+                {
+                    Form scan = new TemporaryFileScan();
+                    scan.Show();
+                }
+            }
+        }
+
     }
 }

@@ -39,7 +39,7 @@ namespace troll_ui_app
   </appender>
 
   <appender name='FileLog' type='log4net.Appender.RollingFileAppender'>
-    <file value='logs/trollwiz.txt' />
+    <file value='{0}/logs/trollwiz.txt' />
     <appendToFile value='true' />
     <maximumFileSize value='1000KB' />
     <rollingStyle value='Size' />
@@ -62,7 +62,7 @@ namespace troll_ui_app
   </logger>
 
   <appender name='FileLog' type='log4net.Appender.RollingFileAppender'>
-    <file value='logs/trollwiz.txt' />
+    <file value='{0}/logs/trollwiz.txt' />
     <appendToFile value='true' />
     <maximumFileSize value='1000KB' />
     <rollingStyle value='Size' />
@@ -74,8 +74,9 @@ namespace troll_ui_app
 </log4net>";
 
 #endif
+            string ccfg = string.Format(cfg, Program.AppLocalDir);
             log4net.Config.XmlConfigurator.Configure(
-                new MemoryStream(System.Text.Encoding.ASCII.GetBytes(cfg)));
+                new MemoryStream(System.Text.Encoding.ASCII.GetBytes(ccfg)));
         }
     }
 }

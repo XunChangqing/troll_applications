@@ -34,6 +34,7 @@
             this.tool_strip_menu_item_toggle_onff = new System.Windows.Forms.ToolStripMenuItem();
             this.RecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripMenuItemAutoStartToggleOnff = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemLocalScan = new System.Windows.Forms.ToolStripMenuItem();
             this.QuitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.context_menu_main.SuspendLayout();
             this.SuspendLayout();
@@ -51,9 +52,10 @@
             this.tool_strip_menu_item_toggle_onff,
             this.RecordToolStripMenuItem,
             this.ToolStripMenuItemAutoStartToggleOnff,
+            this.toolStripMenuItemLocalScan,
             this.QuitToolStripMenuItem});
             this.context_menu_main.Name = "context_menu_main";
-            this.context_menu_main.Size = new System.Drawing.Size(125, 92);
+            this.context_menu_main.Size = new System.Drawing.Size(125, 114);
             // 
             // tool_strip_menu_item_toggle_onff
             // 
@@ -77,6 +79,13 @@
             this.ToolStripMenuItemAutoStartToggleOnff.Text = "开机启动";
             this.ToolStripMenuItemAutoStartToggleOnff.Click += new System.EventHandler(this.tool_strip_menu_item_auto_start_Click);
             // 
+            // toolStripMenuItemLocalScan
+            // 
+            this.toolStripMenuItemLocalScan.Name = "toolStripMenuItemLocalScan";
+            this.toolStripMenuItemLocalScan.Size = new System.Drawing.Size(124, 22);
+            this.toolStripMenuItemLocalScan.Text = "本地扫描";
+            this.toolStripMenuItemLocalScan.Click += new System.EventHandler(this.toolStripMenuItemLocalScan_Click);
+            // 
             // QuitToolStripMenuItem
             // 
             this.QuitToolStripMenuItem.Name = "QuitToolStripMenuItem";
@@ -94,7 +103,9 @@
             this.Text = "山妖卫士";
             this.TopMost = true;
             this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
+            this.Load += new System.EventHandler(this.FormMain_Load);
             this.SizeChanged += new System.EventHandler(this.FormMain_SizeChanged);
             this.context_menu_main.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -109,6 +120,7 @@
         private System.Windows.Forms.ToolStripMenuItem QuitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tool_strip_menu_item_toggle_onff;
         private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItemAutoStartToggleOnff;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemLocalScan;
     }
 }
 
