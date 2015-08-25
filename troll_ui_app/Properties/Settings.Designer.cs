@@ -214,5 +214,29 @@ namespace troll_ui_app.Properties {
                 this["email"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("updates")]
+        public string updateDir {
+            get {
+                return ((string)(this["updateDir"]));
+            }
+            set {
+                this["updateDir"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://trollwiz-online-update.oss-cn-beijing.aliyuncs.com/trollwiz-vers.xml")]
+        public string updateXmlUrl {
+            get {
+                return ((string)(this["updateXmlUrl"]));
+            }
+            set {
+                this["updateXmlUrl"] = value;
+            }
+        }
     }
 }

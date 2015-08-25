@@ -17,10 +17,21 @@ UninstallDisplayIcon={app}\troll_ui_app.exe
 Compression=lzma2
 SolidCompression=yes
 ;OutputDir=userdocs:Inno Setup Examples Output
+AppMutex=masa_troll_guard_mutex
+SetupMutex=TrollwizSetupsMutex,Global\TrollwizSetupsMutex
+MinVersion=6.1.7600
+;OnlyBelowVersion=10.0.10240
+SetupIconFile=shanyaows.ico
+;WizardImageBackColor=#bbggrr #221100
+;WizardImageFile=
+;WizardSmallImageFile=*.bmp
+OutputBaseFilename=trollwiz-{#ApplicationVersion}
+OutputManifestFile=trollwiz-{#ApplicationVersion}.manifest
+
 
 [languages]
-Name: "en"; MessagesFile: "compiler:Default.isl"
-;Name: "cs"; MessagesFile: "compiler:Languages\ChineseSimp.isl"
+;Name: "en"; MessagesFile: "compiler:Default.isl"
+Name: "cs"; MessagesFile: "compiler:Languages\ChineseSimp.isl"
 
 [Dirs]
 Name: "{localappdata}\masatek\trollwiz"
@@ -40,40 +51,52 @@ Source: "{#DistFolder}\log4net.xml"; DestDir: "{app}"
 Source: "{#DistFolder}\HtmlAgilityPack.dll"; DestDir: "{app}"
 Source: "{#DistFolder}\HtmlAgilityPack.pdb"; DestDir: "{app}"
 Source: "{#DistFolder}\HtmlAgilityPack.xml"; DestDir: "{app}"
-Source: "{#DistFolder}\x64\SQLite.Interop.dll"; DestDir: "{app}\x64\SQLite.Interop.dll"
-Source: "{#DistFolder}\x86\SQLite.Interop.dll"; DestDir: "{app}\x86\SQLite.Interop.dll"
+Source: "{#DistFolder}\x64\SQLite.Interop.dll"; DestDir: "{app}\x64\"
+Source: "{#DistFolder}\x86\SQLite.Interop.dll"; DestDir: "{app}\x86\"
 Source: "{#DistFolder}\caffe.dll"; DestDir: "{app}"
 Source: "{#DistFolder}\libiomp5md.dll"; DestDir: "{app}"
-Source: "{#DistFolder}\data\deploy.prototxt"; DestDir: "{app}\data\deploy.prototxt"
-Source: "{#DistFolder}\data\imagenet_mean.binaryproto"; DestDir: "{app}\data\imagenet_mean.binaryproto"
-Source: "{#DistFolder}\data\model_256__iter_50000.caffemodel"; DestDir: "{app}\data\model_256__iter_50000.caffemodel"
+Source: "{#DistFolder}\msvcp120.dll"; DestDir: "{app}"
+Source: "{#DistFolder}\msvcr120.dll"; DestDir: "{app}"
+Source: "{#DistFolder}\data\deploy.prototxt"; DestDir: "{app}\data\"
+Source: "{#DistFolder}\data\imagenet_mean.binaryproto"; DestDir: "{app}\data\"
+Source: "{#DistFolder}\data\model_256__iter_50000.caffemodel"; DestDir: "{app}\data\"
 Source: "{#DistFolder}\porn.db"; DestDir: "{app}"
+;Source: "{#DistFolder}\testfile.txt"; DestDir: "{app}"
 ;Source: "MyProg.chm"; DestDir: "{app}"
 ;Source: "Readme.txt"; DestDir: "{app}"; Flags: isreadme
 
-;Source: "{#MyDistFolder}\dotNetFx40_Full_setup.exe"; DestDir: {tmp}; Flags: deleteafterinstall; Check: not IsRequiredDotNetDetected
+;Source: "{#DistFolder}\dotnetfx45_full_x86_x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall; Check: not IsRequiredDotNetDetected
+Source: "{#DistFolder}\dotNetFx45_Full_setup.exe"; DestDir: {tmp}; Flags: deleteafterinstall; Check: not IsRequiredDotNetDetected
 
 [Icons]
-Name: "{group}\山妖卫士"; Filename: "{app}\troll_ui_app.exe"; WorkingDir: "{app}"
-Name: "{group}\卸载山妖卫士"; Filename: "{uninstallexe}"
+Name: "{group}\山妖卫士"; Filename: "{app}\troll_ui_app.exe"; WorkingDir: "{app}"; Tasks: startupicon
+Name: "{group}\卸载山妖卫士"; Filename: "{uninstallexe}"; Tasks: startupicon
+;Name: "{Desktop}"; Filename: "{app}\troll_ui_app.exe";
 Name: "{commondesktop}\山妖卫士"; Filename: "{app}\troll_ui_app.exe"; WorkingDir: "{app}"; Tasks: desktopicon 
 ;Name: "{commonprograms}\My Program"
 ;Name: "{commonstartup}\My Program"
-;Name: "{Desktop}"; Filename: "{app}\troll_ui_app.exe";
+
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{localappdata}\masatek\trollwiz"
 
 [Tasks]
-Name: desktopicon; Description: "创建桌面快捷方式"; GroupDescription: "Additional icons:";
+Name: desktopicon; Description: "创建桌面快捷方式"; GroupDescription: "附加图标：";
+Name: startupicon; Description: "创建开始菜单快捷方式"; GroupDescription: "附加图标："
 ;Name: desktopicon\common; Description: "For all users"; GroupDescription: "Additional icons:";
 ;Name: desktopicon\user; Description: "For the current user only"; GroupDescription: "Additional icons:";
 ;Name: quicklaunchicon; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:";
 ;Name: associate; Description: "&Associate files"; GroupDescription: "Other tasks:"; Flags: unchecked
-Name: startexe; Description: "安装完成以后启动程序"
+;Name: startexe; Description: "安装完成以后启动程序"
 
 [Run]
-;Filename: {tmp}\dotNetFx40_Full_setup.exe; Parameters: "/q:a /c:""install /l /q"""; Check: not IsRequiredDotNetDetected; StatusMsg: Microsoft Framework 4.0 is beïng installed. Please wait...
+Filename: "{app}\troll_ui_app.exe"; Description: "启动应用程序"; Flags: postinstall nowait
+;require .net framework 4.5
+;Filename: {tmp}\dotnetfx45_full_x86_x64.exe; Parameters: "/q:a /c:""install /l /q"""; Check: not IsRequiredDotNetDetected; StatusMsg: Microsoft Framework 4.5 is beïng installed. Please wait...
+Filename: {tmp}\dotNetFx45_Full_setup.exe; Parameters: "/q:a /c:""install /l /q"""; Check: not IsRequiredDotNetDetected; StatusMsg: Microsoft Framework 4.5 is beïng installed. Please wait...
+
+[UninstallRun]
+Filename: {app}\troll_ui_app.exe; Parameters: "-uninstall"
 
 [Code]
 function IsDotNetDetected(version: string; service: cardinal): boolean;
@@ -129,14 +152,18 @@ begin
     result := success and (install = 1) and (serviceCount >= service);
 end;
 
-
-function InitializeSetup(): Boolean;
+function IsRequiredDotNetDetected(): Boolean;  
 begin
-    if not IsDotNetDetected('v4.5', 0) then begin
-        MsgBox('MyApp requires Microsoft .NET Framework 4.0 Client Profile.'#13#13
-            'Please use Windows Update to install this version,'#13
-            'and then re-run the MyApp setup program.', mbInformation, MB_OK);
-        result := false;
-    end else
-        result := true;
+    result := IsDotNetDetected('v4.5', 0);
 end;
+
+//function InitializeSetup(): Boolean;
+//begin
+//    if not IsDotNetDetected('v4.5', 0) then begin
+//        MsgBox('MyApp requires Microsoft .NET Framework 4.0 Client Profile.'#13#13
+//            'Please use Windows Update to install this version,'#13
+//            'and then re-run the MyApp setup program.', mbInformation, MB_OK);
+//        result := false;
+//    end else
+//        result := true;
+//end;

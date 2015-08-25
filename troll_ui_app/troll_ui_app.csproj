@@ -86,6 +86,7 @@
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.JScript" />
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -124,6 +125,7 @@
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
     <Compile Include="Log.cs" />
+    <Compile Include="MailRoutines.cs" />
     <Compile Include="PictureForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -144,6 +146,12 @@
     </Compile>
     <Compile Include="TemporaryFileScan.Designer.cs">
       <DependentUpon>TemporaryFileScan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UpdateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UpdateForm.Designer.cs">
+      <DependentUpon>UpdateForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Utils.cs" />
     <EmbeddedResource Include="FilterRecordDisplay.resx">
@@ -167,6 +175,9 @@
     </Compile>
     <EmbeddedResource Include="TemporaryFileScan.resx">
       <DependentUpon>TemporaryFileScan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UpdateForm.resx">
+      <DependentUpon>UpdateForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />

@@ -13,6 +13,8 @@ using Microsoft.Win32;
 using log4net;
 using TrotiNet;
 using System.Threading;
+using System.Net.Mail;
+using Microsoft.VisualBasic;
 
 namespace troll_ui_app
 {
@@ -29,6 +31,8 @@ namespace troll_ui_app
         private TcpServer Server;
         System.Threading.Timer delete_history_timer;
         System.Threading.Timer update_domain_list_timer;
+        Task updateTask;
+        Task exitMailTask;
         public FormMain(String []args)
         {
             InitializeComponent();
@@ -42,7 +46,6 @@ namespace troll_ui_app
             form1.FormBorderStyle = FormBorderStyle.FixedToolWindow;
             form1.ShowInTaskbar = false;
             Owner = form1;
-
         }
         //protected override CreateParams CreateParams
         //{
@@ -69,11 +72,9 @@ namespace troll_ui_app
 
         private void QuitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (DialogResult.Yes == MessageBox.Show("关闭、退出等操作会记录在日志中哦，确认退出吗？", "退出提醒", MessageBoxButtons.YesNo))
-            {
-                Application.Exit();
-                //this.Close();
-            }
+            exitMailTask = MailRoutines.SendExitNotification();
+            Application.Exit();
+            //this.Close();
         }
 
         private void FormMain_SizeChanged(object sender, EventArgs e)
@@ -86,15 +87,13 @@ namespace troll_ui_app
         {
             if (onoff)
             {
-                if (DialogResult.Yes == MessageBox.Show("关闭、退出等操作会记录在日志中哦，确认退出吗？", "退出提醒", MessageBoxButtons.YesNo))
-                {
-                    ProxyRoutines.SetProxy(false);
-                    //ProxyRoutines.SetProxy("");
-                    //Proxies.UnsetProxy();
-                    notify_icon_main.Icon = Properties.Resources.off;
-                    tool_strip_menu_item_toggle_onff.Text = "开始保护";
-                    onoff = !onoff;
-                }
+                Task mailTask = MailRoutines.SendShutdownNotification();
+                ProxyRoutines.SetProxy(false);
+                //ProxyRoutines.SetProxy("");
+                //Proxies.UnsetProxy();
+                notify_icon_main.Icon = Properties.Resources.off;
+                tool_strip_menu_item_toggle_onff.Text = "开始保护";
+                onoff = !onoff;
             }
             else
             {
@@ -138,6 +137,8 @@ namespace troll_ui_app
             foreach (WaitHandle wh in whs)
                 wh.WaitOne();
             Server.Stop();
+            updateTask.Wait();
+            exitMailTask.Wait(); 
             log.Info("Exit gracefully!");
         }
 
@@ -164,6 +165,7 @@ namespace troll_ui_app
 
         private void FormMain_Load(object sender, EventArgs e)
         {
+            //check update
             log.Info("Load FormMain!");
             const bool bUseIPv6 = false;
             Server = new TcpServer(Properties.Settings.Default.bindPort, bUseIPv6);
@@ -177,8 +179,9 @@ namespace troll_ui_app
             delete_history_timer = new System.Threading.Timer(PornDatabase.DeleteHistroy, null, new TimeSpan(0, 0, 10), System.Threading.Timeout.InfiniteTimeSpan);
             update_domain_list_timer = new System.Threading.Timer(PornDatabase.UpdateDatabase, null, new TimeSpan(0, 0, 20), new TimeSpan(0, 60, 0));
 
-            ProxyRoutines.SetProxy("http=127.0.0.1:8090", null);
-            tool_strip_menu_item_toggle_onff.Text = "停止保护";
+            //setup
+            //ProxyRoutines.SetProxy("http=127.0.0.1:8090", null);
+            //tool_strip_menu_item_toggle_onff.Text = "停止保护";
 
             //ShowInTaskbar = false;
             RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
@@ -187,8 +190,15 @@ namespace troll_ui_app
                 ToolStripMenuItemAutoStartToggleOnff.Checked = false;
             else
             {
-                autorun_registry_key.SetValue(kAutoRunKey, Application.ExecutablePath+" -notvisible");
+                //autorun_registry_key.SetValue(kAutoRunKey, Application.ExecutablePath+" -notvisible");
                 ToolStripMenuItemAutoStartToggleOnff.Checked = true;
+            }
+
+            updateTask = UpdateForm.UpdateProduct();
+
+            if(Properties.Settings.Default.email == "")
+            {
+                SetEmail();
             }
 
             if (Program.FirstTime)
@@ -201,5 +211,39 @@ namespace troll_ui_app
             }
         }
 
+        private void SetEmail()
+        {
+            bool tryAgain = true;
+            string prompt = "请输入Email地址";
+            string title = "当前Email: "+Properties.Settings.Default.email;
+            while (tryAgain)
+            {
+                try
+                {
+                    string ret = Interaction.InputBox(prompt, title);
+                    MailAddress ma = new MailAddress(ret);
+                    //send mail to notify email changed if new email address is valid
+                    Task n = MailRoutines.SendMailChangedNotification(ma.Address);
+                    Properties.Settings.Default.email = ma.Address;
+                    Properties.Settings.Default.Save();
+                    tryAgain = false;
+                }
+                catch (FormatException fe)
+                {
+                    prompt = "请输入有效Email地址";
+                    tryAgain = true;
+                }
+                catch(ArgumentException ae)
+                {
+                    log.Info(ae.ToString());
+                    tryAgain = false;
+                }
+            }
+        }
+
+        private void toolStripMenuItemChangeEmail_Click(object sender, EventArgs e)
+        {
+            SetEmail();
+        }
     }
 }

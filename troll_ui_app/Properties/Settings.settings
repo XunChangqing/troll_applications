@@ -50,5 +50,11 @@
     <Setting Name="email" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="updateDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)">updates</Value>
+    </Setting>
+    <Setting Name="updateXmlUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://trollwiz-online-update.oss-cn-beijing.aliyuncs.com/trollwiz-vers.xml</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

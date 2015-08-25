@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using log4net;
 using System.Reflection;
+using System.Net.Mail;
 
 namespace troll_ui_app
 {
@@ -36,6 +37,13 @@ namespace troll_ui_app
         {
             try
             {
+                //when uninstall send email and return
+                if (args.Contains("-uninstall"))
+                {
+                    MessageBox.Show("uninstall");
+                    MailRoutines.SendUninstallMail().Wait();
+                    return;
+                }
                 Init();
                 bool result;
                 //using named system mutex to ensure single instance of application
@@ -50,7 +58,7 @@ namespace troll_ui_app
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new FormMain(args));
-
+                log.Info("Exit from Main!");
             }
             catch (Exception e)
             {
@@ -89,6 +97,9 @@ namespace troll_ui_app
             //create directory for images
             if (!Directory.Exists(Program.AppLocalDir + Properties.Settings.Default.imagesDir))
                 Directory.CreateDirectory(Program.AppLocalDir + Properties.Settings.Default.imagesDir);
+            //create directory for updates
+            if (!Directory.Exists(Program.AppLocalDir + Properties.Settings.Default.updateDir))
+                Directory.CreateDirectory(Program.AppLocalDir + Properties.Settings.Default.updateDir);
             Utils.Log_Init();
             PornDatabase.Init();
             //PornDatabase.Test();
