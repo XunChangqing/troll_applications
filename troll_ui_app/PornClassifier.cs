@@ -10,14 +10,14 @@ namespace troll_ui_app
 {
     class PornClassifier
     {
-        [DllImport("caffe.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("porn.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public extern static void InitLib();
-        [DllImport("caffe.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("porn.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         extern static IntPtr CreatePornClassifier(string model_file, string trained_file, string mean_file);
-        [DllImport("caffe.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("porn.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         extern static int ClassifyImage(IntPtr classifier, IntPtr img, int width, int height, int stride, int channels,
             int types, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 7)] float[] ratio);
-        [DllImport("caffe.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("porn.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         extern static void ReleaseClassifier(IntPtr classifier);
 
         public enum ImageType{Normal, Disguise, Porn};
@@ -29,9 +29,9 @@ namespace troll_ui_app
         public static void Init()
         {
             InitLib();
-            instance = new PornClassifier(Properties.Settings.Default.modelFile,
-                Properties.Settings.Default.trainedFile,
-                Properties.Settings.Default.meanFile);
+            instance = new PornClassifier(Properties.Settings.Default.modelDescFile,
+                Properties.Settings.Default.modelFile,
+                Properties.Settings.Default.modelCommonFile);
         }
         public static PornClassifier Instance
         {

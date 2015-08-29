@@ -72,8 +72,14 @@ namespace troll_ui_app
 
         private void QuitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            exitMailTask = MailRoutines.SendExitNotification();
-            Application.Exit();
+            //authenticate by wechat
+            WechatForm wechatForm = new WechatForm(true);
+            wechatForm.ShowDialog();
+            if (wechatForm.authSuccess)
+            {
+                //exitMailTask = NotificationRoutines.SendExitNotification();
+                Application.Exit();
+            }
             //this.Close();
         }
 
@@ -87,19 +93,24 @@ namespace troll_ui_app
         {
             if (onoff)
             {
-                Task mailTask = MailRoutines.SendShutdownNotification();
-                ProxyRoutines.SetProxy(false);
-                //ProxyRoutines.SetProxy("");
-                //Proxies.UnsetProxy();
-                notify_icon_main.Icon = Properties.Resources.off;
-                tool_strip_menu_item_toggle_onff.Text = "开始保护";
-                onoff = !onoff;
+                //Task mailTask = NotificationRoutines.SendStopNotification();
+                WechatForm wechatForm = new WechatForm(true);
+                wechatForm.ShowDialog();
+                if (wechatForm.authSuccess)
+                {
+#if !DEBUG
+                    ProxyRoutines.SetProxy(false);
+#endif
+                    notify_icon_main.Icon = Properties.Resources.off;
+                    tool_strip_menu_item_toggle_onff.Text = "开始保护";
+                    onoff = !onoff;
+                }
             }
             else
             {
-                //Proxies.SetProxy();
+#if !DEBUG
                 ProxyRoutines.SetProxy("http=127.0.0.1:8090", null);
-                //ProxyRoutines.SetProxy("127.0.0.1:8090");
+#endif
                 notify_icon_main.Icon = Properties.Resources.on;
                 tool_strip_menu_item_toggle_onff.Text = "停止保护";
                 onoff = !onoff;
@@ -116,7 +127,12 @@ namespace troll_ui_app
             }
             else
             {
-                autorun_registry_key.DeleteValue(kAutoRunKey);
+                WechatForm wechatForm = new WechatForm(true);
+                wechatForm.ShowDialog();
+                if (wechatForm.authSuccess)
+                    autorun_registry_key.DeleteValue(kAutoRunKey);
+                else
+                    mi.Checked = true;
             }
         }
 
@@ -138,7 +154,7 @@ namespace troll_ui_app
                 wh.WaitOne();
             Server.Stop();
             updateTask.Wait();
-            exitMailTask.Wait(); 
+            //exitMailTask.Wait();
             log.Info("Exit gracefully!");
         }
 
@@ -167,6 +183,7 @@ namespace troll_ui_app
         {
             //check update
             log.Info("Load FormMain!");
+            
             const bool bUseIPv6 = false;
             Server = new TcpServer(Properties.Settings.Default.bindPort, bUseIPv6);
 
@@ -176,12 +193,14 @@ namespace troll_ui_app
             if (Server.InitListenException != null)
                 throw Server.InitListenException;
 
-            delete_history_timer = new System.Threading.Timer(PornDatabase.DeleteHistroy, null, new TimeSpan(0, 0, 10), System.Threading.Timeout.InfiniteTimeSpan);
-            update_domain_list_timer = new System.Threading.Timer(PornDatabase.UpdateDatabase, null, new TimeSpan(0, 0, 20), new TimeSpan(0, 60, 0));
+            update_domain_list_timer = new System.Threading.Timer(PornDatabase.UpdateDatabase, null, new TimeSpan(0, 0, 5), new TimeSpan(4, 0, 0));
+            delete_history_timer = new System.Threading.Timer(PornDatabase.DeleteHistroy, null, new TimeSpan(0, 1, 0), System.Threading.Timeout.InfiniteTimeSpan);
 
             //setup
-            //ProxyRoutines.SetProxy("http=127.0.0.1:8090", null);
-            //tool_strip_menu_item_toggle_onff.Text = "停止保护";
+#if !DEBUG
+            ProxyRoutines.SetProxy("http=127.0.0.1:8090", null);
+#endif
+            tool_strip_menu_item_toggle_onff.Text = "停止保护";
 
             //ShowInTaskbar = false;
             RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
@@ -194,15 +213,23 @@ namespace troll_ui_app
                 ToolStripMenuItemAutoStartToggleOnff.Checked = true;
             }
 
+            if(Properties.Settings.Default.openid == "")
+            {
+                //binding wechat
+                WechatForm wechatForm = new WechatForm(false);
+                wechatForm.ShowDialog();
+            }
+
             updateTask = UpdateForm.UpdateProduct();
 
-            if(Properties.Settings.Default.email == "")
-            {
-                SetEmail();
-            }
+            //if(Properties.Settings.Default.email == "")
+            //{
+            //    SetEmail();
+            //}
 
             if (Program.FirstTime)
             {
+                //we need non modal here
                 if (DialogResult.Yes == MessageBox.Show("是否扫描浏览器记录？", "本地扫描", MessageBoxButtons.YesNo))
                 {
                     Form scan = new TemporaryFileScan();
@@ -223,7 +250,7 @@ namespace troll_ui_app
                     string ret = Interaction.InputBox(prompt, title);
                     MailAddress ma = new MailAddress(ret);
                     //send mail to notify email changed if new email address is valid
-                    Task n = MailRoutines.SendMailChangedNotification(ma.Address);
+                    //Task n = MailRoutines.SendMailChangedNotification(ma.Address);
                     Properties.Settings.Default.email = ma.Address;
                     Properties.Settings.Default.Save();
                     tryAgain = false;

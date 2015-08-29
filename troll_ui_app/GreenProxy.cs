@@ -103,20 +103,22 @@ namespace troll_ui_app
 
         private void AddPorn()
         {
+            PornDB.InsertPornPic(FullRequestUri, PornClassifier.ImageType.Porn);
             lock (SyncObject)
             {
                 foreach (Tuple<String, HashSet<String>> tset in ImageSrcSetList)
                 {
                     if (tset.Item2.Contains(FullRequestUri.ToLower()))
                     {
+                        string domainName = GetDomain.GetDomainFromUrl(tset.Item1);
+                        PornDatabase.DomainType dt = PornDB.GetDomainType(domainName);
                         //hit
                         log.Info("Hit: " + FullRequestUri + " => " + tset.Item1);
                         //add to database
-                        PornDB.InsertPornPic(FullRequestUri, PornClassifier.ImageType.Porn);
-                        PornDB.InsertPornPage(GetDomain.GetDomainFromUrl(tset.Item1), tset.Item1, FullRequestUri);
+                        PornDB.InsertPornPage(domainName, tset.Item1,
+                            FullRequestUri, dt==PornDatabase.DomainType.Black);
                     }
                 }
-
             }
         }
 
@@ -236,20 +238,20 @@ namespace troll_ui_app
             //add p to body
             if (!bNoFileEncoding)
             {
-                var head = htmlDoc.DocumentNode.SelectSingleNode("//head");
-                var body = htmlDoc.DocumentNode.SelectSingleNode("//body");
-                if (head != null && body != null)
-                {
-                    HtmlNode pcss = htmlDoc.CreateElement("style");
-                    pcss.SetAttributeValue("type", "text/css");
-                    pcss.InnerHtml = HtmlDocument.HtmlEncode("#masatek-tag{color:green; background-color: gray; padding:5px; text-align:center; font-size: 150%;}");
-                    head.PrependChild(pcss);
+                //var head = htmlDoc.DocumentNode.SelectSingleNode("//head");
+                //var body = htmlDoc.DocumentNode.SelectSingleNode("//body");
+                //if (head != null && body != null)
+                //{
+                //    HtmlNode pcss = htmlDoc.CreateElement("style");
+                //    pcss.SetAttributeValue("type", "text/css");
+                //    pcss.InnerHtml = HtmlDocument.HtmlEncode("#masatek-tag{color:green; background-color: gray; padding:5px; text-align:center; font-size: 150%;}");
+                //    head.PrependChild(pcss);
 
-                    HtmlNode pMasaTag = htmlDoc.CreateElement("p");
-                    pMasaTag.SetAttributeValue("id", "masatek-tag");
-                    pMasaTag.InnerHtml = HtmlDocument.HtmlEncode("Powered by Masatek");
-                    body.PrependChild(pMasaTag);
-                }
+                //    HtmlNode pMasaTag = htmlDoc.CreateElement("p");
+                //    pMasaTag.SetAttributeValue("id", "masatek-tag");
+                //    pMasaTag.InnerHtml = HtmlDocument.HtmlEncode("Powered by Masatek");
+                //    body.PrependChild(pMasaTag);
+                //}
             }
 
 
@@ -264,9 +266,9 @@ namespace troll_ui_app
             //htmlDoc.Save(HttpUtility.UrlEncode(RequestLine.URI));
             if (!bNoFileEncoding)
             {
-                MemoryStream mstr = new MemoryStream();
-                htmlDoc.Save(mstr, fileEncoding);
-                response = CompressResponse(mstr.GetBuffer());
+                //MemoryStream mstr = new MemoryStream();
+                //htmlDoc.Save(mstr, fileEncoding);
+                //response = CompressResponse(mstr.GetBuffer());
             }
 
             ResponseHeaders.ContentLength = (uint)response.Length;
@@ -340,8 +342,8 @@ namespace troll_ui_app
             DomainName = GetDomain.GetDomainFromUrl(RequestLine.URI);
             DomainType = PornDB.GetDomainType(DomainName);
             log.Debug(GetDomain.GetDomainFromUrl(RequestLine.URI));
-            if(DomainType == PornDatabase.DomainType.Black ||
-                DomainType == PornDatabase.DomainType.TmpBlack)
+                //DomainType == PornDatabase.DomainType.Black ||
+            if( DomainType == PornDatabase.DomainType.TmpBlack)
             {
                 PornDB.InsertBlockedPage(FullRequestUri);
                 SocketBP.Send403();

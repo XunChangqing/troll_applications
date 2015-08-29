@@ -14,6 +14,7 @@ using System.Configuration;
 using System.Windows.Forms;
 using System.Diagnostics;
 using log4net;
+using Newtonsoft.Json.Linq;
 //using System.Json;
 
 namespace troll_ui_app
@@ -49,6 +50,7 @@ namespace troll_ui_app
     //}
     class PornDatabase
     {
+        static readonly string webToken = "masa417";
         static readonly ILog log = Log.Get();
         //select * from porn_pics where date(created_at)<date('now', '-10 day');
         static readonly String kConnectionString = "Data Source={0}porn.db";
@@ -57,6 +59,7 @@ namespace troll_ui_app
         static readonly String kDomainListGetType = "select type from domain_list where domain_name='{0}'";
         static readonly String kDomainListDelete = "delete from domain_list where domain_name='{0}'";
         static readonly String kDomainListInsertOrReplace = "insert or replace into domain_list (domain_name, type) values ('{0}', {1})";
+        static readonly String kDomainListInsertOrIgnore = "insert or ignore into domain_list (domain_name, type) values ('{0}', {1})";
         static readonly String kPornPicsInsert = "insert or ignore into porn_pics (url, type) values ('{0}', {1})";
         static readonly String kPornPagesInsert = "insert or  ignore into porn_pages (domain_name, page_url, porn_pic_url) values ('{0}', '{1}', '{2}')";
         static readonly String kPornPagesCountSelect = "select count(*) from porn_pages where domain_name='{0}'";
@@ -213,7 +216,7 @@ namespace troll_ui_app
             }
         }
 
-        public void InsertPornPage(String domainName, String pageUrl, String pornUrl)
+        public void InsertPornPage(String domainName, String pageUrl, String pornUrl, bool isBlack)
         {
             try
             {
@@ -224,11 +227,14 @@ namespace troll_ui_app
                 Object row = countCmd.ExecuteScalar();
                 Int64 count = (Int64)row;
                 log.Info("Domain: " + domainName + " contains porn: " + count);
-                if (count > Properties.Settings.Default.thdPornPicsOfDomain)
+                int thd = Properties.Settings.Default.thdPornPicsOfDomain;
+                if (isBlack)
+                    thd = Properties.Settings.Default.thdPornPicsOfBlackDomain;
+                if (count > thd)
                 {
                     log.Info("Add domain to tmp black: " + domainName);
-                    InsertBlackDomainDeteced(domainName);
-                    DeletePagesInList(domainName);
+                    Task tmpTask = InsertBlackDomainDetecedAsync(domainName);
+                    //DeletePagesInList(domainName);
                 }
                 
                 //lock (PornPagesTable.Rows.SyncRoot)
@@ -267,37 +273,27 @@ namespace troll_ui_app
                 log.Error(e.ToString());
             }
         }
-        public void InsertBlackDomainDeteced(String domainName)
+        public async Task InsertBlackDomainDetecedAsync(String domainName)
         {
             try
             {
-                SQLiteCommand cmd = new SQLiteCommand(String.Format(kDomainListInsert, domainName, (Int64)DomainType.TmpBlack), PornDBConnection);
+                SQLiteCommand cmd = new SQLiteCommand(String.Format(kDomainListInsertOrReplace, domainName, (Int64)DomainType.TmpBlack), PornDBConnection);
                 cmd.ExecuteNonQuery();
-                //lock (DomainTable)
-                //{
-                //    DomainTable.Rows.Add(null, domainName, DomainType.TmpBlack);
-                //    DomainDataAdapter.Update(DomainTable);
-                //}
 
                 HttpClientHandler handler = new HttpClientHandler() { UseProxy = false };
                 HttpClient client = new HttpClient(handler);
-                //var builder = new UriBuilder(Properties.Settings.Default.submitTmpDomainUrl);
-                //string url = builder.ToString();
-                
-                DomainSubmitItem submit_item = new DomainSubmitItem();
-                submit_item.dni = new DomainNameItem();
-                submit_item.dni.domain_name = domainName;
-                DataContractJsonSerializer submit_serializer = new DataContractJsonSerializer(submit_item.GetType());
-                MemoryStream ms = new MemoryStream();
-                submit_serializer.WriteObject(ms, submit_item);
-                String request_str = Encoding.Default.GetString(ms.ToArray());
-                //Task<HttpResponseMessage> task = client.PostAsync(Properties.Settings.Default.submitTmpDomainUrl,
-                //    new StringContent(request_str, Encoding.UTF8, "application/json"));
-                //Task.Run(() => {client.PostAsync(Properties.Settings.Default.submitTmpDomainUrl,
-                //    new StringContent(request_str, Encoding.UTF8, "application/json")); });
-                //wait here 
-                HttpResponseMessage response = client.PostAsync(Properties.Settings.Default.submitTmpDomainUrl, new StringContent(request_str, Encoding.UTF8, "application/json")).Result;
-                response.EnsureSuccessStatusCode();
+
+                JObject submitTmpDomainObj = new JObject();
+                submitTmpDomainObj["token"] = webToken;
+                submitTmpDomainObj["domain_name"] = domainName;
+
+                HttpResponseMessage msg = await client.PostAsync(Properties.Settings.Default.submitTmpDomainUrl, 
+                    new StringContent(submitTmpDomainObj.ToString(),
+                    Encoding.UTF8, "application/json"));
+                //msg.EnsureSuccessStatusCode();
+                //string retStr = await msg.Content.ReadAsStringAsync();
+                //JObject retObj = JObject.Parse(retStr);
+                await NotificationRoutines.SendPornDetectedNotification(domainName);
             }
             catch (Exception e)
             {
@@ -330,7 +326,7 @@ namespace troll_ui_app
             //porndb.InsertPornPage("feng.com", "sdfsdf", "xxxx");
 
             //porndb.MaintainDatabase();
-            porndb.InsertBlackDomainDeteced("kkk.com");
+            Task t = porndb.InsertBlackDomainDetecedAsync("kkk.com");
         }
         static public void Init()
         {
@@ -415,14 +411,6 @@ namespace troll_ui_app
             {
                 SQLiteCommand cmd = new SQLiteCommand(String.Format(kHistoryDelete, "blocked_pages", Properties.Settings.Default.maxHistoryDays), PornDBConnection);
                 cmd.ExecuteNonQuery();
-                //lock (BlockedPagesTable)
-                //{
-                //    DateTime nt = DateTime.Now.ToUniversalTime().AddDays(-Properties.Settings.Default.maxHistoryDays);
-                //    DataRow[] rows = BlockedPagesTable.Select(String.Format("created_at<#{0}#", nt.ToString()));
-                //    foreach (DataRow each_row in rows)
-                //        each_row.Delete();
-                //    BlockedPagesDataAdapter.Update(BlockedPagesTable);
-                //}
             }
             catch (Exception e)
             {
@@ -446,6 +434,7 @@ namespace troll_ui_app
         }
         static public void UpdateDatabase(Object state)
         {
+            log.Info("Update Database");
             PornDatabase db = new PornDatabase();
             db.MaintainDatabase();
         }
@@ -459,19 +448,21 @@ namespace troll_ui_app
                 //update black, white and tmp lists
                 HttpClientHandler handler = new HttpClientHandler() { UseProxy = false };
                 HttpClient client = new HttpClient(handler);
-                var builder = new UriBuilder(Properties.Settings.Default.update_domain_url);
-                var query = HttpUtility.ParseQueryString(builder.Query);
-                query["start_id"] = last_id.ToString();
-                builder.Query = query.ToString();
-                string url = builder.ToString();
 
-                log.Info("Try to update domain, url: " + url);
+                JObject updateDomainObj = new JObject();
+                updateDomainObj["token"] = webToken;
+                updateDomainObj["last_id"] = last_id;
+
+                HttpResponseMessage msg = client.PostAsync(Properties.Settings.Default.domainUpdateLogsUrl, 
+                    new StringContent(updateDomainObj.ToString(),
+                    Encoding.UTF8, "application/json")).Result;
+                msg.EnsureSuccessStatusCode();
+                //string retStr = await msg.Content.ReadAsStringAsync();
+                //JObject retObj = JObject.Parse(retStr);
 
                 ////HttpResponseMessage response = await client.GetAsync(builder.Uri);
                 List<DomainUpdateLogItem> log_items = new List<DomainUpdateLogItem>();
-                HttpResponseMessage response = client.GetAsync(builder.Uri).Result;
-                response.EnsureSuccessStatusCode();
-                String response_body = response.Content.ReadAsStringAsync().Result;
+                String response_body = msg.Content.ReadAsStringAsync().Result;
 
                 DataContractJsonSerializer json_serializer = new DataContractJsonSerializer(log_items.GetType());
                 using (MemoryStream stream = new MemoryStream(Encoding.Unicode.GetBytes(response_body)))
@@ -540,8 +531,8 @@ namespace troll_ui_app
                                 break;
                             case Operations.AddBlack:
                                 log.Info("Add black: " + item.DomainName);
-                                DeletePagesInList(item.DomainName);
-                                cmd = new SQLiteCommand(String.Format(kDomainListInsertOrReplace, item.DomainName, (Int64)DomainType.Black), PornDBConnection);
+                                //DeletePagesInList(item.DomainName);
+                                cmd = new SQLiteCommand(String.Format(kDomainListInsertOrIgnore, item.DomainName, (Int64)DomainType.Black), PornDBConnection);
                                 cmd.ExecuteNonQuery();
                                 //row = DomainTable.Rows.Find(item.DomainName);
                                 //if (row != null)

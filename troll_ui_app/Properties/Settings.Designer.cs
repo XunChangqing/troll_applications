@@ -25,19 +25,31 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://112.126.80.28/domain_admin/domain_update_logs.json")]
-        public string update_domain_url {
+        [global::System.Configuration.DefaultSettingValueAttribute("http://www.shanyaows.com/domain_names/update_logs.json")]
+        public string domainUpdateLogsUrl {
             get {
-                return ((string)(this["update_domain_url"]));
+                return ((string)(this["domainUpdateLogsUrl"]));
             }
             set {
-                this["update_domain_url"] = value;
+                this["domainUpdateLogsUrl"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("data/deploy.prototxt")]
+        [global::System.Configuration.DefaultSettingValueAttribute("data/porn.modeldesc")]
+        public string modelDescFile {
+            get {
+                return ((string)(this["modelDescFile"]));
+            }
+            set {
+                this["modelDescFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("data/porn.model")]
         public string modelFile {
             get {
                 return ((string)(this["modelFile"]));
@@ -49,25 +61,13 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("data/model_256__iter_50000.caffemodel")]
-        public string trainedFile {
+        [global::System.Configuration.DefaultSettingValueAttribute("data/porn.common")]
+        public string modelCommonFile {
             get {
-                return ((string)(this["trainedFile"]));
+                return ((string)(this["modelCommonFile"]));
             }
             set {
-                this["trainedFile"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("data/imagenet_mean.binaryproto")]
-        public string meanFile {
-            get {
-                return ((string)(this["meanFile"]));
-            }
-            set {
-                this["meanFile"] = value;
+                this["modelCommonFile"] = value;
             }
         }
         
@@ -97,7 +97,7 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        [global::System.Configuration.DefaultSettingValueAttribute("60")]
         public int maxHistoryDays {
             get {
                 return ((int)(this["maxHistoryDays"]));
@@ -109,7 +109,7 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://112.126.80.28/domain_admin/tmp_domain_names.json")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://www.shanyaows.com/domain_names/submit_tmp_domain_name.json")]
         public string submitTmpDomainUrl {
             get {
                 return ((string)(this["submitTmpDomainUrl"]));
@@ -121,7 +121,7 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
         public int thdPornPicsOfDomain {
             get {
                 return ((int)(this["thdPornPicsOfDomain"]));
@@ -229,13 +229,169 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://trollwiz-online-update.oss-cn-beijing.aliyuncs.com/trollwiz-vers.xml")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://download.shanyaows.com/trollwiz-vers.xml")]
         public string updateXmlUrl {
             get {
                 return ((string)(this["updateXmlUrl"]));
             }
             set {
                 this["updateXmlUrl"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string openid {
+            get {
+                return ((string)(this["openid"]));
+            }
+            set {
+                this["openid"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://www.shanyaows.com/wechat_apis/create_scene.json")]
+        public string createSceneUrl {
+            get {
+                return ((string)(this["createSceneUrl"]));
+            }
+            set {
+                this["createSceneUrl"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://www.shanyaows.com/wechat_apis/scene_info.json")]
+        public string getSceneUrl {
+            get {
+                return ((string)(this["getSceneUrl"]));
+            }
+            set {
+                this["getSceneUrl"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://www.shanyaows.com/wechat_apis/access_token.json")]
+        public string getAccessTokenUrl {
+            get {
+                return ((string)(this["getAccessTokenUrl"]));
+            }
+            set {
+                this["getAccessTokenUrl"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token={0}")]
+        public string wechatCreateQrcodeUrl {
+            get {
+                return ((string)(this["wechatCreateQrcodeUrl"]));
+            }
+            set {
+                this["wechatCreateQrcodeUrl"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket={0}")]
+        public string wechatGetQrcodeUrl {
+            get {
+                return ((string)(this["wechatGetQrcodeUrl"]));
+            }
+            set {
+                this["wechatGetQrcodeUrl"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}")]
+        public string wechatSendTemplateMessage {
+            get {
+                return ((string)(this["wechatSendTemplateMessage"]));
+            }
+            set {
+                this["wechatSendTemplateMessage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("MNdOlj_naI2e_BZuCgWqY03oDoC8OI3pltEZ5oe_cr0")]
+        public string wechatTemplateUninstall {
+            get {
+                return ((string)(this["wechatTemplateUninstall"]));
+            }
+            set {
+                this["wechatTemplateUninstall"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("IdRKT6ON2_rbqeCMOLnm8ikSZ2CzjaXJrUIcC1sd0Eg")]
+        public string wechatTemplatePornDetected {
+            get {
+                return ((string)(this["wechatTemplatePornDetected"]));
+            }
+            set {
+                this["wechatTemplatePornDetected"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("HgM5dmYw2gAvp6lYwO_CLXK2kiu2z68oG0tOxSvOA4o")]
+        public string wechatTemplatePornScanned {
+            get {
+                return ((string)(this["wechatTemplatePornScanned"]));
+            }
+            set {
+                this["wechatTemplatePornScanned"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("8")]
+        public int thdPornPicsOfBlackDomain {
+            get {
+                return ((int)(this["thdPornPicsOfBlackDomain"]));
+            }
+            set {
+                this["thdPornPicsOfBlackDomain"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string guid {
+            get {
+                return ((string)(this["guid"]));
+            }
+            set {
+                this["guid"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://www.shanyaows.com/trollwiz_users/register.json")]
+        public string registerTrollwizUserUrl {
+            get {
+                return ((string)(this["registerTrollwizUserUrl"]));
+            }
+            set {
+                this["registerTrollwizUserUrl"] = value;
             }
         }
     }

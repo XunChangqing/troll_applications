@@ -40,8 +40,7 @@ namespace troll_ui_app
                 //when uninstall send email and return
                 if (args.Contains("-uninstall"))
                 {
-                    MessageBox.Show("uninstall");
-                    MailRoutines.SendUninstallMail().Wait();
+                    NotificationRoutines.SendUninstallNotification().Wait();
                     return;
                 }
                 Init();
@@ -58,6 +57,7 @@ namespace troll_ui_app
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new FormMain(args));
+                //Application.Run(new WechatForm());
                 log.Info("Exit from Main!");
             }
             catch (Exception e)
@@ -90,6 +90,11 @@ namespace troll_ui_app
                 Properties.Settings.Default.firstTime = false;
                 Properties.Settings.Default.Save();
             }
+            if(Properties.Settings.Default.guid == "")
+            {
+                Properties.Settings.Default.guid = System.Guid.NewGuid().ToString();
+                Properties.Settings.Default.Save();
+            }
 
             //create directory for work
             if (!Directory.Exists(Program.AppLocalDir))
@@ -102,10 +107,11 @@ namespace troll_ui_app
                 Directory.CreateDirectory(Program.AppLocalDir + Properties.Settings.Default.updateDir);
             Utils.Log_Init();
             PornDatabase.Init();
-            //PornDatabase.Test();
-            //return;
             PornClassifier.Init();
             RegisterApplicationRestart("", 0);
+
+            //PornDatabase.Test();
+            //return;
         }
     }
 }

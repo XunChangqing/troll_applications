@@ -4,13 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Mail;
+//using Senparc.Weixin.MP.AdvancedAPIs;
+//using Senparc.Weixin.MP.AdvancedAPIs.QrCode;
+using System.Web;
 using log4net;
+//using Senparc.Weixin.MP.CommonAPIs;
+using System.Drawing;
+using System.IO;
 
 namespace troll_ui_app
 {
     class MailRoutines
     {
-
         static readonly ILog log = Log.Get();
         private static async Task SendMail(string subject, string body)
         {

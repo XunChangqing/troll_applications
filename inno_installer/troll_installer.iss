@@ -51,9 +51,11 @@ Source: "{#DistFolder}\log4net.xml"; DestDir: "{app}"
 Source: "{#DistFolder}\HtmlAgilityPack.dll"; DestDir: "{app}"
 Source: "{#DistFolder}\HtmlAgilityPack.pdb"; DestDir: "{app}"
 Source: "{#DistFolder}\HtmlAgilityPack.xml"; DestDir: "{app}"
+Source: "{#DistFolder}\Newtonsoft.Json.dll"; DestDir: "{app}"
+Source: "{#DistFolder}\Newtonsoft.Json.xml"; DestDir: "{app}"
 Source: "{#DistFolder}\x64\SQLite.Interop.dll"; DestDir: "{app}\x64\"
 Source: "{#DistFolder}\x86\SQLite.Interop.dll"; DestDir: "{app}\x86\"
-Source: "{#DistFolder}\caffe.dll"; DestDir: "{app}"
+Source: "{#DistFolder}\trollwiz-masatek.dll"; DestDir: "{app}"
 Source: "{#DistFolder}\libiomp5md.dll"; DestDir: "{app}"
 Source: "{#DistFolder}\msvcp120.dll"; DestDir: "{app}"
 Source: "{#DistFolder}\msvcr120.dll"; DestDir: "{app}"
@@ -79,6 +81,7 @@ Name: "{commondesktop}\山妖卫士"; Filename: "{app}\troll_ui_app.exe"; Workin
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{localappdata}\masatek\trollwiz"
+Type: filesandordirs; Name: "{localappdata}\masatek\troll_ui_app*"
 
 [Tasks]
 Name: desktopicon; Description: "创建桌面快捷方式"; GroupDescription: "附加图标：";

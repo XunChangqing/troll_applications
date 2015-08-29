@@ -36,7 +36,6 @@
             this.ToolStripMenuItemAutoStartToggleOnff = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemLocalScan = new System.Windows.Forms.ToolStripMenuItem();
             this.QuitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItemChangeEmail = new System.Windows.Forms.ToolStripMenuItem();
             this.context_menu_main.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -54,22 +53,21 @@
             this.RecordToolStripMenuItem,
             this.ToolStripMenuItemAutoStartToggleOnff,
             this.toolStripMenuItemLocalScan,
-            this.toolStripMenuItemChangeEmail,
             this.QuitToolStripMenuItem});
             this.context_menu_main.Name = "context_menu_main";
-            this.context_menu_main.Size = new System.Drawing.Size(149, 136);
+            this.context_menu_main.Size = new System.Drawing.Size(125, 114);
             // 
             // tool_strip_menu_item_toggle_onff
             // 
             this.tool_strip_menu_item_toggle_onff.Name = "tool_strip_menu_item_toggle_onff";
-            this.tool_strip_menu_item_toggle_onff.Size = new System.Drawing.Size(148, 22);
+            this.tool_strip_menu_item_toggle_onff.Size = new System.Drawing.Size(124, 22);
             this.tool_strip_menu_item_toggle_onff.Text = "开启防护";
             this.tool_strip_menu_item_toggle_onff.Click += new System.EventHandler(this.tool_strip_menu_item_toggle_onff_Click);
             // 
             // RecordToolStripMenuItem
             // 
             this.RecordToolStripMenuItem.Name = "RecordToolStripMenuItem";
-            this.RecordToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.RecordToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.RecordToolStripMenuItem.Text = "拦截记录";
             this.RecordToolStripMenuItem.Click += new System.EventHandler(this.RecordToolStripMenuItem_Click);
             // 
@@ -77,30 +75,23 @@
             // 
             this.ToolStripMenuItemAutoStartToggleOnff.CheckOnClick = true;
             this.ToolStripMenuItemAutoStartToggleOnff.Name = "ToolStripMenuItemAutoStartToggleOnff";
-            this.ToolStripMenuItemAutoStartToggleOnff.Size = new System.Drawing.Size(148, 22);
+            this.ToolStripMenuItemAutoStartToggleOnff.Size = new System.Drawing.Size(124, 22);
             this.ToolStripMenuItemAutoStartToggleOnff.Text = "开机启动";
             this.ToolStripMenuItemAutoStartToggleOnff.Click += new System.EventHandler(this.tool_strip_menu_item_auto_start_Click);
             // 
             // toolStripMenuItemLocalScan
             // 
             this.toolStripMenuItemLocalScan.Name = "toolStripMenuItemLocalScan";
-            this.toolStripMenuItemLocalScan.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItemLocalScan.Size = new System.Drawing.Size(124, 22);
             this.toolStripMenuItemLocalScan.Text = "本地扫描";
             this.toolStripMenuItemLocalScan.Click += new System.EventHandler(this.toolStripMenuItemLocalScan_Click);
             // 
             // QuitToolStripMenuItem
             // 
             this.QuitToolStripMenuItem.Name = "QuitToolStripMenuItem";
-            this.QuitToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.QuitToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.QuitToolStripMenuItem.Text = "退出";
             this.QuitToolStripMenuItem.Click += new System.EventHandler(this.QuitToolStripMenuItem_Click);
-            // 
-            // toolStripMenuItemChangeEmail
-            // 
-            this.toolStripMenuItemChangeEmail.Name = "toolStripMenuItemChangeEmail";
-            this.toolStripMenuItemChangeEmail.Size = new System.Drawing.Size(148, 22);
-            this.toolStripMenuItemChangeEmail.Text = "修改邮件地址";
-            this.toolStripMenuItemChangeEmail.Click += new System.EventHandler(this.toolStripMenuItemChangeEmail_Click);
             // 
             // FormMain
             // 
@@ -130,7 +121,6 @@
         private System.Windows.Forms.ToolStripMenuItem tool_strip_menu_item_toggle_onff;
         private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItemAutoStartToggleOnff;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemLocalScan;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemChangeEmail;
     }
 }
 
