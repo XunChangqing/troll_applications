@@ -15,6 +15,7 @@ namespace troll_ui_app
     public partial class TemporaryFileScan : Form
     {
         static readonly ILog log = Log.Get();
+        static TemporaryFileScan SingleInstance;
         class PornFile
         {
             public PornFile(String p, PornClassifier.ImageType t)
@@ -27,9 +28,15 @@ namespace troll_ui_app
         }
 
         private BindingSource bindingSource = new BindingSource();
-        public TemporaryFileScan()
+        private TemporaryFileScan()
         {
             InitializeComponent();
+        }
+        public static TemporaryFileScan GetInstance()
+        {
+            if (SingleInstance == null || SingleInstance.IsDisposed)
+                SingleInstance = new TemporaryFileScan();
+            return SingleInstance;
         }
 
         private void TemporaryFileScan_Load(object sender, EventArgs e)

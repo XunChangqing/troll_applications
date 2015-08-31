@@ -4,6 +4,7 @@ dist_folder
 packages
 inno_installer/output
 installed_files
+resources
 troll_installer/troll_installer
 # User-specific files
 *.suo

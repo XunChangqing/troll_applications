@@ -10,14 +10,14 @@ namespace troll_ui_app
 {
     class PornClassifier
     {
-        [DllImport("porn.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("trollwiz-masatek.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public extern static void InitLib();
-        [DllImport("porn.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("trollwiz-masatek.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         extern static IntPtr CreatePornClassifier(string model_file, string trained_file, string mean_file);
-        [DllImport("porn.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("trollwiz-masatek.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         extern static int ClassifyImage(IntPtr classifier, IntPtr img, int width, int height, int stride, int channels,
             int types, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 7)] float[] ratio);
-        [DllImport("porn.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("trollwiz-masatek.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         extern static void ReleaseClassifier(IntPtr classifier);
 
         public enum ImageType{Normal, Disguise, Porn};

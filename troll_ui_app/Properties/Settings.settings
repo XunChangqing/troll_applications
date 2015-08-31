@@ -95,5 +95,11 @@
     <Setting Name="registerTrollwizUserUrl" Type="System.String" Scope="User">
       <Value Profile="(Default)">http://www.shanyaows.com/trollwiz_users/register.json</Value>
     </Setting>
+    <Setting Name="skipVersion" Type="System.String" Scope="User">
+      <Value Profile="(Default)">0.0.0.0</Value>
+    </Setting>
+    <Setting Name="helpUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://www.shanyaows.com</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

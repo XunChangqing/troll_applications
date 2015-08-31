@@ -394,5 +394,29 @@ namespace troll_ui_app.Properties {
                 this["registerTrollwizUserUrl"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.0.0.0")]
+        public string skipVersion {
+            get {
+                return ((string)(this["skipVersion"]));
+            }
+            set {
+                this["skipVersion"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://www.shanyaows.com")]
+        public string helpUrl {
+            get {
+                return ((string)(this["helpUrl"]));
+            }
+            set {
+                this["helpUrl"] = value;
+            }
+        }
     }
 }

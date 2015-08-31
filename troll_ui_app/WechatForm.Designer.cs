@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WechatForm));
             this.qrCodePictureBox = new System.Windows.Forms.PictureBox();
             this.tipLabel = new System.Windows.Forms.Label();
             this.refreshButton = new System.Windows.Forms.Button();
@@ -37,16 +38,19 @@
             // 
             // qrCodePictureBox
             // 
-            this.qrCodePictureBox.Location = new System.Drawing.Point(12, 12);
+            this.qrCodePictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.qrCodePictureBox.Location = new System.Drawing.Point(12, 38);
             this.qrCodePictureBox.Name = "qrCodePictureBox";
-            this.qrCodePictureBox.Size = new System.Drawing.Size(509, 410);
+            this.qrCodePictureBox.Size = new System.Drawing.Size(509, 384);
+            this.qrCodePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.qrCodePictureBox.TabIndex = 0;
             this.qrCodePictureBox.TabStop = false;
             // 
             // tipLabel
             // 
+            this.tipLabel.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.tipLabel.AutoSize = true;
-            this.tipLabel.Location = new System.Drawing.Point(408, 439);
+            this.tipLabel.Location = new System.Drawing.Point(193, 9);
             this.tipLabel.Name = "tipLabel";
             this.tipLabel.Size = new System.Drawing.Size(113, 12);
             this.tipLabel.TabIndex = 1;
@@ -54,7 +58,8 @@
             // 
             // refreshButton
             // 
-            this.refreshButton.Location = new System.Drawing.Point(223, 434);
+            this.refreshButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.refreshButton.Location = new System.Drawing.Point(207, 428);
             this.refreshButton.Name = "refreshButton";
             this.refreshButton.Size = new System.Drawing.Size(90, 23);
             this.refreshButton.TabIndex = 2;
@@ -65,7 +70,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 439);
+            this.label1.Location = new System.Drawing.Point(12, 433);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(161, 12);
             this.label1.TabIndex = 3;
@@ -75,15 +80,19 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(533, 466);
+            this.ClientSize = new System.Drawing.Size(528, 453);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.refreshButton);
             this.Controls.Add(this.tipLabel);
             this.Controls.Add(this.qrCodePictureBox);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "WechatForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "WechatForm";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.WechatForm_FormClosed);
             this.Load += new System.EventHandler(this.WechatForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.qrCodePictureBox)).EndInit();
             this.ResumeLayout(false);

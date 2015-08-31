@@ -12,6 +12,7 @@ using System.Text;
 using log4net;
 using System.Reflection;
 using System.Net.Mail;
+using TrotiNet;
 
 namespace troll_ui_app
 {
@@ -31,6 +32,9 @@ namespace troll_ui_app
             [MarshalAs(UnmanagedType.BStr)] string commandLineArgs,
             int flags);
 
+        static TcpServer Server;
+        static System.Threading.Timer delete_history_timer;
+        static System.Threading.Timer update_domain_list_timer;
         /// </summary>
         [STAThread]
         static void Main(String[] args)
@@ -54,6 +58,8 @@ namespace troll_ui_app
                     return;
                 }
 
+                Application.ApplicationExit += OnApplicationExit;
+
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new FormMain(args));
@@ -65,7 +71,6 @@ namespace troll_ui_app
                 log.Error(e.ToString());
             }
         }
-
         static private void Init()
         {
             //change workdir to the path of executable
@@ -112,6 +117,41 @@ namespace troll_ui_app
 
             //PornDatabase.Test();
             //return;
+            //init proxy server
+            const bool bUseIPv6 = false;
+            Server = new TcpServer(Properties.Settings.Default.bindPort, bUseIPv6);
+
+            Server.Start(GreenProxy.CreateProxy);
+
+            Server.InitListenFinished.WaitOne();
+            if (Server.InitListenException != null)
+                throw Server.InitListenException;
+
+            update_domain_list_timer = new System.Threading.Timer(PornDatabase.UpdateDatabase, null, new TimeSpan(0, 0, 5), new TimeSpan(4, 0, 0));
+            delete_history_timer = new System.Threading.Timer(PornDatabase.DeleteHistroy, null, new TimeSpan(0, 1, 0), System.Threading.Timeout.InfiniteTimeSpan);
+        }
+        static void OnApplicationExit(object sender, EventArgs e)
+        {
+            try
+            {
+                //dispose timer and wait for callback complete
+                WaitHandle[] whs = new WaitHandle[]{
+                new AutoResetEvent(false),
+                new AutoResetEvent(false) };
+                //WaitHandle wh = new AutoResetEvent(false);
+                delete_history_timer.Dispose(whs[0]);
+                update_domain_list_timer.Dispose(whs[1]);
+                foreach (WaitHandle wh in whs)
+                    wh.WaitOne();
+                Server.Stop();
+                //updateTask.Wait();
+                //exitMailTask.Wait();
+                log.Info("Exit gracefully!");
+            }
+            catch(Exception exception)
+            {
+                log.Error(exception.ToString());
+            }
         }
     }
 }

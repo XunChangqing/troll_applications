@@ -19,9 +19,10 @@ namespace troll_ui_app
     public partial class UpdateForm : Form
     {
         static readonly ILog log = Log.Get();
+        static UpdateForm SingleInstance;
         static UpdateForm updateForm;
         private string updateUrl;
-        public UpdateForm(string url)
+        private UpdateForm(string url)
         {
             updateUrl = url;
             InitializeComponent();
@@ -30,63 +31,6 @@ namespace troll_ui_app
         private WebClient updateDownloadClient;
         private Task updateDownloadTask;
 
-        public static async Task UpdateProduct()
-        {
-            //if (newVersion > curVersion)
-            //    MessageBox.Show("Update");
-            try
-            {
-                FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
-                Version curVersion = new Version(versionInfo.ProductVersion);
-                WebClient client = new WebClient();
-                XmlDocument xmlDoc = new XmlDocument();
-                //xmlDoc.Load("trollwiz-vers.xml");
-                string xmlstr = await client.DownloadStringTaskAsync(Properties.Settings.Default.updateXmlUrl);
-                xmlDoc.LoadXml(xmlstr);
-                Version latestVersion = curVersion;
-                string latestUrl = null;
-                XmlElement root = xmlDoc.DocumentElement;//取到根结点
-                foreach (var element in root.ChildNodes)
-                {
-                    if (element.GetType() == typeof(XmlElement))
-                    {
-                        XmlElement ele = (XmlElement)element;
-                        if (ele.Name == "ver")
-                        {
-                            Version cv = new Version(ele.Attributes["version"].Value);
-                            if (cv > latestVersion)
-                            {
-                                latestVersion = cv;
-                                latestUrl = ele.Attributes["url"].Value;
-                            }
-                        }
-                    }
-                }
-
-                if(latestUrl != null)
-                {
-                    log.Info("Update from: " + latestUrl);
-                    if (DialogResult.Yes == MessageBox.Show("有新版本：" + latestVersion + "，是否更新？", "版本更新", MessageBoxButtons.YesNo))
-                    {
-                        updateForm = new UpdateForm(latestUrl);
-                        updateForm.Show();
-                    }
-                }
-
-            }
-            catch (Exception e)
-            {
-                log.Error(e.ToString());
-            }
-            //XmlNode newNode = xmlDoc.CreateNode("element", "NewBook", "");
-            //newNode.InnerText = "WPF";
-
-            //添加为根元素的第一层子结点
-            //root.AppendChild(newNode);
-            //xmlDoc.Save(xmlPath);
-
-            //var companyName = versionInfo.CompanyName;
-        }
 
         private void UpdateForm_Load(object sender, EventArgs e)
         {
@@ -153,6 +97,13 @@ namespace troll_ui_app
         private void UpdateForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             updateDownloadClient.CancelAsync();
+        }
+
+        public static UpdateForm GetInstance(string url)
+        {
+            if(SingleInstance == null || SingleInstance.IsDisposed)
+                SingleInstance = new UpdateForm(url);
+            return SingleInstance;
         }
     }
 }

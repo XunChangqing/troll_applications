@@ -7,16 +7,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-//using Senparc.Weixin.MP.CommonAPIs;
 using log4net;
 using System.IO;
 using System.Net.Http;
+//using Senparc.Weixin.MP.CommonAPIs;
 //using Senparc.Weixin.MP.AdvancedAPIs.QrCode;
 //using Senparc.Weixin.MP.AdvancedAPIs;
 using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Threading;
+using QRCoder;
 
 namespace troll_ui_app
 {
@@ -24,22 +25,37 @@ namespace troll_ui_app
     {
         static readonly string webToken = "masa417";
         static readonly ILog log = Log.Get();
+        static bool hasBeenAuth = false;
+        public static bool Auth()
+        {
+            if (hasBeenAuth)
+                return true;
+            else
+            {
+                WechatForm wechatForm = new WechatForm(true);
+                wechatForm.ShowDialog();
+                if (wechatForm.authSuccess)
+                {
+                    hasBeenAuth = true;
+                    return true;
+                }
+                else
+                    return false;
+            }
+        }
         public bool authSuccess { get; set; }
         //binding mode if false;
         bool authMode = false;
         private Task getQrCodeTask;
-        CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-        CancellationToken cancellationToken;
+        CancellationTokenSource cancellationTokenSource;
         public WechatForm(bool mode)
         {
             authMode = mode;
             authSuccess = false;
-            cancellationToken = cancellationTokenSource.Token;
             InitializeComponent();
         }
 
-
-        private async Task SetQrcodeAsync()
+        private async Task SetQrcodeAsync(CancellationToken cancellationToken)
         {
             try
             {
@@ -72,11 +88,18 @@ namespace troll_ui_app
                 retStr = await msg.Content.ReadAsStringAsync();
                 retObj = JObject.Parse(retStr);
                 string ticket = retObj["ticket"].ToString();
-                msg = await client.GetAsync(string.Format(Properties.Settings.Default.wechatGetQrcodeUrl, HttpUtility.UrlEncode(ticket)), cancellationToken);
-                msg.EnsureSuccessStatusCode();
-                Stream img = await msg.Content.ReadAsStreamAsync();
-                Bitmap bmp = new Bitmap(img);
-                qrCodePictureBox.Image = bmp;
+                string qrcodeUrl = retObj["url"].ToString();
+
+                //msg = await client.GetAsync(string.Format(Properties.Settings.Default.wechatGetQrcodeUrl, HttpUtility.UrlEncode(ticket)), cancellationToken);
+                //msg.EnsureSuccessStatusCode();
+                //Stream img = await msg.Content.ReadAsStreamAsync();
+                //Bitmap bmp = new Bitmap(img);
+
+                //generate qrcode myself to decrease the latency
+                QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                QRCodeGenerator.QRCode qrCode = qrGenerator.CreateQrCode(qrcodeUrl, QRCodeGenerator.ECCLevel.Q);
+                qrCodePictureBox.Image = qrCode.GetGraphic(20);
+                //qrCodePictureBox.Image = bmp;
 
                 //qrCodePictureBox.ImageLocation = string.Format(Properties.Settings.Default.wechatGetQrcodeUrl, HttpUtility.UrlEncode(ticket));
                 //qrCodePictureBox.LoadAsync(string.Format(Properties.Settings.Default.wechatGetQrcodeUrl, HttpUtility.UrlEncode(ticket)));
@@ -103,6 +126,7 @@ namespace troll_ui_app
                                 tipLabel.Text = "授权成功！";
                                 await Task.Delay(2000);
                                 Close();
+                                break;
                             }
                             else
                             {
@@ -110,8 +134,8 @@ namespace troll_ui_app
                                 authSuccess = false;
                                 await Task.Delay(2000);
                                 Close();
+                                break;
                             }
-
                         }
                         else
                         {
@@ -152,17 +176,22 @@ namespace troll_ui_app
                 Text = "微信绑定";
             }
             else
-            {
-                Text = "微信授权";
-            }
-            getQrCodeTask = SetQrcodeAsync();
+                Text = "您需要验证一次身份才能进行高权限操作！";
+            cancellationTokenSource = new CancellationTokenSource();
+            getQrCodeTask = SetQrcodeAsync(cancellationTokenSource.Token);
+        }
+        private void WechatForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            //stop task, otherwise it will get the openid forever
+            cancellationTokenSource.Cancel();
         }
 
         private void refreshButton_Click(object sender, EventArgs e)
         {
             cancellationTokenSource.Cancel();
-            getQrCodeTask.Wait();
-            getQrCodeTask = SetQrcodeAsync();
+            cancellationTokenSource = new CancellationTokenSource();
+            //getQrCodeTask.Wait();
+            getQrCodeTask = SetQrcodeAsync(cancellationTokenSource.Token);
         }
         private static async Task SendTemplateMessageAsync(JObject msgObj)
         {
@@ -242,5 +271,6 @@ namespace troll_ui_app
             dataObj["pic-number"]["color"] = "#173177";
             await SendTemplateMessageAsync(msgObj);
         }
+
     }
 }
