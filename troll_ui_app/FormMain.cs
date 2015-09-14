@@ -15,6 +15,7 @@ using TrotiNet;
 using System.Threading;
 using System.Net.Mail;
 using Microsoft.VisualBasic;
+using Titanium.Web.Proxy.Helpers;
 
 namespace troll_ui_app
 {
@@ -27,12 +28,19 @@ namespace troll_ui_app
         private const int MOD_ALT = 0x0001;
         const String kAutoRunRegisstryKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
         const String kAutoRunKey = "trollwiz";
-        bool isProxyOn = false;
+        bool IsRealQuit = false;
         public FormMain(String []args)
         {
             InitializeComponent();
+            Icon = Properties.Resources.TrollIcon;
+            settingsToolStripDropDownButton.Image = Properties.Resources.advancedsettings;
+            helpToolStripDropDownButton.Image = Properties.Resources.help;
+            localScanButton.Image = Properties.Resources.search_button;
             if (args.Contains("-notvisible"))
+            {
                 WindowState = FormWindowState.Minimized;
+                ShowInTaskbar = false;
+            }
             //set hotkey as ctrl+alt+backspace
             //Boolean success = FormMain.RegisterHotKey(this.Handle, this.GetType().GetHashCode(), MOD_CTRL | MOD_ALT, 0x08);//Set hotkey as 'b'
             //set the owner to avoid the main form in atl-table window
@@ -51,9 +59,12 @@ namespace troll_ui_app
         private void QuitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //authenticate by wechat
+            log.Info("Auth for Quit!");
             if (WechatForm.Auth())
             {
                 //exitMailTask = NotificationRoutines.SendExitNotification();
+                log.Info("auth success!");
+                IsRealQuit = true;
                 Application.Exit();
             }
             //this.Close();
@@ -68,76 +79,106 @@ namespace troll_ui_app
             toggleOnOff();
         }
 
+        private void TurnOnProxy()
+        {
+//#if !DEBUG
+                //ProxyRoutines.SetProxy("http=127.0.0.1:8090", null);
+                SystemProxyHelper.EnableProxyHTTP("127.0.0.1", 8090);
+                FireFoxHelper.AddFirefox();
+//#endif
+            //notify_icon_main.Icon = Properties.Resources.on;
+            tool_strip_menu_item_toggle_onff.Checked = true;
+            toggleOnOffButton.Image = Properties.Resources.powerblue_small;
+            Properties.Settings.Default.isProtected = true;
+            Properties.Settings.Default.Save();
+            //同时设置
+            TurnOnAutoStart();
+        }
+        private void TurnOffProxy()
+        {
+            if (WechatForm.Auth())
+            {
+//#if !DEBUG
+                    //ProxyRoutines.SetProxy(false);
+                    SystemProxyHelper.DisableAllProxy();
+                    FireFoxHelper.RemoveFirefox();
+//#endif
+                //notify_icon_main.Icon = Properties.Resources.off;
+                tool_strip_menu_item_toggle_onff.Checked = false;
+                toggleOnOffButton.Image = Properties.Resources.powerblack_small;
+                Properties.Settings.Default.isProtected = false;
+                Properties.Settings.Default.Save();
+                //同时设置
+                TurnOffAutoStart();
+            }
+        }
+
         private void toggleOnOff()
         {
-            if (isProxyOn)
-            {
-                //Task mailTask = NotificationRoutines.SendStopNotification();
-                if (WechatForm.Auth())
-                {
-#if !DEBUG
-                    ProxyRoutines.SetProxy(false);
-#endif
-                    //notify_icon_main.Icon = Properties.Resources.off;
-                    tool_strip_menu_item_toggle_onff.Checked = false;
-                    toggleOnOffButton.Image = Properties.Resources.powerblack_small;
-                    isProxyOn = !isProxyOn;
-                }
-            }
+            //Task mailTask = NotificationRoutines.SendStopNotification();
+            if (Properties.Settings.Default.isProtected)
+                TurnOffProxy();
             else
-            {
-#if !DEBUG
-                ProxyRoutines.SetProxy("http=127.0.0.1:8090", null);
-#endif
-                //notify_icon_main.Icon = Properties.Resources.on;
-                tool_strip_menu_item_toggle_onff.Checked = true;
-                toggleOnOffButton.Image = Properties.Resources.powerblue_small;
-                isProxyOn = !isProxyOn;
-            }
+                TurnOnProxy();
         }
 
         private void tool_strip_menu_item_auto_start_Click(object sender, EventArgs e)
         {
-            autoStartToggle(false);
+            autoStartToggle();
         }
         private void mainAutoStartToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            autoStartToggle(false);
+            autoStartToggle();
         }
-        private void autoStartToggle(bool isInit)
+        private void TurnOnAutoStart()
+        {
+            RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
+            autorun_registry_key.SetValue(kAutoRunKey, Application.ExecutablePath + " -notvisible");
+            ToolStripMenuItemAutoStartToggleOnff.Checked = true;
+            mainAutoStartToolStripMenuItem.Checked = true;
+        }
+        private void TurnOffAutoStart()
+        {
+            RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
+            if (WechatForm.Auth())
+            {
+                //autorun_registry_key.DeleteValue(kAutoRunKey);
+                autorun_registry_key.SetValue(kAutoRunKey, "");
+                ToolStripMenuItemAutoStartToggleOnff.Checked = false;
+                mainAutoStartToolStripMenuItem.Checked = false;
+            }
+        }
+        private void InitAutoStart()
         {
             RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
             var autostart = autorun_registry_key.GetValue(kAutoRunKey);
             if (autostart == null)
             {
-                if (isInit)
-                {
-                    ToolStripMenuItemAutoStartToggleOnff.Checked = false;
-                    mainAutoStartToolStripMenuItem.Checked = false;
-                }
-                else
-                {
-                    autorun_registry_key.SetValue(kAutoRunKey, Application.ExecutablePath + " -notvisible");
-                    ToolStripMenuItemAutoStartToggleOnff.Checked = true;
-                    mainAutoStartToolStripMenuItem.Checked = true;
-                }
+                ToolStripMenuItemAutoStartToggleOnff.Checked = false;
+                mainAutoStartToolStripMenuItem.Checked = false;
             }
             else
             {
                 ToolStripMenuItemAutoStartToggleOnff.Checked = true;
                 mainAutoStartToolStripMenuItem.Checked = true;
-                if (WechatForm.Auth())
-                {
-                    autorun_registry_key.DeleteValue(kAutoRunKey);
-                    ToolStripMenuItemAutoStartToggleOnff.Checked = false;
-                    mainAutoStartToolStripMenuItem.Checked = false;
-                }
             }
+
+        }
+        private void autoStartToggle()
+        {
+            if (mainAutoStartToolStripMenuItem.Checked == true)
+                TurnOnAutoStart();
+            else
+                TurnOffAutoStart();
         }
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (isProxyOn)
-                toggleOnOff();
+//#if !DEBUG
+//            if (Properties.Settings.Default.isProtected)
+            //ProxyRoutines.SetProxy(false);
+            SystemProxyHelper.DisableAllProxy();
+            FireFoxHelper.RemoveFirefox();
+//#endif
             log.Info("FormMain_FormClosed Unset Proxy!");
         }
 
@@ -186,6 +227,7 @@ namespace troll_ui_app
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
                 WindowState = FormWindowState.Normal;
+                ShowInTaskbar = true;
                 Show();
             }
             else
@@ -198,13 +240,19 @@ namespace troll_ui_app
             helpToolStripDropDownButton.Image = Properties.Resources.help;
             settingsToolStripDropDownButton.Image = Properties.Resources.advancedsettings;
             hideToolStripButton.Image = Properties.Resources.symbol_delete_icon;
-            notifyIconMain.Icon = Properties.Resources.main_icon;
 
-            toggleOnOff();
-            autoStartToggle(true);
+            notifyIconMain.Icon = Properties.Resources.TrollIcon;
+
+            if (Properties.Settings.Default.isProtected)
+                TurnOnProxy();
+            else
+                toggleOnOffButton.Image = Properties.Resources.powerblack_small;
+               
+            InitAutoStart();
             //binding, update and local scan
             if(Properties.Settings.Default.openid == "")
             {
+                log.Info("binding wechat, openid: "+Properties.Settings.Default.openid);
                 //binding wechat
                 WechatForm wechatForm = new WechatForm(false);
                 wechatForm.ShowDialog();
@@ -216,7 +264,7 @@ namespace troll_ui_app
             if (Program.FirstTime)
             {
                 //we need non modal here
-                if (DialogResult.Yes == MessageBox.Show("是否扫描浏览器记录？", "本地扫描", MessageBoxButtons.YesNo))
+                if (DialogResult.Yes == MessageBox.Show(Properties.Resources.RunLocalScanFirstTime, Properties.Resources.LocalScan, MessageBoxButtons.YesNo))
                     TemporaryFileScan.GetInstance().Show();
             }
         }
@@ -232,6 +280,23 @@ namespace troll_ui_app
                 notifyIconMain.Visible = !notifyIconMain.Visible;
             }
             base.WndProc(ref m);
+        }
+
+        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!IsRealQuit)
+            {
+                log.Info("just hide!");
+                Hide();
+                e.Cancel = true;
+            }
+            else
+                log.Info("real quit!");
+        }
+
+        private void aboutUsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormAbout.ShowAbout();
         }
         //private void SetEmail()
         //{

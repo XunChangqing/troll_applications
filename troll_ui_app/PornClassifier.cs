@@ -13,7 +13,7 @@ namespace troll_ui_app
         [DllImport("trollwiz-masatek.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public extern static void InitLib();
         [DllImport("trollwiz-masatek.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        extern static IntPtr CreatePornClassifier(string model_file, string trained_file, string mean_file);
+        extern static IntPtr CreatePornClassifier(string model_file);
         [DllImport("trollwiz-masatek.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         extern static int ClassifyImage(IntPtr classifier, IntPtr img, int width, int height, int stride, int channels,
             int types, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 7)] float[] ratio);
@@ -29,19 +29,15 @@ namespace troll_ui_app
         public static void Init()
         {
             InitLib();
-            instance = new PornClassifier(Properties.Settings.Default.modelDescFile,
-                Properties.Settings.Default.modelFile,
-                Properties.Settings.Default.modelCommonFile);
+            instance = new PornClassifier(Properties.Settings.Default.modelFile);
         }
         public static PornClassifier Instance
         {
             get { return instance; }
         }
-        private PornClassifier(String model_file, String trained_file, String mean_file)
+        private PornClassifier(String model_file)
         {
-            classifier_handle_ = CreatePornClassifier(model_file,
-                trained_file,
-                mean_file);
+            classifier_handle_ = CreatePornClassifier(model_file);
         }
 
         public ImageType Classify(String fname)

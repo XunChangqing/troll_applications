@@ -31,6 +31,7 @@ namespace troll_ui_app
         private TemporaryFileScan()
         {
             InitializeComponent();
+            Icon = Properties.Resources.TrollIcon;
         }
         public static TemporaryFileScan GetInstance()
         {
@@ -64,26 +65,37 @@ namespace troll_ui_app
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            String iecachepath = Environment.GetFolderPath(Environment.SpecialFolder.InternetCache);
-            var totalfiles = Directory.EnumerateFiles(iecachepath, "*.*", SearchOption.AllDirectories).Where<String>(s => (s.EndsWith(".jpg") || s.EndsWith(".png")));
-
-            string roamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var dirs = SafeFileEnumerator.EnumerateDirectories(roamingPath, "Cache", SearchOption.AllDirectories);
-            string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            dirs = dirs.Concat(SafeFileEnumerator.EnumerateDirectories(localAppDataPath, "Cache", SearchOption.AllDirectories));
-            foreach(var dir in dirs)
-                totalfiles = totalfiles.Concat(SafeFileEnumerator.EnumerateFiles(dir, "*.*", SearchOption.AllDirectories));
-
-            int tcount = totalfiles.Count();
-            int num = 0;
-            foreach (var file in totalfiles)
+            try
             {
-                log.Info("Scan: " + file);
-                PornClassifier.ImageType t = PornClassifier.Instance.Classify(file);
-                num++;
-                backgroundWorker.ReportProgress(100 * num / tcount, new PornFile(file, t));
-                if (backgroundWorker.CancellationPending)
-                    break;
+                String iecachepath = Environment.GetFolderPath(Environment.SpecialFolder.InternetCache);
+                log.Info("IE cache path: " + iecachepath);
+                var totalfiles = SafeFileEnumerator.EnumerateFiles(iecachepath, "*.*", SearchOption.AllDirectories);
+                //Directory.EnumerateFiles(iecachepath, "*.*", SearchOption.AllDirectories).Where<String>(s => (s.EndsWith(".jpg") || s.EndsWith(".png")));
+
+                string roamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                var dirs = SafeFileEnumerator.EnumerateDirectories(roamingPath, "*Cache*", SearchOption.AllDirectories);
+
+                string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                dirs = dirs.Concat(SafeFileEnumerator.EnumerateDirectories(localAppDataPath, "*Cache*", SearchOption.AllDirectories));
+
+                foreach (var dir in dirs)
+                    totalfiles = totalfiles.Concat(SafeFileEnumerator.EnumerateFiles(dir, "*.*", SearchOption.AllDirectories));
+
+                int tcount = totalfiles.Count();
+                int num = 0;
+                foreach (var file in totalfiles)
+                {
+                    log.Info("Scan: " + file);
+                    PornClassifier.ImageType t = PornClassifier.Instance.Classify(file);
+                    num++;
+                    backgroundWorker.ReportProgress(100 * num / tcount, new PornFile(file, t));
+                    if (backgroundWorker.CancellationPending)
+                        break;
+                }
+            }
+            catch (Exception exception)
+            {
+                log.Error(exception.ToString());
             }
         }
 

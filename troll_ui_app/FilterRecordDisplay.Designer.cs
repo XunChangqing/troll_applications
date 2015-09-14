@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FilterRecordDisplay));
             this.tab_control_record = new System.Windows.Forms.TabControl();
             this.context_menu_grid_view = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.刷新ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -150,7 +149,6 @@
             this.ClientSize = new System.Drawing.Size(1095, 480);
             this.Controls.Add(this.picture_box);
             this.Controls.Add(this.tab_control_record);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FilterRecordDisplay";
             this.Text = "拦截记录";
             this.Load += new System.EventHandler(this.FilterRecordDisplay_Load);

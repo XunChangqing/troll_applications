@@ -28,10 +28,11 @@ namespace troll_ui_app
         static bool hasBeenAuth = false;
         public static bool Auth()
         {
-            if (hasBeenAuth)
+            if (hasBeenAuth || Properties.Settings.Default.openid == "")
                 return true;
             else
             {
+                log.Info("auth wechat, openid new version: "+Properties.Settings.Default.openid);
                 WechatForm wechatForm = new WechatForm(true);
                 wechatForm.ShowDialog();
                 if (wechatForm.authSuccess)
@@ -53,6 +54,7 @@ namespace troll_ui_app
             authMode = mode;
             authSuccess = false;
             InitializeComponent();
+            Icon = Properties.Resources.TrollIcon;
         }
 
         private async Task SetQrcodeAsync(CancellationToken cancellationToken)
@@ -172,11 +174,11 @@ namespace troll_ui_app
         {
             if (!authMode)
             {
-                ControlBox = false;
+                //ControlBox = false;
                 Text = "微信绑定";
             }
             else
-                Text = "您需要验证一次身份才能进行高权限操作！";
+                Text = "您需要验证一次身份才能进行停止和退出操作！";
             cancellationTokenSource = new CancellationTokenSource();
             getQrCodeTask = SetQrcodeAsync(cancellationTokenSource.Token);
         }
@@ -238,6 +240,10 @@ namespace troll_ui_app
 
         public static async Task SendPornDetectedNotificationAsync(string domainName)
         {
+            //{{first.DATA}}
+            //计算机名称：{{keyword1.DATA}}
+            //不良网站域名：{{keyword2.DATA}}
+            //{{remark.DATA}}
             JObject msgObj = new JObject();
             msgObj["touser"] = Properties.Settings.Default.openid;
             msgObj["template_id"] = Properties.Settings.Default.wechatTemplatePornDetected;
@@ -245,12 +251,19 @@ namespace troll_ui_app
             msgObj["topcolor"] = "#FF0000";
             JObject dataObj = new JObject();
             msgObj["data"] = dataObj;
-            dataObj["machine-name"] = new JObject();
-            dataObj["machine-name"]["value"] = Environment.MachineName;
-            dataObj["machine-name"]["color"] = "#173177";
-            dataObj["domain-name"] = new JObject();
-            dataObj["domain-name"]["value"] = domainName;
-            dataObj["domain-name"]["color"] = "#173177";
+            dataObj["first"] = new JObject();
+            dataObj["first"]["value"] = "您好，域名访问被禁止。";
+            dataObj["first"]["color"] = "#173177";
+            dataObj["keyword1"] = new JObject();
+            dataObj["keyword1"]["value"] = Environment.MachineName;
+            dataObj["keyword1"]["color"] = "#173177";
+            dataObj["keyword2"] = new JObject();
+            dataObj["keyword2"]["value"] = domainName;
+            dataObj["keyword2"]["color"] = "#173177";
+            dataObj["remark"] = new JObject();
+            dataObj["remark"]["value"] = "该计算机频繁访问上述不良网站，现已暂时禁止对该域名的访问。";
+            dataObj["remark"]["color"] = "#173177";
+
             await SendTemplateMessageAsync(msgObj);
         }
 

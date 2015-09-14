@@ -124,6 +124,7 @@ namespace troll_ui_app
 
         protected void ProcessImage()
         { 
+            log.Info("Process Image: " + RequestLine.URI);
             byte[] response = GetContent();
 
             // From now on, the default State.NextStep ( == SendResponse()
@@ -181,6 +182,7 @@ namespace troll_ui_app
 
         protected void ProcessHtml()
         {
+            log.Info("Process HTML: " + RequestLine.URI);
             // Let's assume we need to retrieve the entire file before
             // we can do the rewriting. This is usually the case if the
             // content has been compressed by the remote server, or if we
@@ -287,13 +289,17 @@ namespace troll_ui_app
             //bool bModifyContent = false;
             bool bProcessHtml = false;
             bool bProcessImage = false;
+            //if (!(DomainType == PornDatabase.DomainType.White) && ResponseHeaders.Headers.ContainsKey("content-type"))
             if (ResponseHeaders.Headers.ContainsKey("content-type"))
             {
-                bProcessHtml = ResponseHeaders.Headers["content-type"].
-                    Contains("text/html");
-                bProcessImage = ResponseHeaders.Headers["content-type"].Contains("image/jpeg") ||
-                    ResponseHeaders.Headers["content-type"].Contains("image/png");
+                if (DomainType != PornDatabase.DomainType.White)
+                    bProcessHtml = ResponseHeaders.Headers["content-type"].Contains("text/html");
+                if (DomainType != PornDatabase.DomainType.White || Properties.Settings.Default.IsImageWhiteProcessed)
+                    bProcessImage = ResponseHeaders.Headers["content-type"].Contains("image/jpeg") ||
+                        ResponseHeaders.Headers["content-type"].Contains("image/png");
             }
+            else
+                log.Info("Ignore request: " + RequestLine.URI);
 
             // Rewriting may also depend on the user agent.
 #if false
@@ -343,11 +349,13 @@ namespace troll_ui_app
             DomainType = PornDB.GetDomainType(DomainName);
             log.Debug(GetDomain.GetDomainFromUrl(RequestLine.URI));
                 //DomainType == PornDatabase.DomainType.Black ||
-            if( DomainType == PornDatabase.DomainType.TmpBlack)
+            if (DomainType == PornDatabase.DomainType.TmpBlack)
             {
                 PornDB.InsertBlockedPage(FullRequestUri);
                 SocketBP.Send403();
+                //SocketBP.SendHttpError();
                 State.NextStep = AbortRequest;
+                log.Info("Block request in tmp black list: " + RequestLine.URI);
             }
         }
     }

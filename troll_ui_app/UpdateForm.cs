@@ -26,6 +26,7 @@ namespace troll_ui_app
         {
             updateUrl = url;
             InitializeComponent();
+            Icon = Properties.Resources.TrollIcon;
         }
 
         private WebClient updateDownloadClient;

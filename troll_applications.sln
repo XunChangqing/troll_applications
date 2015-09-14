@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "troll_ui_app", "troll_ui_ap
 		{7FEDA61E-ED0A-4357-932E-746C697E464E} = {7FEDA61E-ED0A-4357-932E-746C697E464E}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "caffe", "..\caffe\caffe.vcxproj", "{2674BA05-4CEF-4383-8E5D-2E890B62E800}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "trollwiz-masatek", "..\caffe\caffe.vcxproj", "{2674BA05-4CEF-4383-8E5D-2E890B62E800}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrotiNet.Lib", "..\TrotiNet\Lib\TrotiNet.Lib.csproj", "{7FEDA61E-ED0A-4357-932E-746C697E464E}"
 EndProject

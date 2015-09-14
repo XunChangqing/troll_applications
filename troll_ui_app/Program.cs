@@ -13,6 +13,7 @@ using log4net;
 using System.Reflection;
 using System.Net.Mail;
 using TrotiNet;
+using Titanium.Web.Proxy.Helpers;
 
 namespace troll_ui_app
 {
@@ -39,6 +40,13 @@ namespace troll_ui_app
         [STAThread]
         static void Main(String[] args)
         {
+            //AllocConsole();
+            //SystemProxyHelper.EnableProxyHTTP("127.0.0.1", 8090);
+            //FireFoxHelper.AddFirefox();
+            //string x = Console.ReadLine();
+            //SystemProxyHelper.DisableAllProxy();
+            //FireFoxHelper.RemoveFirefox();
+            //return;
             try
             {
                 //when uninstall send email and return
@@ -48,6 +56,7 @@ namespace troll_ui_app
                     return;
                 }
                 Init();
+
                 bool result;
                 //using named system mutex to ensure single instance of application
                 var mutex = new System.Threading.Mutex(true, "masa_troll_guard_mutex", out result);
@@ -95,7 +104,7 @@ namespace troll_ui_app
                 Properties.Settings.Default.firstTime = false;
                 Properties.Settings.Default.Save();
             }
-            if(Properties.Settings.Default.guid == "")
+            if (Properties.Settings.Default.guid == "")
             {
                 Properties.Settings.Default.guid = System.Guid.NewGuid().ToString();
                 Properties.Settings.Default.Save();
@@ -113,7 +122,7 @@ namespace troll_ui_app
             Utils.Log_Init();
             PornDatabase.Init();
             PornClassifier.Init();
-            RegisterApplicationRestart("", 0);
+            //RegisterApplicationRestart("", 0);
 
             //PornDatabase.Test();
             //return;
@@ -134,6 +143,8 @@ namespace troll_ui_app
         {
             try
             {
+                //unset proxy again to make sure
+                ProxyRoutines.SetProxy(false);
                 //dispose timer and wait for callback complete
                 WaitHandle[] whs = new WaitHandle[]{
                 new AutoResetEvent(false),
@@ -148,7 +159,7 @@ namespace troll_ui_app
                 //exitMailTask.Wait();
                 log.Info("Exit gracefully!");
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 log.Error(exception.ToString());
             }

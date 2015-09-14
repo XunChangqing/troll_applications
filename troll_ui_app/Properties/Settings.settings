@@ -3,16 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="domainUpdateLogsUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://www.shanyaows.com/domain_names/update_logs.json</Value>
-    </Setting>
-    <Setting Name="modelDescFile" Type="System.String" Scope="User">
-      <Value Profile="(Default)">data/porn.modeldesc</Value>
+      <Value Profile="(Default)">http://domain.shanyaows.com/domain_names/update_logs.json</Value>
     </Setting>
     <Setting Name="modelFile" Type="System.String" Scope="User">
       <Value Profile="(Default)">data/porn.model</Value>
-    </Setting>
-    <Setting Name="modelCommonFile" Type="System.String" Scope="User">
-      <Value Profile="(Default)">data/porn.common</Value>
     </Setting>
     <Setting Name="bindPort" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">8090</Value>
@@ -24,7 +18,7 @@
       <Value Profile="(Default)">60</Value>
     </Setting>
     <Setting Name="submitTmpDomainUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://www.shanyaows.com/domain_names/submit_tmp_domain_name.json</Value>
+      <Value Profile="(Default)">http://domain.shanyaows.com/domain_names/submit_tmp_domain_name.json</Value>
     </Setting>
     <Setting Name="thdPornPicsOfDomain" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">30</Value>
@@ -60,13 +54,13 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="createSceneUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://www.shanyaows.com/wechat_apis/create_scene.json</Value>
+      <Value Profile="(Default)">http://domain.shanyaows.com/wechat_apis/create_scene.json</Value>
     </Setting>
     <Setting Name="getSceneUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://www.shanyaows.com/wechat_apis/scene_info.json</Value>
+      <Value Profile="(Default)">http://domain.shanyaows.com/wechat_apis/scene_info.json</Value>
     </Setting>
     <Setting Name="getAccessTokenUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://www.shanyaows.com/wechat_apis/access_token.json</Value>
+      <Value Profile="(Default)">http://domain.shanyaows.com/wechat_apis/access_token.json</Value>
     </Setting>
     <Setting Name="wechatCreateQrcodeUrl" Type="System.String" Scope="User">
       <Value Profile="(Default)">https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token={0}</Value>
@@ -81,7 +75,7 @@
       <Value Profile="(Default)">MNdOlj_naI2e_BZuCgWqY03oDoC8OI3pltEZ5oe_cr0</Value>
     </Setting>
     <Setting Name="wechatTemplatePornDetected" Type="System.String" Scope="User">
-      <Value Profile="(Default)">IdRKT6ON2_rbqeCMOLnm8ikSZ2CzjaXJrUIcC1sd0Eg</Value>
+      <Value Profile="(Default)">EZPCL_OUoG7FbBGG3CBmJG75UJL6Xx9r9vBgPFE23pw</Value>
     </Setting>
     <Setting Name="wechatTemplatePornScanned" Type="System.String" Scope="User">
       <Value Profile="(Default)">HgM5dmYw2gAvp6lYwO_CLXK2kiu2z68oG0tOxSvOA4o</Value>
@@ -93,13 +87,19 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="registerTrollwizUserUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://www.shanyaows.com/trollwiz_users/register.json</Value>
+      <Value Profile="(Default)">http://domain.shanyaows.com/trollwiz_users/register.json</Value>
     </Setting>
     <Setting Name="skipVersion" Type="System.String" Scope="User">
       <Value Profile="(Default)">0.0.0.0</Value>
     </Setting>
     <Setting Name="helpUrl" Type="System.String" Scope="User">
       <Value Profile="(Default)">http://www.shanyaows.com</Value>
+    </Setting>
+    <Setting Name="isProtected" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="IsImageWhiteProcessed" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

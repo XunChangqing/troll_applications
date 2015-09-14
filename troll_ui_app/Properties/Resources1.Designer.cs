@@ -81,12 +81,11 @@ namespace troll_ui_app.Properties {
         }
         
         /// <summary>
-        ///   查找类似于 (Icon) 的 System.Drawing.Icon 类型的本地化资源。
+        ///   查找类似 本地扫描 的本地化字符串。
         /// </summary>
-        internal static System.Drawing.Icon main_icon {
+        internal static string LocalScan {
             get {
-                object obj = ResourceManager.GetObject("main_icon", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
+                return ResourceManager.GetString("LocalScan", resourceCulture);
             }
         }
         
@@ -111,12 +110,41 @@ namespace troll_ui_app.Properties {
         }
         
         /// <summary>
+        ///   查找类似 您是初次使用，是否运行本地扫描？ 的本地化字符串。
+        /// </summary>
+        internal static string RunLocalScanFirstTime {
+            get {
+                return ResourceManager.GetString("RunLocalScanFirstTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap search_button {
+            get {
+                object obj = ResourceManager.GetObject("search_button", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
         internal static System.Drawing.Bitmap symbol_delete_icon {
             get {
                 object obj = ResourceManager.GetObject("symbol_delete_icon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似于 (Icon) 的 System.Drawing.Icon 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Icon TrollIcon {
+            get {
+                object obj = ResourceManager.GetObject("TrollIcon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
     }

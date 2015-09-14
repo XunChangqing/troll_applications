@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UpdateForm));
             this.downloadProgressBar = new System.Windows.Forms.ProgressBar();
             this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
@@ -58,8 +57,7 @@
             this.ClientSize = new System.Drawing.Size(692, 71);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.downloadProgressBar);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(0, 109);
+            this.MinimumSize = new System.Drawing.Size(16, 109);
             this.Name = "UpdateForm";
             this.Text = "更新";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.UpdateForm_FormClosed);

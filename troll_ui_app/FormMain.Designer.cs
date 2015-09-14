@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.contextMenuMain = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tool_strip_menu_item_toggle_onff = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemLocalScan = new System.Windows.Forms.ToolStripMenuItem();
@@ -38,8 +37,6 @@
             this.打开面板ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.QuitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.localScanButton = new System.Windows.Forms.Button();
-            this.toggleOnOffButton = new System.Windows.Forms.Button();
             this.hideToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.settingsToolStripDropDownButton = new System.Windows.Forms.ToolStripDropDownButton();
             this.mainAutoStartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,8 +44,10 @@
             this.checkUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.onlineHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutUsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mainToolStrip = new System.Windows.Forms.ToolStrip();
             this.notifyIconMain = new System.Windows.Forms.NotifyIcon(this.components);
+            this.toggleOnOffButton = new System.Windows.Forms.Button();
+            this.localScanButton = new System.Windows.Forms.Button();
+            this.mainToolStrip = new System.Windows.Forms.ToolStrip();
             this.contextMenuMain.SuspendLayout();
             this.mainToolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -64,20 +63,20 @@
             this.toolStripSeparator1,
             this.QuitToolStripMenuItem});
             this.contextMenuMain.Name = "context_menu_main";
-            this.contextMenuMain.Size = new System.Drawing.Size(125, 126);
+            this.contextMenuMain.Size = new System.Drawing.Size(153, 148);
             // 
             // tool_strip_menu_item_toggle_onff
             // 
             this.tool_strip_menu_item_toggle_onff.CheckOnClick = true;
             this.tool_strip_menu_item_toggle_onff.Name = "tool_strip_menu_item_toggle_onff";
-            this.tool_strip_menu_item_toggle_onff.Size = new System.Drawing.Size(124, 22);
+            this.tool_strip_menu_item_toggle_onff.Size = new System.Drawing.Size(152, 22);
             this.tool_strip_menu_item_toggle_onff.Text = "实时防护";
             this.tool_strip_menu_item_toggle_onff.Click += new System.EventHandler(this.tool_strip_menu_item_toggle_onff_Click);
             // 
             // toolStripMenuItemLocalScan
             // 
             this.toolStripMenuItemLocalScan.Name = "toolStripMenuItemLocalScan";
-            this.toolStripMenuItemLocalScan.Size = new System.Drawing.Size(124, 22);
+            this.toolStripMenuItemLocalScan.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItemLocalScan.Text = "本地扫描";
             this.toolStripMenuItemLocalScan.Click += new System.EventHandler(this.toolStripMenuItemLocalScan_Click);
             // 
@@ -85,7 +84,7 @@
             // 
             this.ToolStripMenuItemAutoStartToggleOnff.CheckOnClick = true;
             this.ToolStripMenuItemAutoStartToggleOnff.Name = "ToolStripMenuItemAutoStartToggleOnff";
-            this.ToolStripMenuItemAutoStartToggleOnff.Size = new System.Drawing.Size(124, 22);
+            this.ToolStripMenuItemAutoStartToggleOnff.Size = new System.Drawing.Size(152, 22);
             this.ToolStripMenuItemAutoStartToggleOnff.Text = "开机启动";
             this.ToolStripMenuItemAutoStartToggleOnff.Visible = false;
             this.ToolStripMenuItemAutoStartToggleOnff.Click += new System.EventHandler(this.tool_strip_menu_item_auto_start_Click);
@@ -93,73 +92,43 @@
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(121, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator2.Visible = false;
             // 
             // 打开面板ToolStripMenuItem
             // 
             this.打开面板ToolStripMenuItem.Name = "打开面板ToolStripMenuItem";
-            this.打开面板ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.打开面板ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.打开面板ToolStripMenuItem.Text = "打开面板";
+            this.打开面板ToolStripMenuItem.Visible = false;
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(121, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
             // 
             // QuitToolStripMenuItem
             // 
             this.QuitToolStripMenuItem.Name = "QuitToolStripMenuItem";
-            this.QuitToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.QuitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.QuitToolStripMenuItem.Text = "退出";
             this.QuitToolStripMenuItem.Click += new System.EventHandler(this.QuitToolStripMenuItem_Click);
-            // 
-            // localScanButton
-            // 
-            this.localScanButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.localScanButton.Image = ((System.Drawing.Image)(resources.GetObject("localScanButton.Image")));
-            this.localScanButton.Location = new System.Drawing.Point(144, 45);
-            this.localScanButton.Name = "localScanButton";
-            this.localScanButton.Size = new System.Drawing.Size(100, 90);
-            this.localScanButton.TabIndex = 2;
-            this.localScanButton.TabStop = false;
-            this.localScanButton.Text = "本地扫描";
-            this.localScanButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.localScanButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.localScanButton.UseVisualStyleBackColor = true;
-            this.localScanButton.Click += new System.EventHandler(this.localScanButton_Click);
-            // 
-            // toggleOnOffButton
-            // 
-            this.toggleOnOffButton.Image = ((System.Drawing.Image)(resources.GetObject("toggleOnOffButton.Image")));
-            this.toggleOnOffButton.Location = new System.Drawing.Point(23, 45);
-            this.toggleOnOffButton.Name = "toggleOnOffButton";
-            this.toggleOnOffButton.Size = new System.Drawing.Size(100, 90);
-            this.toggleOnOffButton.TabIndex = 0;
-            this.toggleOnOffButton.TabStop = false;
-            this.toggleOnOffButton.Text = "实时防护";
-            this.toggleOnOffButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.toggleOnOffButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.toggleOnOffButton.UseVisualStyleBackColor = true;
-            this.toggleOnOffButton.Click += new System.EventHandler(this.toggleOnOffButton_Click);
             // 
             // hideToolStripButton
             // 
             this.hideToolStripButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.hideToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("hideToolStripButton.Image")));
-            this.hideToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.hideToolStripButton.Name = "hideToolStripButton";
-            this.hideToolStripButton.Size = new System.Drawing.Size(52, 22);
+            this.hideToolStripButton.Size = new System.Drawing.Size(36, 22);
             this.hideToolStripButton.Text = "隐藏";
+            this.hideToolStripButton.Visible = false;
             this.hideToolStripButton.Click += new System.EventHandler(this.hideToolStripButton_Click);
             // 
             // settingsToolStripDropDownButton
             // 
             this.settingsToolStripDropDownButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mainAutoStartToolStripMenuItem});
-            this.settingsToolStripDropDownButton.Image = ((System.Drawing.Image)(resources.GetObject("settingsToolStripDropDownButton.Image")));
-            this.settingsToolStripDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.settingsToolStripDropDownButton.Name = "settingsToolStripDropDownButton";
-            this.settingsToolStripDropDownButton.Size = new System.Drawing.Size(61, 22);
+            this.settingsToolStripDropDownButton.Size = new System.Drawing.Size(45, 22);
             this.settingsToolStripDropDownButton.Text = "设置";
             // 
             // mainAutoStartToolStripMenuItem
@@ -176,10 +145,8 @@
             this.checkUpdateToolStripMenuItem,
             this.onlineHelpToolStripMenuItem,
             this.aboutUsToolStripMenuItem});
-            this.helpToolStripDropDownButton.Image = ((System.Drawing.Image)(resources.GetObject("helpToolStripDropDownButton.Image")));
-            this.helpToolStripDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.helpToolStripDropDownButton.Name = "helpToolStripDropDownButton";
-            this.helpToolStripDropDownButton.Size = new System.Drawing.Size(61, 22);
+            this.helpToolStripDropDownButton.Size = new System.Drawing.Size(45, 22);
             this.helpToolStripDropDownButton.Text = "帮助";
             this.helpToolStripDropDownButton.ToolTipText = "帮助";
             // 
@@ -201,7 +168,42 @@
             // 
             this.aboutUsToolStripMenuItem.Name = "aboutUsToolStripMenuItem";
             this.aboutUsToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.aboutUsToolStripMenuItem.Text = "关于我们";
+            this.aboutUsToolStripMenuItem.Text = "关于";
+            this.aboutUsToolStripMenuItem.Click += new System.EventHandler(this.aboutUsToolStripMenuItem_Click);
+            // 
+            // notifyIconMain
+            // 
+            this.notifyIconMain.ContextMenuStrip = this.contextMenuMain;
+            this.notifyIconMain.Text = "山妖卫士";
+            this.notifyIconMain.Visible = true;
+            this.notifyIconMain.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIconMain_MouseClick);
+            // 
+            // toggleOnOffButton
+            // 
+            this.toggleOnOffButton.Location = new System.Drawing.Point(55, 47);
+            this.toggleOnOffButton.Name = "toggleOnOffButton";
+            this.toggleOnOffButton.Size = new System.Drawing.Size(100, 90);
+            this.toggleOnOffButton.TabIndex = 0;
+            this.toggleOnOffButton.TabStop = false;
+            this.toggleOnOffButton.Text = "实时防护";
+            this.toggleOnOffButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.toggleOnOffButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toggleOnOffButton.UseVisualStyleBackColor = true;
+            this.toggleOnOffButton.Click += new System.EventHandler(this.toggleOnOffButton_Click);
+            // 
+            // localScanButton
+            // 
+            this.localScanButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.localScanButton.Location = new System.Drawing.Point(189, 47);
+            this.localScanButton.Name = "localScanButton";
+            this.localScanButton.Size = new System.Drawing.Size(100, 90);
+            this.localScanButton.TabIndex = 2;
+            this.localScanButton.TabStop = false;
+            this.localScanButton.Text = "本地扫描";
+            this.localScanButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.localScanButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.localScanButton.UseVisualStyleBackColor = true;
+            this.localScanButton.Click += new System.EventHandler(this.localScanButton_Click);
             // 
             // mainToolStrip
             // 
@@ -213,33 +215,27 @@
             this.helpToolStripDropDownButton});
             this.mainToolStrip.Location = new System.Drawing.Point(0, 0);
             this.mainToolStrip.Name = "mainToolStrip";
-            this.mainToolStrip.Size = new System.Drawing.Size(263, 25);
+            this.mainToolStrip.Size = new System.Drawing.Size(345, 25);
             this.mainToolStrip.TabIndex = 3;
             this.mainToolStrip.Text = "toolStrip1";
-            // 
-            // notifyIconMain
-            // 
-            this.notifyIconMain.ContextMenuStrip = this.contextMenuMain;
-            this.notifyIconMain.Text = "山妖卫士";
-            this.notifyIconMain.Visible = true;
-            this.notifyIconMain.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIconMain_MouseClick);
             // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.ClientSize = new System.Drawing.Size(263, 148);
+            this.ClientSize = new System.Drawing.Size(345, 163);
             this.ContextMenuStrip = this.contextMenuMain;
-            this.ControlBox = false;
-            this.Controls.Add(this.mainToolStrip);
-            this.Controls.Add(this.localScanButton);
             this.Controls.Add(this.toggleOnOffButton);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.HelpButton = true;
+            this.Controls.Add(this.localScanButton);
+            this.Controls.Add(this.mainToolStrip);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "FormMain";
-            this.ShowInTaskbar = false;
             this.Text = "山妖卫士";
+            this.TopMost = true;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.contextMenuMain.ResumeLayout(false);
@@ -257,8 +253,6 @@
         private System.Windows.Forms.ToolStripMenuItem tool_strip_menu_item_toggle_onff;
         private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItemAutoStartToggleOnff;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemLocalScan;
-        private System.Windows.Forms.Button toggleOnOffButton;
-        private System.Windows.Forms.Button localScanButton;
         private System.Windows.Forms.ToolStripButton hideToolStripButton;
         private System.Windows.Forms.ToolStripDropDownButton settingsToolStripDropDownButton;
         private System.Windows.Forms.ToolStripMenuItem mainAutoStartToolStripMenuItem;
@@ -266,11 +260,13 @@
         private System.Windows.Forms.ToolStripMenuItem checkUpdateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem onlineHelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutUsToolStripMenuItem;
-        private System.Windows.Forms.ToolStrip mainToolStrip;
         private System.Windows.Forms.NotifyIcon notifyIconMain;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem 打开面板ToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.Button toggleOnOffButton;
+        private System.Windows.Forms.Button localScanButton;
+        private System.Windows.Forms.ToolStrip mainToolStrip;
     }
 }
 

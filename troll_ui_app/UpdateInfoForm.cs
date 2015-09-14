@@ -26,6 +26,7 @@ namespace troll_ui_app
         private UpdateInfoForm()
         {
             InitializeComponent();
+            Icon = Properties.Resources.TrollIcon;
         }
         private async Task UpdateProduct()
         {

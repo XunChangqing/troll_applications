@@ -25,25 +25,13 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://www.shanyaows.com/domain_names/update_logs.json")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://domain.shanyaows.com/domain_names/update_logs.json")]
         public string domainUpdateLogsUrl {
             get {
                 return ((string)(this["domainUpdateLogsUrl"]));
             }
             set {
                 this["domainUpdateLogsUrl"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("data/porn.modeldesc")]
-        public string modelDescFile {
-            get {
-                return ((string)(this["modelDescFile"]));
-            }
-            set {
-                this["modelDescFile"] = value;
             }
         }
         
@@ -56,18 +44,6 @@ namespace troll_ui_app.Properties {
             }
             set {
                 this["modelFile"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("data/porn.common")]
-        public string modelCommonFile {
-            get {
-                return ((string)(this["modelCommonFile"]));
-            }
-            set {
-                this["modelCommonFile"] = value;
             }
         }
         
@@ -109,7 +85,7 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://www.shanyaows.com/domain_names/submit_tmp_domain_name.json")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://domain.shanyaows.com/domain_names/submit_tmp_domain_name.json")]
         public string submitTmpDomainUrl {
             get {
                 return ((string)(this["submitTmpDomainUrl"]));
@@ -253,7 +229,7 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://www.shanyaows.com/wechat_apis/create_scene.json")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://domain.shanyaows.com/wechat_apis/create_scene.json")]
         public string createSceneUrl {
             get {
                 return ((string)(this["createSceneUrl"]));
@@ -265,7 +241,7 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://www.shanyaows.com/wechat_apis/scene_info.json")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://domain.shanyaows.com/wechat_apis/scene_info.json")]
         public string getSceneUrl {
             get {
                 return ((string)(this["getSceneUrl"]));
@@ -277,7 +253,7 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://www.shanyaows.com/wechat_apis/access_token.json")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://domain.shanyaows.com/wechat_apis/access_token.json")]
         public string getAccessTokenUrl {
             get {
                 return ((string)(this["getAccessTokenUrl"]));
@@ -337,7 +313,7 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("IdRKT6ON2_rbqeCMOLnm8ikSZ2CzjaXJrUIcC1sd0Eg")]
+        [global::System.Configuration.DefaultSettingValueAttribute("EZPCL_OUoG7FbBGG3CBmJG75UJL6Xx9r9vBgPFE23pw")]
         public string wechatTemplatePornDetected {
             get {
                 return ((string)(this["wechatTemplatePornDetected"]));
@@ -385,7 +361,7 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://www.shanyaows.com/trollwiz_users/register.json")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://domain.shanyaows.com/trollwiz_users/register.json")]
         public string registerTrollwizUserUrl {
             get {
                 return ((string)(this["registerTrollwizUserUrl"]));
@@ -416,6 +392,30 @@ namespace troll_ui_app.Properties {
             }
             set {
                 this["helpUrl"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool isProtected {
+            get {
+                return ((bool)(this["isProtected"]));
+            }
+            set {
+                this["isProtected"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsImageWhiteProcessed {
+            get {
+                return ((bool)(this["IsImageWhiteProcessed"]));
+            }
+            set {
+                this["IsImageWhiteProcessed"] = value;
             }
         }
     }

@@ -58,7 +58,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>20150728010913511_easyicon_net_128.ico</ApplicationIcon>
+    <ApplicationIcon>troll.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>A6606CC2FBBB69EC07D83313FC6573B3F459FBCB</ManifestCertificateThumbprint>
@@ -67,16 +67,18 @@
     <ManifestKeyFile>troll_ui_app_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <GenerateManifests>false</GenerateManifests>
+    <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
     <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="HtmlAgilityPack">
@@ -115,8 +117,17 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
+    <Reference Include="Titanium.Web.Proxy">
+      <HintPath>..\..\Titanium\Titanium.Web.Proxy\bin\Release\Titanium.Web.Proxy.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FormAbout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormAbout.Designer.cs">
+      <DependentUpon>FormAbout.cs</DependentUpon>
+    </Compile>
     <Compile Include="GetDomain.cs" />
     <Compile Include="GreenProxy.cs" />
     <Compile Include="FilterRecordDisplay.cs">
@@ -134,12 +145,6 @@
     <Compile Include="Log.cs" />
     <Compile Include="NotificationRoutines.cs" />
     <Compile Include="MailRoutines.cs" />
-    <Compile Include="PictureForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="PictureForm.Designer.cs">
-      <DependentUpon>PictureForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="PornClassifier.cs" />
     <Compile Include="PornDatabase.cs" />
     <Compile Include="Program.cs" />
@@ -180,11 +185,11 @@
     <EmbeddedResource Include="FilterRecordDisplay.resx">
       <DependentUpon>FilterRecordDisplay.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormAbout.resx">
+      <DependentUpon>FormAbout.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PictureForm.resx">
-      <DependentUpon>PictureForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -221,7 +226,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="20150728010913511_easyicon_net_128.ico" />
     <None Include="Resources\powerblue-small.png" />
     <None Include="Resources\powerblack-small .png" />
     <None Include="Resources\symbol-delete-icon.png" />
@@ -255,7 +259,14 @@
       <Name>TrotiNet.Lib</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\troll.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\advancedsettings.png" />
+    <None Include="Resources\search-button.png" />
+    <Content Include="troll.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.97.0\build\net45\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.97.0\build\net45\System.Data.SQLite.Core.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
