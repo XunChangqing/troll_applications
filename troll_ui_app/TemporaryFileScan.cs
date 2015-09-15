@@ -86,7 +86,16 @@ namespace troll_ui_app
                 foreach (var file in totalfiles)
                 {
                     log.Info("Scan: " + file);
-                    PornClassifier.ImageType t = PornClassifier.Instance.Classify(file);
+                    PornClassifier.ImageType t;
+                    try
+                    {
+                        t = PornClassifier.Instance.Classify(file);
+                    }
+                    catch(Exception exception)
+                    {
+                        log.Error(exception.ToString());
+                        t = PornClassifier.ImageType.Normal;
+                    }
                     num++;
                     backgroundWorker.ReportProgress(100 * num / tcount, new PornFile(file, t));
                     if (backgroundWorker.CancellationPending)

@@ -81,12 +81,12 @@ namespace troll_ui_app
 
         private void TurnOnProxy()
         {
-//#if !DEBUG
+#if !DEBUG
                 //ProxyRoutines.SetProxy("http=127.0.0.1:8090", null);
                 SystemProxyHelper.EnableProxyHTTP("127.0.0.1", 8090);
                 FireFoxHelper.AddFirefox();
-//#endif
-            //notify_icon_main.Icon = Properties.Resources.on;
+#endif
+                //notify_icon_main.Icon = Properties.Resources.on;
             tool_strip_menu_item_toggle_onff.Checked = true;
             toggleOnOffButton.Image = Properties.Resources.powerblue_small;
             Properties.Settings.Default.isProtected = true;
@@ -98,12 +98,12 @@ namespace troll_ui_app
         {
             if (WechatForm.Auth())
             {
-//#if !DEBUG
+#if !DEBUG
                     //ProxyRoutines.SetProxy(false);
                     SystemProxyHelper.DisableAllProxy();
                     FireFoxHelper.RemoveFirefox();
-//#endif
-                //notify_icon_main.Icon = Properties.Resources.off;
+#endif
+                    //notify_icon_main.Icon = Properties.Resources.off;
                 tool_strip_menu_item_toggle_onff.Checked = false;
                 toggleOnOffButton.Image = Properties.Resources.powerblack_small;
                 Properties.Settings.Default.isProtected = false;
@@ -173,12 +173,12 @@ namespace troll_ui_app
         }
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
-//#if !DEBUG
+#if !DEBUG
 //            if (Properties.Settings.Default.isProtected)
             //ProxyRoutines.SetProxy(false);
             SystemProxyHelper.DisableAllProxy();
             FireFoxHelper.RemoveFirefox();
-//#endif
+#endif
             log.Info("FormMain_FormClosed Unset Proxy!");
         }
 

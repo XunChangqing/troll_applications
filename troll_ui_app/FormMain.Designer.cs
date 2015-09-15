@@ -63,20 +63,20 @@
             this.toolStripSeparator1,
             this.QuitToolStripMenuItem});
             this.contextMenuMain.Name = "context_menu_main";
-            this.contextMenuMain.Size = new System.Drawing.Size(153, 148);
+            this.contextMenuMain.Size = new System.Drawing.Size(125, 126);
             // 
             // tool_strip_menu_item_toggle_onff
             // 
             this.tool_strip_menu_item_toggle_onff.CheckOnClick = true;
             this.tool_strip_menu_item_toggle_onff.Name = "tool_strip_menu_item_toggle_onff";
-            this.tool_strip_menu_item_toggle_onff.Size = new System.Drawing.Size(152, 22);
+            this.tool_strip_menu_item_toggle_onff.Size = new System.Drawing.Size(124, 22);
             this.tool_strip_menu_item_toggle_onff.Text = "实时防护";
             this.tool_strip_menu_item_toggle_onff.Click += new System.EventHandler(this.tool_strip_menu_item_toggle_onff_Click);
             // 
             // toolStripMenuItemLocalScan
             // 
             this.toolStripMenuItemLocalScan.Name = "toolStripMenuItemLocalScan";
-            this.toolStripMenuItemLocalScan.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItemLocalScan.Size = new System.Drawing.Size(124, 22);
             this.toolStripMenuItemLocalScan.Text = "本地扫描";
             this.toolStripMenuItemLocalScan.Click += new System.EventHandler(this.toolStripMenuItemLocalScan_Click);
             // 
@@ -84,7 +84,7 @@
             // 
             this.ToolStripMenuItemAutoStartToggleOnff.CheckOnClick = true;
             this.ToolStripMenuItemAutoStartToggleOnff.Name = "ToolStripMenuItemAutoStartToggleOnff";
-            this.ToolStripMenuItemAutoStartToggleOnff.Size = new System.Drawing.Size(152, 22);
+            this.ToolStripMenuItemAutoStartToggleOnff.Size = new System.Drawing.Size(124, 22);
             this.ToolStripMenuItemAutoStartToggleOnff.Text = "开机启动";
             this.ToolStripMenuItemAutoStartToggleOnff.Visible = false;
             this.ToolStripMenuItemAutoStartToggleOnff.Click += new System.EventHandler(this.tool_strip_menu_item_auto_start_Click);
@@ -92,25 +92,25 @@
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(121, 6);
             this.toolStripSeparator2.Visible = false;
             // 
             // 打开面板ToolStripMenuItem
             // 
             this.打开面板ToolStripMenuItem.Name = "打开面板ToolStripMenuItem";
-            this.打开面板ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.打开面板ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.打开面板ToolStripMenuItem.Text = "打开面板";
             this.打开面板ToolStripMenuItem.Visible = false;
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(121, 6);
             // 
             // QuitToolStripMenuItem
             // 
             this.QuitToolStripMenuItem.Name = "QuitToolStripMenuItem";
-            this.QuitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.QuitToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.QuitToolStripMenuItem.Text = "退出";
             this.QuitToolStripMenuItem.Click += new System.EventHandler(this.QuitToolStripMenuItem_Click);
             // 
@@ -234,7 +234,6 @@
             this.MinimizeBox = false;
             this.Name = "FormMain";
             this.Text = "山妖卫士";
-            this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
             this.Load += new System.EventHandler(this.FormMain_Load);
