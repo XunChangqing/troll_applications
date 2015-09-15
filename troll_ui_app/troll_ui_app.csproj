@@ -120,6 +120,10 @@
     <Reference Include="Titanium.Web.Proxy">
       <HintPath>..\..\Titanium\Titanium.Web.Proxy\bin\Release\Titanium.Web.Proxy.dll</HintPath>
     </Reference>
+    <Reference Include="TrotiNet, Version=0.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TrotiNet\Lib\bin\Release\TrotiNet.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FormAbout.cs">
@@ -252,12 +256,6 @@
       <ProductName>Visual C++ 2013 运行库%28x86%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\TrotiNet\Lib\TrotiNet.Lib.csproj">
-      <Project>{7feda61e-ed0a-4357-932e-746c697e464e}</Project>
-      <Name>TrotiNet.Lib</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\troll.ico" />
