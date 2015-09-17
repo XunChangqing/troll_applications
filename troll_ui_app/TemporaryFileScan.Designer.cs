@@ -33,7 +33,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.pornGridView = new System.Windows.Forms.DataGridView();
-            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.currentFileName = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
@@ -101,13 +100,6 @@
             this.pornGridView.TabIndex = 6;
             this.pornGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.pornGridView_CellFormatting);
             // 
-            // backgroundWorker
-            // 
-            this.backgroundWorker.WorkerReportsProgress = true;
-            this.backgroundWorker.WorkerSupportsCancellation = true;
-            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
-            this.backgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker_ProgressChanged);
-            // 
             // currentFileName
             // 
             this.currentFileName.AutoSize = true;
@@ -169,7 +161,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.DataGridView pornGridView;
-        private System.ComponentModel.BackgroundWorker backgroundWorker;
         private System.Windows.Forms.Label currentFileName;
         private System.Windows.Forms.SplitContainer splitContainer1;
     }

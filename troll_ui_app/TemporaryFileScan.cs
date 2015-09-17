@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using log4net;
+using System.Threading;
 
 namespace troll_ui_app
 {
@@ -32,6 +33,7 @@ namespace troll_ui_app
         {
             InitializeComponent();
             Icon = Properties.Resources.TrollIcon;
+            progressChanged = new ProgressChanged(ProgressChangedMethod);
         }
         public static TemporaryFileScan GetInstance()
         {
@@ -40,6 +42,17 @@ namespace troll_ui_app
             return SingleInstance;
         }
 
+        CancellationTokenSource cancelTokenSource;
+        delegate void ProgressChanged(int percentage, string filename, PornClassifier.ImageType type);
+        ProgressChanged progressChanged;
+        private void ProgressChangedMethod(int percentage, string filename, PornClassifier.ImageType type)
+        {
+            progressBar.Value = percentage;
+            currentFileName.Text = filename;
+            if (type == PornClassifier.ImageType.Porn)
+                bindingSource.Add(new PornFile(filename, type));
+        }
+        Task scanTask;
         private void TemporaryFileScan_Load(object sender, EventArgs e)
         {
             bindingSource.DataSource = typeof(PornFile);
@@ -51,7 +64,17 @@ namespace troll_ui_app
             //pornGridView.Columns["type"].HeaderText = "类型";
             //pornGridView.AutoGenerateColumns = true;
             pictureBox.DataBindings.Add("ImageLocation", bindingSource, "path");
-            backgroundWorker.RunWorkerAsync();
+
+            //backgroundWorker.RunWorkerAsync();
+            cancelTokenSource = new CancellationTokenSource();
+            //Progress<int> progress = new Progress<int>();
+            //progress.ProgressChanged += progress_ProgressChanged;
+            scanTask = Task.Factory.StartNew(() =>
+            {
+                backgroundWorker_DoWork(cancelTokenSource.Token);
+            },
+            cancelTokenSource.Token
+            );
         }
 
         private void pornGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -60,10 +83,25 @@ namespace troll_ui_app
 
         private void TemporaryFileScan_FormClosed(object sender, FormClosedEventArgs e)
         {
-            backgroundWorker.CancelAsync();
+            if (cancelTokenSource != null)
+                cancelTokenSource.Cancel();
+            try 
+            {
+                scanTask.Wait();
+            }
+            catch (AggregateException exception)
+            {
+                log.Info("AggregateException thrown with the following inner exceptions: " + exception.ToString());
+            }
+            finally
+            {
+                cancelTokenSource.Dispose();
+            }
+
+            //backgroundWorker.CancelAsync();
         }
 
-        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void backgroundWorker_DoWork(CancellationToken ct)
         {
             try
             {
@@ -91,15 +129,22 @@ namespace troll_ui_app
                     {
                         t = PornClassifier.Instance.Classify(file);
                     }
-                    catch(Exception exception)
+                    catch (Exception exception)
                     {
                         log.Error(exception.ToString());
                         t = PornClassifier.ImageType.Normal;
                     }
                     num++;
-                    backgroundWorker.ReportProgress(100 * num / tcount, new PornFile(file, t));
-                    if (backgroundWorker.CancellationPending)
-                        break;
+                    //backgroundWorker.ReportProgress(100 * num / tcount, new PornFile(file, t));
+                    //progressBar.Invoke(backgroundWorker_ProgressChanged, (int)100*num/tcount, file, t);
+                    int percentage = 100 * num / tcount;
+                    if (percentage > 100)
+                        percentage = 100;
+                    progressBar.BeginInvoke(progressChanged, percentage, file, t);
+                    if (ct.IsCancellationRequested)
+                        ct.ThrowIfCancellationRequested();
+                    //if (backgroundWorker.CancellationPending)
+                    //    break;
                 }
             }
             catch (Exception exception)
@@ -108,13 +153,13 @@ namespace troll_ui_app
             }
         }
 
-        private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            progressBar.Value = e.ProgressPercentage;
-            PornFile pf = (PornFile)e.UserState;
-            currentFileName.Text = pf.path;
-            if (pf.type == PornClassifier.ImageType.Porn)
-                bindingSource.Add(pf);
-        }
+        //private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        //private void backgroundWorker_ProgressChanged(int percentage, string file, PornClassifier.ImageType t)
+        //{
+        //    progressBar.Value = percentage;
+        //    currentFileName.Text = file;
+        //    if (t == PornClassifier.ImageType.Porn)
+        //        bindingSource.Add(file);
+        //}
     }
 }
