@@ -99,7 +99,36 @@ namespace troll_ui_app
         //private SQLiteDataAdapter TmpBlackDataAdapter;
         //private SQLiteDataAdapter PornPicsDataAdapter;
         //private SQLiteDataAdapter BlockedPagesDataAdapter;
-        public PornDatabase()
+
+        private static PornDatabase instance = null;
+        private static object theLock = new Object();
+        //public static void Init()
+        //{
+        //    instance = new PornDatabase();
+        //}
+        public static PornDatabase Instance
+        {
+            get 
+            {
+                if (null == instance)
+                {
+                    PornDatabase.Init();
+                }
+                return instance; 
+            }
+        }
+        private PornDatabase()
+        {
+            PornDBConnection = new SQLiteConnection(string.Format(kConnectionString, Program.AppLocalDir));
+            PornDBConnection.Open();           
+        }
+        //~PornDatabase()
+        //{
+        //    if (ConnectionState.Open == PornDBConnection.State)
+        //        PornDBConnection.Close();
+        //}
+       
+/*        public PornDatabase()
         {
             PornDBConnection = new SQLiteConnection(string.Format(kConnectionString, Program.AppLocalDir));
             PornDBConnection.Open();
@@ -155,7 +184,7 @@ namespace troll_ui_app
             //    SQLiteCommandBuilder cmdBuilder = new SQLiteCommandBuilder(BlockedPagesDataAdapter);
             //    BlockedPagesDataAdapter.Fill(BlockedPagesTable);
             //}
-        }
+        }*/
         public DataTable CreatePornPicsDataTable()
         {
             DataTable pornPicsTable = new DataTable();
@@ -328,7 +357,8 @@ namespace troll_ui_app
 
         static public void Test()
         {
-            PornDatabase porndb = new PornDatabase();
+            //PornDatabase porndb = new PornDatabase();
+            PornDatabase porndb = PornDatabase.Instance;
             SQLiteCommand ncmd = new SQLiteCommand(kGetLastIDSelect, porndb.PornDBConnection);
             int last_id = int.Parse(ncmd.ExecuteScalar().ToString());
             ncmd = new SQLiteCommand(String.Format(kUpdateLastIDInsert, 2), porndb.PornDBConnection);
@@ -344,33 +374,36 @@ namespace troll_ui_app
         {
             try
             {
-                //if (!Directory.Exists(Program.kWorkDir))
-                //    Directory.CreateDirectory(Program.kWorkDir);
-                if (!File.Exists(Program.AppLocalDir + Properties.Settings.Default.pornDbFileName))
+                lock (theLock)
                 {
-                    File.Copy(Properties.Settings.Default.pornDbFileName, Program.AppLocalDir + Properties.Settings.Default.pornDbFileName);
-                    //create database
-                    //                SQLiteConnection.CreateFile(Program.AppLocalDir+Properties.Settings.Default.pornDbFileName);
-                    //                SQLiteConnection conn = new SQLiteConnection(string.Format(kConnectionString, Program.AppLocalDir));
-                    //                conn.Open();
+                    //if (!Directory.Exists(Program.kWorkDir))
+                    //    Directory.CreateDirectory(Program.kWorkDir);
+                    if (!File.Exists(Program.AppLocalDir + Properties.Settings.Default.pornDbFileName))
+                    {
+                        File.Copy(Properties.Settings.Default.pornDbFileName, Program.AppLocalDir + Properties.Settings.Default.pornDbFileName);
+                        //create database
+                        //                SQLiteConnection.CreateFile(Program.AppLocalDir+Properties.Settings.Default.pornDbFileName);
+                        //                SQLiteConnection conn = new SQLiteConnection(string.Format(kConnectionString, Program.AppLocalDir));
+                        //                conn.Open();
 
-                    //                String sql =
-                    //"create table porn_pics(id integer primary key autoincrement, url text not null, type integer not null default 0, created_at datetime default current_timestamp);" +
-                    //"create index porn_pics_created_at_index on porn_pics(created_at);" +
-                    //"create table blocked_pages(id integer primary key autoincrement, url text not null, created_at datetime default current_timestamp);" +
-                    //"create index blocked_pages_created_at_index on blocked_pages(created_at);" +
-                    //"create table porn_pages(id integer primary key autoincrement, domain_name text not null, page_url text not null, porn_pic_url text not null, created_at datetime default current_timestamp, unique(page_url, porn_pic_url));" +
-                    //"create table domain_list(id integer primary key autoincrement, domain_name text not null unique, type integer not null default 0, created_at datetime default current_timestamp);" +
-                    //                "create table configs (id integer primary key autoincrement, name text not null unique, value text);";
-                    //                SQLiteCommand command = new SQLiteCommand(sql, conn);
-                    //                command.ExecuteNonQuery();
+                        //                String sql =
+                        //"create table porn_pics(id integer primary key autoincrement, url text not null, type integer not null default 0, created_at datetime default current_timestamp);" +
+                        //"create index porn_pics_created_at_index on porn_pics(created_at);" +
+                        //"create table blocked_pages(id integer primary key autoincrement, url text not null, created_at datetime default current_timestamp);" +
+                        //"create index blocked_pages_created_at_index on blocked_pages(created_at);" +
+                        //"create table porn_pages(id integer primary key autoincrement, domain_name text not null, page_url text not null, porn_pic_url text not null, created_at datetime default current_timestamp, unique(page_url, porn_pic_url));" +
+                        //"create table domain_list(id integer primary key autoincrement, domain_name text not null unique, type integer not null default 0, created_at datetime default current_timestamp);" +
+                        //                "create table configs (id integer primary key autoincrement, name text not null unique, value text);";
+                        //                SQLiteCommand command = new SQLiteCommand(sql, conn);
+                        //                command.ExecuteNonQuery();
 
-                    //                string insertSql = "insert into configs (name, value) values ('last_id', '0')";
-                    //                command = new SQLiteCommand(insertSql, conn);
-                    //                command.ExecuteNonQuery();
-                    //                conn.Close();
+                        //                string insertSql = "insert into configs (name, value) values ('last_id', '0')";
+                        //                command = new SQLiteCommand(insertSql, conn);
+                        //                command.ExecuteNonQuery();
+                        //                conn.Close();
+                    }
+                    instance = new PornDatabase();
                 }
-                //instance = new PornDatabase();
             }
             catch (Exception e)
             {
@@ -434,7 +467,8 @@ namespace troll_ui_app
             log.Info("Delete history!");
             try
             {
-                PornDatabase db = new PornDatabase();
+                //PornDatabase db = new PornDatabase();
+                PornDatabase db = PornDatabase.Instance;
                 db.DeleteHistoryPornPics();
                 db.DeleteHistoryBlockedPages();
             }
@@ -446,7 +480,8 @@ namespace troll_ui_app
         static public void UpdateDatabase(Object state)
         {
             log.Info("Update Database");
-            PornDatabase db = new PornDatabase();
+            //PornDatabase db = new PornDatabase();
+            PornDatabase db = PornDatabase.Instance;
             db.MaintainDatabase();
         }
         public void MaintainDatabase()
@@ -576,6 +611,11 @@ namespace troll_ui_app
             {
                 log.Error(e.ToString());
             }
+        }
+
+        internal static PornDatabase GetInstance()
+        {
+            throw new NotImplementedException();
         }
     }
 }

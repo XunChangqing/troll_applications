@@ -29,7 +29,8 @@ namespace troll_ui_app
         private String FullRequestUri;
         private String DomainName;
         private PornDatabase.DomainType DomainType;
-        private PornDatabase PornDB = new PornDatabase();
+        //private PornDatabase PornDB = new PornDatabase();
+        private PornDatabase PornDB = PornDatabase.Instance;
 
         private HashSet<String> GetPornSet(String domainName)
         {
