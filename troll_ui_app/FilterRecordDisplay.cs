@@ -44,7 +44,8 @@ namespace troll_ui_app
         {
             try
             {
-                PornDB = new PornDatabase();
+                //PornDB = new PornDatabase();
+                PornDB = PornDatabase.Instance;
                 porn_pics_binding_source.DataSource = PornDB.CreatePornPicsDataTable();
 
                 // Resize the DataGridView columns to fit the newly loaded content.
