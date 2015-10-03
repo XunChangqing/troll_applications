@@ -40,45 +40,59 @@ namespace troll_ui_app
         [STAThread]
         static void Main(String[] args)
         {
-            //AllocConsole();
-            //SystemProxyHelper.EnableProxyHTTP("127.0.0.1", 8090);
-            //FireFoxHelper.AddFirefox();
-            //string x = Console.ReadLine();
-            //SystemProxyHelper.DisableAllProxy();
-            //FireFoxHelper.RemoveFirefox();
+            AllocConsole();
+            AppLocalDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "/masatek/trollwiz/";
+            PornDatabase.Init();
+            PornDatabase pdb = new PornDatabase();
+            pdb.InsertPornFile("C:/xyz", PornDatabase.PornItemType.LocalImage);
+            Application.Run(new MainForm());
+            return;
+            //for (int i = 0; i < 1000;i++ )
+            //{
+            //    //pdb.InsertPornPic("http://www.ifeng.com/yxz.jpg", PornClassifier.ImageType.Porn);
+            //    PornDatabase pdb = new PornDatabase();
+            //}
             //return;
-            try
-            {
-                //when uninstall send email and return
-                if (args.Contains("-uninstall"))
+                //FileSystemWatcher watcher = new FileSystemWatcher();
+                //LocalScan.LocalScanWork();
+                //SystemProxyHelper.EnableProxyHTTP("127.0.0.1", 8090);
+                //FireFoxHelper.AddFirefox();
+                //string x = Console.ReadLine();
+                //SystemProxyHelper.DisableAllProxy();
+                //FireFoxHelper.RemoveFirefox();
+                //return;
+                try
                 {
-                    NotificationRoutines.SendUninstallNotification().Wait();
-                    return;
+                    //when uninstall send email and return
+                    if (args.Contains("-uninstall"))
+                    {
+                        NotificationRoutines.SendUninstallNotification().Wait();
+                        return;
+                    }
+                    Init();
+
+                    bool result;
+                    //using named system mutex to ensure single instance of application
+                    var mutex = new System.Threading.Mutex(true, "masa_troll_guard_mutex", out result);
+
+                    if (!result)
+                    {
+                        log.Error("Exit due to another running instance!");
+                        return;
+                    }
+
+                    Application.ApplicationExit += OnApplicationExit;
+
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+                    Application.Run(new FormMain(args));
+                    //Application.Run(new WechatForm());
+                    log.Info("Exit from Main!");
                 }
-                Init();
-
-                bool result;
-                //using named system mutex to ensure single instance of application
-                var mutex = new System.Threading.Mutex(true, "masa_troll_guard_mutex", out result);
-
-                if (!result)
+                catch (Exception e)
                 {
-                    log.Error("Exit due to another running instance!");
-                    return;
+                    log.Error(e.ToString());
                 }
-
-                Application.ApplicationExit += OnApplicationExit;
-
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new FormMain(args));
-                //Application.Run(new WechatForm());
-                log.Info("Exit from Main!");
-            }
-            catch (Exception e)
-            {
-                log.Error(e.ToString());
-            }
         }
         static private void Init()
         {

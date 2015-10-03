@@ -33,8 +33,8 @@ namespace troll_ui_app
         {
             InitializeComponent();
             Icon = Properties.Resources.TrollIcon;
-            settingsToolStripDropDownButton.Image = Properties.Resources.advancedsettings;
-            helpToolStripDropDownButton.Image = Properties.Resources.help;
+            //settingsToolStripDropDownButton.Image = Properties.Resources.advancedsettings;
+            //helpToolStripDropDownButton.Image = Properties.Resources.help;
             localScanButton.Image = Properties.Resources.search_button;
             if (args.Contains("-notvisible"))
             {
@@ -135,7 +135,7 @@ namespace troll_ui_app
             RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
             autorun_registry_key.SetValue(kAutoRunKey, Application.ExecutablePath + " -notvisible");
             ToolStripMenuItemAutoStartToggleOnff.Checked = true;
-            mainAutoStartToolStripMenuItem.Checked = true;
+            //mainAutoStartToolStripMenuItem.Checked = true;
         }
         private void TurnOffAutoStart()
         {
@@ -145,7 +145,7 @@ namespace troll_ui_app
                 //autorun_registry_key.DeleteValue(kAutoRunKey);
                 autorun_registry_key.SetValue(kAutoRunKey, "");
                 ToolStripMenuItemAutoStartToggleOnff.Checked = false;
-                mainAutoStartToolStripMenuItem.Checked = false;
+                //mainAutoStartToolStripMenuItem.Checked = false;
             }
         }
         private void InitAutoStart()
@@ -155,21 +155,21 @@ namespace troll_ui_app
             if (autostart == null)
             {
                 ToolStripMenuItemAutoStartToggleOnff.Checked = false;
-                mainAutoStartToolStripMenuItem.Checked = false;
+                //mainAutoStartToolStripMenuItem.Checked = false;
             }
             else
             {
                 ToolStripMenuItemAutoStartToggleOnff.Checked = true;
-                mainAutoStartToolStripMenuItem.Checked = true;
+                //mainAutoStartToolStripMenuItem.Checked = true;
             }
 
         }
         private void autoStartToggle()
         {
-            if (mainAutoStartToolStripMenuItem.Checked == true)
-                TurnOnAutoStart();
-            else
-                TurnOffAutoStart();
+            //if (mainAutoStartToolStripMenuItem.Checked == true)
+            //    TurnOnAutoStart();
+            //else
+            //    TurnOffAutoStart();
         }
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
@@ -192,8 +192,8 @@ namespace troll_ui_app
         }
         private void localScan()
         {
-            TemporaryFileScan.GetInstance().Show();
-            TemporaryFileScan.GetInstance().WindowState = FormWindowState.Normal;
+            //TemporaryFileScan.GetInstance().Show();
+            //TemporaryFileScan.GetInstance().WindowState = FormWindowState.Normal;
         }
         private void updateToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -237,9 +237,9 @@ namespace troll_ui_app
         private void FormMain_Load(object sender, EventArgs e)
         {
             //init ui
-            helpToolStripDropDownButton.Image = Properties.Resources.help;
-            settingsToolStripDropDownButton.Image = Properties.Resources.advancedsettings;
-            hideToolStripButton.Image = Properties.Resources.symbol_delete_icon;
+            //helpToolStripDropDownButton.Image = Properties.Resources.help;
+            //settingsToolStripDropDownButton.Image = Properties.Resources.advancedsettings;
+            //hideToolStripButton.Image = Properties.Resources.symbol_delete_icon;
 
             notifyIconMain.Icon = Properties.Resources.TrollIcon;
 
@@ -264,8 +264,8 @@ namespace troll_ui_app
             if (Program.FirstTime)
             {
                 //we need non modal here
-                if (DialogResult.Yes == MessageBox.Show(Properties.Resources.RunLocalScanFirstTime, Properties.Resources.LocalScan, MessageBoxButtons.YesNo))
-                    TemporaryFileScan.GetInstance().Show();
+                //if (DialogResult.Yes == MessageBox.Show(Properties.Resources.RunLocalScanFirstTime, Properties.Resources.LocalScan, MessageBoxButtons.YesNo))
+                //    TemporaryFileScan.GetInstance().Show();
             }
         }
 

@@ -37,19 +37,10 @@
             this.打开面板ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.QuitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hideToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.settingsToolStripDropDownButton = new System.Windows.Forms.ToolStripDropDownButton();
-            this.mainAutoStartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripDropDownButton = new System.Windows.Forms.ToolStripDropDownButton();
-            this.checkUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.onlineHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutUsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.notifyIconMain = new System.Windows.Forms.NotifyIcon(this.components);
             this.toggleOnOffButton = new System.Windows.Forms.Button();
             this.localScanButton = new System.Windows.Forms.Button();
-            this.mainToolStrip = new System.Windows.Forms.ToolStrip();
             this.contextMenuMain.SuspendLayout();
-            this.mainToolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // contextMenuMain
@@ -114,63 +105,6 @@
             this.QuitToolStripMenuItem.Text = "退出";
             this.QuitToolStripMenuItem.Click += new System.EventHandler(this.QuitToolStripMenuItem_Click);
             // 
-            // hideToolStripButton
-            // 
-            this.hideToolStripButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.hideToolStripButton.Name = "hideToolStripButton";
-            this.hideToolStripButton.Size = new System.Drawing.Size(36, 22);
-            this.hideToolStripButton.Text = "隐藏";
-            this.hideToolStripButton.Visible = false;
-            this.hideToolStripButton.Click += new System.EventHandler(this.hideToolStripButton_Click);
-            // 
-            // settingsToolStripDropDownButton
-            // 
-            this.settingsToolStripDropDownButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mainAutoStartToolStripMenuItem});
-            this.settingsToolStripDropDownButton.Name = "settingsToolStripDropDownButton";
-            this.settingsToolStripDropDownButton.Size = new System.Drawing.Size(45, 22);
-            this.settingsToolStripDropDownButton.Text = "设置";
-            // 
-            // mainAutoStartToolStripMenuItem
-            // 
-            this.mainAutoStartToolStripMenuItem.CheckOnClick = true;
-            this.mainAutoStartToolStripMenuItem.Name = "mainAutoStartToolStripMenuItem";
-            this.mainAutoStartToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.mainAutoStartToolStripMenuItem.Text = "开机启动";
-            this.mainAutoStartToolStripMenuItem.Click += new System.EventHandler(this.mainAutoStartToolStripMenuItem_Click);
-            // 
-            // helpToolStripDropDownButton
-            // 
-            this.helpToolStripDropDownButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.checkUpdateToolStripMenuItem,
-            this.onlineHelpToolStripMenuItem,
-            this.aboutUsToolStripMenuItem});
-            this.helpToolStripDropDownButton.Name = "helpToolStripDropDownButton";
-            this.helpToolStripDropDownButton.Size = new System.Drawing.Size(45, 22);
-            this.helpToolStripDropDownButton.Text = "帮助";
-            this.helpToolStripDropDownButton.ToolTipText = "帮助";
-            // 
-            // checkUpdateToolStripMenuItem
-            // 
-            this.checkUpdateToolStripMenuItem.Name = "checkUpdateToolStripMenuItem";
-            this.checkUpdateToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.checkUpdateToolStripMenuItem.Text = "检查更新";
-            this.checkUpdateToolStripMenuItem.Click += new System.EventHandler(this.checkUpdateToolStripMenuItem_Click);
-            // 
-            // onlineHelpToolStripMenuItem
-            // 
-            this.onlineHelpToolStripMenuItem.Name = "onlineHelpToolStripMenuItem";
-            this.onlineHelpToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.onlineHelpToolStripMenuItem.Text = "在线帮助";
-            this.onlineHelpToolStripMenuItem.Click += new System.EventHandler(this.onlineHelpToolStripMenuItem_Click);
-            // 
-            // aboutUsToolStripMenuItem
-            // 
-            this.aboutUsToolStripMenuItem.Name = "aboutUsToolStripMenuItem";
-            this.aboutUsToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.aboutUsToolStripMenuItem.Text = "关于";
-            this.aboutUsToolStripMenuItem.Click += new System.EventHandler(this.aboutUsToolStripMenuItem_Click);
-            // 
             // notifyIconMain
             // 
             this.notifyIconMain.ContextMenuStrip = this.contextMenuMain;
@@ -205,31 +139,16 @@
             this.localScanButton.UseVisualStyleBackColor = true;
             this.localScanButton.Click += new System.EventHandler(this.localScanButton_Click);
             // 
-            // mainToolStrip
-            // 
-            this.mainToolStrip.Font = new System.Drawing.Font("微软雅黑", 9F);
-            this.mainToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.mainToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.hideToolStripButton,
-            this.settingsToolStripDropDownButton,
-            this.helpToolStripDropDownButton});
-            this.mainToolStrip.Location = new System.Drawing.Point(0, 0);
-            this.mainToolStrip.Name = "mainToolStrip";
-            this.mainToolStrip.Size = new System.Drawing.Size(345, 25);
-            this.mainToolStrip.TabIndex = 3;
-            this.mainToolStrip.Text = "toolStrip1";
-            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.ClientSize = new System.Drawing.Size(345, 163);
+            this.ClientSize = new System.Drawing.Size(708, 442);
             this.ContextMenuStrip = this.contextMenuMain;
             this.Controls.Add(this.toggleOnOffButton);
             this.Controls.Add(this.localScanButton);
-            this.Controls.Add(this.mainToolStrip);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormMain";
@@ -238,10 +157,7 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.contextMenuMain.ResumeLayout(false);
-            this.mainToolStrip.ResumeLayout(false);
-            this.mainToolStrip.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -252,20 +168,12 @@
         private System.Windows.Forms.ToolStripMenuItem tool_strip_menu_item_toggle_onff;
         private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItemAutoStartToggleOnff;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemLocalScan;
-        private System.Windows.Forms.ToolStripButton hideToolStripButton;
-        private System.Windows.Forms.ToolStripDropDownButton settingsToolStripDropDownButton;
-        private System.Windows.Forms.ToolStripMenuItem mainAutoStartToolStripMenuItem;
-        private System.Windows.Forms.ToolStripDropDownButton helpToolStripDropDownButton;
-        private System.Windows.Forms.ToolStripMenuItem checkUpdateToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem onlineHelpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem aboutUsToolStripMenuItem;
         private System.Windows.Forms.NotifyIcon notifyIconMain;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem 打开面板ToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.Button toggleOnOffButton;
         private System.Windows.Forms.Button localScanButton;
-        private System.Windows.Forms.ToolStrip mainToolStrip;
     }
 }
 

@@ -29,6 +29,7 @@ namespace troll_ui_app
         private String FullRequestUri;
         private String DomainName;
         private PornDatabase.DomainType DomainType;
+        private PornDatabase.PornItemStatus _autoDomainStatus;
         private PornDatabase PornDB = new PornDatabase();
 
         private HashSet<String> GetPornSet(String domainName)
@@ -294,7 +295,7 @@ namespace troll_ui_app
             {
                 if (DomainType != PornDatabase.DomainType.White)
                     bProcessHtml = ResponseHeaders.Headers["content-type"].Contains("text/html");
-                if (DomainType != PornDatabase.DomainType.White || Properties.Settings.Default.IsImageWhiteProcessed)
+                if (DomainType != PornDatabase.DomainType.White || Properties.Settings.Default.IsNetworkImageTurnOn)
                     bProcessImage = ResponseHeaders.Headers["content-type"].Contains("image/jpeg") ||
                         ResponseHeaders.Headers["content-type"].Contains("image/png");
             }
@@ -347,9 +348,12 @@ namespace troll_ui_app
             FullRequestUri = RequestLine.URI;
             DomainName = GetDomain.GetDomainFromUrl(RequestLine.URI);
             DomainType = PornDB.GetDomainType(DomainName);
+            _autoDomainStatus = PornDB.GetAutoDomainStatus(DomainName);
             log.Debug(GetDomain.GetDomainFromUrl(RequestLine.URI));
                 //DomainType == PornDatabase.DomainType.Black ||
-            if (DomainType == PornDatabase.DomainType.TmpBlack)
+            if (DomainType != PornDatabase.DomainType.White &&
+                _autoDomainStatus == PornDatabase.PornItemStatus.Normal &&
+                Properties.Settings.Default.IsPornWebsiteProtectionTurnOn)
             {
                 PornDB.InsertBlockedPage(FullRequestUri);
                 SocketBP.Send403();

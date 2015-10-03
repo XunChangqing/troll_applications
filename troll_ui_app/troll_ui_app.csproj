@@ -126,6 +126,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActiveFileMonitor.cs" />
     <Compile Include="FormAbout.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -134,23 +135,36 @@
     </Compile>
     <Compile Include="GetDomain.cs" />
     <Compile Include="GreenProxy.cs" />
-    <Compile Include="FilterRecordDisplay.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FilterRecordDisplay.Designer.cs">
-      <DependentUpon>FilterRecordDisplay.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="ImageButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LocalScan.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainPanelControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="NotificationRoutines.cs" />
     <Compile Include="MailRoutines.cs" />
+    <Compile Include="OutlineLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="PornClassifier.cs" />
     <Compile Include="PornDatabase.cs" />
+    <Compile Include="PornDataGridView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="PornItemTableViewWithPreview.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources1.Designer.cs">
@@ -158,14 +172,20 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ProtectionPanelControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="ProxyRoutines.cs" />
     <Compile Include="SafeFileEnumerator.cs" />
-    <Compile Include="Settings.cs" />
-    <Compile Include="TemporaryFileScan.cs">
-      <SubType>Form</SubType>
+    <Compile Include="ScanPanelControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TemporaryFileScan.Designer.cs">
-      <DependentUpon>TemporaryFileScan.cs</DependentUpon>
+    <Compile Include="Settings.cs" />
+    <Compile Include="TextButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TitleBarControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="UpdateForm.cs">
       <SubType>Form</SubType>
@@ -186,9 +206,6 @@
     <Compile Include="WechatForm.Designer.cs">
       <DependentUpon>WechatForm.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="FilterRecordDisplay.resx">
-      <DependentUpon>FilterRecordDisplay.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FormAbout.resx">
       <DependentUpon>FormAbout.cs</DependentUpon>
     </EmbeddedResource>
@@ -199,9 +216,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TemporaryFileScan.resx">
-      <DependentUpon>TemporaryFileScan.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UpdateForm.resx">
       <DependentUpon>UpdateForm.cs</DependentUpon>
@@ -263,6 +277,70 @@
   <ItemGroup>
     <None Include="Resources\advancedsettings.png" />
     <None Include="Resources\search-button.png" />
+    <None Include="Resources\btn_max_h.png" />
+    <None Include="Resources\btn_max_n.png" />
+    <None Include="Resources\btn_max_p.png" />
+    <None Include="Resources\btn_menu_h.png" />
+    <None Include="Resources\btn_menu_n.png" />
+    <None Include="Resources\btn_menu_p.png" />
+    <None Include="Resources\btn_small_h.png" />
+    <None Include="Resources\btn_small_n.png" />
+    <None Include="Resources\btn_small_p.png" />
+    <None Include="Resources\home_BottomBar_bg.png" />
+    <None Include="Resources\home_fh_bg.jpg" />
+    <None Include="Resources\home_fh_icon_animation_h.gif" />
+    <None Include="Resources\home_fh_icon_animation_n.gif" />
+    <None Include="Resources\home_scanner_ks_h.png" />
+    <None Include="Resources\home_scanner_ks_n.png" />
+    <None Include="Resources\home_scanner_ks_p.png" />
+    <None Include="Resources\home_scanner_qp_h.png" />
+    <None Include="Resources\home_scanner_qp_n.png" />
+    <None Include="Resources\home_scanner_qp_p.png" />
+    <None Include="Resources\home_scanner_zdy_h.png" />
+    <None Include="Resources\home_scanner_zdy_n.png" />
+    <None Include="Resources\home_scanner_zdy_p.png" />
+    <None Include="Resources\home_scannern_ks_n.png.png" />
+    <None Include="Resources\home_scannern_zdy_n.png.png" />
+    <None Include="Resources\logo.png" />
+    <None Include="Resources\wechatauth.png" />
+    <None Include="Resources\wechatnotauth.png" />
+    <None Include="Resources\btn_Clear_h.png" />
+    <None Include="Resources\btn_Clear_n.png" />
+    <None Include="Resources\btn_Clear_p.png" />
+    <None Include="Resources\btn_down_h.png" />
+    <None Include="Resources\btn_down_n.png" />
+    <None Include="Resources\btn_return_h.png" />
+    <None Include="Resources\btn_return_n.png" />
+    <None Include="Resources\btn_return_p.png" />
+    <None Include="Resources\btn_up_h.png" />
+    <None Include="Resources\btn_up_n.png" />
+    <None Include="Resources\fh_icon_animation_.gif" />
+    <None Include="Resources\switch_off.png" />
+    <None Include="Resources\switch_on.png" />
+    <None Include="Resources\top_green_bg.png" />
+    <None Include="Resources\btn_Confirm_h.png" />
+    <None Include="Resources\btn_Confirm_n.png" />
+    <None Include="Resources\btn_Confirm_p.png" />
+    <None Include="Resources\btn_Onekeyclean_h.png" />
+    <None Include="Resources\btn_Onekeyclean_n.png" />
+    <None Include="Resources\btn_Onekeyclean_p.png" />
+    <None Include="Resources\btn_Pause_h.png" />
+    <None Include="Resources\btn_Pause_n.png" />
+    <None Include="Resources\btn_Pause_p.png" />
+    <None Include="Resources\btn_stop_h.png" />
+    <None Include="Resources\btn_stop_n.png" />
+    <None Include="Resources\btn_stop_p.png" />
+    <None Include="Resources\btn_zbcl_h.png" />
+    <None Include="Resources\btn_zbcl_n.png" />
+    <None Include="Resources\btn_zbcl_p.png" />
+    <None Include="Resources\checkbox.png" />
+    <None Include="Resources\Complete.png" />
+    <None Include="Resources\scanning.png" />
+    <None Include="Resources\top_gray_bg.png" />
+    <None Include="Resources\warning.png" />
+    <None Include="Resources\login_btn_Close_h.png" />
+    <None Include="Resources\login_btn_Close_n.png" />
+    <None Include="Resources\login_btn_Close_p.png" />
     <Content Include="troll.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

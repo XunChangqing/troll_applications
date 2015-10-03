@@ -409,13 +409,49 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool IsImageWhiteProcessed {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsNetworkImageTurnOn {
             get {
-                return ((bool)(this["IsImageWhiteProcessed"]));
+                return ((bool)(this["IsNetworkImageTurnOn"]));
             }
             set {
-                this["IsImageWhiteProcessed"] = value;
+                this["IsNetworkImageTurnOn"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsPornWebsiteProtectionTurnOn {
+            get {
+                return ((bool)(this["IsPornWebsiteProtectionTurnOn"]));
+            }
+            set {
+                this["IsPornWebsiteProtectionTurnOn"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsLocalActiveImageTurnOn {
+            get {
+                return ((bool)(this["IsLocalActiveImageTurnOn"]));
+            }
+            set {
+                this["IsLocalActiveImageTurnOn"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsLocalActiveVideoTurnOn {
+            get {
+                return ((bool)(this["IsLocalActiveVideoTurnOn"]));
+            }
+            set {
+                this["IsLocalActiveVideoTurnOn"] = value;
             }
         }
     }

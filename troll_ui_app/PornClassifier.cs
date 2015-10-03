@@ -8,7 +8,7 @@ using System.Drawing;
 
 namespace troll_ui_app
 {
-    class PornClassifier
+    public class PornClassifier
     {
         [DllImport("trollwiz-masatek.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public extern static void InitLib();
