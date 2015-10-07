@@ -56,9 +56,10 @@ namespace troll_ui_app
         //{
         //    ClearSelection();
         //}
-        DataGridViewCheckBoxColumn _checkBoxCol;
-        public PornDataGridView()
+        bool _withCheckCol = false;
+        public PornDataGridView(bool withCheckCol)
         {
+            _withCheckCol = withCheckCol;
             AllowUserToAddRows = false;
             AllowUserToDeleteRows = false;
             AllowUserToResizeRows = false;
@@ -91,6 +92,16 @@ namespace troll_ui_app
             //RowsDefaultCellStyle.Padding = ;
 
             CellFormatting += PornDataGridViewOnCellFormatting;
+            CellContentClick += PornDataGridViewOnCellContentClick;
+        }
+
+        void PornDataGridViewOnCellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (Columns[e.ColumnIndex] is DataGridViewCheckBoxColumn
+                   && e.RowIndex != -1)
+            {
+                CommitEdit(DataGridViewDataErrorContexts.Commit);
+            }
         }
 
         public void Init()
@@ -101,30 +112,38 @@ namespace troll_ui_app
             //Columns.Add(_checkBoxCol);
 
             //AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            Columns["checked"].Width = 20;
-            Columns["created_at"].Width = 150;
+            int didx = 1;
+            if (_withCheckCol)
+            {
+                Columns["checked"].Width = 20;
+                Columns["checked"].HeaderText = "";
+                Columns["checked"].DisplayIndex = didx++;
+            }
             Columns["info"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             Columns["item_type"].Width = 80;
             Columns["status"].Width = 100;
+            Columns["created_at"].Width = 150;
 
-            Columns["checked"].HeaderText = "";
-            Columns["created_at"].HeaderText = "时间";
             Columns["info"].HeaderText = "项目";
             Columns["item_type"].HeaderText = "类型";
             Columns["status"].HeaderText = "状态";
+            Columns["created_at"].HeaderText = "时间";
 
             Columns["id"].Visible = false;
             Columns["desc"].Visible = false;
+            //Columns["status"].ReadOnly = true;
+            Columns["status"].Visible = false;
+            if (_withCheckCol)
+                Columns["created_at"].Visible = false;
+            else
+                Columns["created_at"].DisplayIndex = didx++;
             Columns["created_at"].ReadOnly = true;
             Columns["info"].ReadOnly = true;
-            Columns["status"].ReadOnly = true;
             Columns["item_type"].ReadOnly = true;
 
-            Columns["checked"].DisplayIndex = 1;
-            Columns["created_at"].DisplayIndex = 2;
-            Columns["info"].DisplayIndex = 3;
-            Columns["item_type"].DisplayIndex = 4;
-            Columns["status"].DisplayIndex = 5;
+            Columns["info"].DisplayIndex = didx++;
+            Columns["item_type"].DisplayIndex = didx++;
+            Columns["status"].DisplayIndex = didx++;
         }
 
         void PornDataGridViewOnCellFormatting(object sender, DataGridViewCellFormattingEventArgs e)

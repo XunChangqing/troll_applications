@@ -70,9 +70,15 @@ namespace troll_ui_app
         static readonly String kPornPagesDelete = "delete from porn_pages where domain_name='{0}'";
 
         static readonly string kPornItemInsertOrReplace = "insert or replace into porn_items (info, item_type, desc, status) values ('{0}','{1}','{2}','{3}')";
-        static readonly string kPornItemGetStatus = "select status from porn_items where info='{0}' and item_type='{1}'";
-        static readonly string kPornItemGetById = "select * from porn_items where id='{0}'";
-        static readonly string kPornItemDeleteItem = "delete from porn_items where info='{0}' and item_type='{1}'";
+        static readonly string kPornItemDeleteAll = "delete from porn_items";
+
+        static readonly string kForbiddenItemInsertOrReplace = "insert or replace into blocked_items (info, item_type, desc, status) values ('{0}','{1}','{2}', '{3}')";
+        static readonly string kForbiddenItemGetStatus = "select status from forbidden_items where info='{0}' and item_type='{1}'";
+
+        //static readonly string kPornItemDeleteItem = "delete from porn_items where info='{0}' and item_type='{1}'";
+        //static readonly string kPornItemDeleteItemByID = "delete from porn_items where id='{0}'";
+        //static readonly string kPornItemGetStatus = "select status from porn_items where info='{0}' and item_type='{1}'";
+        //static readonly string kPornItemGetById = "select * from porn_items where id='{0}'";
 
         //static readonly string kAutoDomainListInsertOrReplace = "insert or replace into porn_items (info, status) values ('{0}', {1})";
         //static readonly string kAutoDomainListStatusSelect = "select status from auto_domain_list where domain_name='{0}'";
@@ -93,8 +99,15 @@ namespace troll_ui_app
         //public enum PornFileType {Undefined, Image, Video};
         //static readonly String kBlackListTableName = "black_list";
         public enum DomainType {Undefined, White, Black};//, TmpBlack };
-        public enum PornItemStatus { Undefined, Normal, Trusted };
         public enum PornItemType { Undefined, PornDomain, LocalImage, LocalVideo, NetworkImage, NetworkVideo };
+        public enum PornItemStatus { Undefined, Normal, Trusted };
+
+        public enum ForbiddenItemType { Undefined, PornDomain, LocalImage, LocalVideo, NetworkImage, NetworkVideo };
+        public enum ForbiddenItemStatus { Undefined, Normal, Trusted };
+
+        static IProgress<string> _TableChangedProgressInt;
+        static Progress<string> _TableChangedProgress;
+        public static Progress<string> TableChangedProgress { get { return _TableChangedProgress; } }
 
         //static private PornDatabase instance;
         //public static PornDatabase Instance
@@ -181,13 +194,27 @@ namespace troll_ui_app
         {
             PornDBConnection.Dispose();
         }
-        public DataTable CreatePornItemsDataTable()
+        public DataTable CreatePornItemsDataTable(out SQLiteDataAdapter sqliteDataAdapter)
         {
             DataTable pornItemsTable = new DataTable();
-            SQLiteDataAdapter pornItemsDataAdapter = new SQLiteDataAdapter(String.Format(kGeneralSelect, "porn_items"), PornDBConnection);
-            pornItemsDataAdapter.Fill(pornItemsTable);
+            sqliteDataAdapter = new SQLiteDataAdapter(String.Format(kGeneralSelect, "porn_items"), PornDBConnection);
+            sqliteDataAdapter.Fill(pornItemsTable);
             return pornItemsTable;
         }
+        public void DeleteAllPornItmes()
+        {
+            try
+            {
+                SQLiteCommand cmd = new SQLiteCommand(kPornItemDeleteAll, PornDBConnection);
+                cmd.ExecuteNonQuery();
+                _TableChangedProgressInt.Report("porn_items");
+            }
+            catch(Exception e)
+            {
+                log.Error(e.ToString());
+            }
+        }
+
         //public DataTable CreatePornPicsDataTable()
         //{
         //    DataTable pornPicsTable = new DataTable();
@@ -237,6 +264,7 @@ namespace troll_ui_app
                 SQLiteCommand cmd = new SQLiteCommand(String.Format(kPornItemInsertOrReplace, url, PornItemType.NetworkImage,
                     "网络不良图片", PornItemStatus.Normal), PornDBConnection);
                 cmd.ExecuteNonQuery();
+                _TableChangedProgressInt.Report("porn_items");
                 //lock (PornPicsTable)
                 //{
                 //    PornPicsTable.Rows.Add(null, url, (int)prop);
@@ -256,22 +284,38 @@ namespace troll_ui_app
                 SQLiteCommand cmd = new SQLiteCommand(String.Format(kPornItemInsertOrReplace, location,
                     (Int64)ftype, "本地不良文件", (Int64)PornItemStatus.Normal), PornDBConnection);
                 cmd.ExecuteNonQuery();
+                _TableChangedProgressInt.Report("porn_items");
             }
             catch(Exception e)
             { log.Error(e.ToString()); }
         }
-        public void DeletePornFile(string location, PornItemType ptype)
-        {
-            try
-            {
-                SQLiteCommand cmd = new SQLiteCommand(String.Format(kPornItemDeleteItem, location, (Int64)ptype), PornDBConnection);
-                cmd.ExecuteNonQuery();
-            }
-            catch (Exception e)
-            {
-                log.Error(e.ToString());
-            }
-        }
+        //public void DeletePornFile(string location, PornItemType ptype)
+        //{
+        //    try
+        //    {
+        //        SQLiteCommand cmd = new SQLiteCommand(String.Format(kPornItemDeleteItem, location, (Int64)ptype), PornDBConnection);
+        //        cmd.ExecuteNonQuery();
+        //        _TableChangedProgressInt.Report("porn_items");
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        log.Error(e.ToString());
+        //    }
+        //}
+
+        //public void DeletePornItemByID(Int64 id)
+        //{
+        //    try
+        //    {
+        //        SQLiteCommand cmd = new SQLiteCommand(String.Format(kPornItemDeleteItemByID, id), PornDBConnection);
+        //        cmd.ExecuteNonQuery();
+        //        _TableChangedProgressInt.Report("porn_items");
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        log.Error(e.ToString());
+        //    }
+        //}
         //public DataTable CreatePornFilesDataTable()
         //{
         //    DataTable pornFilesTable = new DataTable();
@@ -300,17 +344,6 @@ namespace troll_ui_app
                     Task tmpTask = InsertBlackDomainDetecedAsync(domainName);
                     //DeletePagesInList(domainName);
                 }
-                
-                //lock (PornPagesTable.Rows.SyncRoot)
-                //{
-                //    PornPagesTable.Rows.Add(null, domainName, pageUrl, pornUrl);
-                //    PornPagesDataAdatper.Update(PornPagesTable);
-                //}
-                //check if the number of porn pics of this domain exceed the threshold
-                //DataRow[] rows = PornPagesTable.Select(String.Format("domain_name='{0}'", domainName));
-                //log.Info("Domain name: " + domainName + " times: " + rows.Length);
-                //if (rows.Length > Properties.Settings.Default.thdPornPicsOfDomain)
-                //    InsertBlackDomainDeteced(domainName);
             }
             catch(Exception e)
             {
@@ -346,32 +379,38 @@ namespace troll_ui_app
                 bool InsertFirstTime = false;
                 lock (DomainLockObj)
                 {
-                    InsertFirstTime = (PornItemStatus.Undefined == GetAutoDomainStatus(domainName));
+                    InsertFirstTime = (ForbiddenItemStatus.Undefined == GetAutoDomainStatus(domainName));
                     if(InsertFirstTime)
                     {
                         SQLiteCommand cmd = new SQLiteCommand(String.Format(kPornItemInsertOrReplace, domainName, (Int64)PornItemType.PornDomain,
                             "不良网站", (Int64)PornItemStatus.Normal), PornDBConnection);
                         cmd.ExecuteNonQuery();
+                        _TableChangedProgressInt.Report("porn_items");
+
+                        cmd = new SQLiteCommand(String.Format(kForbiddenItemInsertOrReplace, domainName, (Int64)ForbiddenItemType.PornDomain,
+                            "不良网站", (Int64)PornItemStatus.Normal), PornDBConnection);
+                        cmd.ExecuteNonQuery();
+                        _TableChangedProgressInt.Report("forbidden_items");
                     }
                 }
 
                 if (InsertFirstTime)
                 {
-                    //HttpClientHandler handler = new HttpClientHandler() { UseProxy = false };
-                    //HttpClient client = new HttpClient(handler);
+                    HttpClientHandler handler = new HttpClientHandler() { UseProxy = false };
+                    HttpClient client = new HttpClient(handler);
 
-                    //JObject submitTmpDomainObj = new JObject();
-                    //submitTmpDomainObj["token"] = webToken;
-                    //submitTmpDomainObj["domain_name"] = domainName;
+                    JObject submitTmpDomainObj = new JObject();
+                    submitTmpDomainObj["token"] = webToken;
+                    submitTmpDomainObj["domain_name"] = domainName;
 
-                    //HttpResponseMessage msg = await client.PostAsync(Properties.Settings.Default.submitTmpDomainUrl,
-                    //    new StringContent(submitTmpDomainObj.ToString(),
-                    //    Encoding.UTF8, "application/json"));
-                    //await NotificationRoutines.SendPornDetectedNotification(domainName);
+                    HttpResponseMessage msg = await client.PostAsync(Properties.Settings.Default.submitTmpDomainUrl,
+                        new StringContent(submitTmpDomainObj.ToString(),
+                        Encoding.UTF8, "application/json"));
+                    await NotificationRoutines.SendPornDetectedNotification(domainName);
 
-                    //msg.EnsureSuccessStatusCode();
-                    //string retStr = await msg.Content.ReadAsStringAsync();
-                    //JObject retObj = JObject.Parse(retStr);
+                    msg.EnsureSuccessStatusCode();
+                    string retStr = await msg.Content.ReadAsStringAsync();
+                    JObject retObj = JObject.Parse(retStr);
                 }
             }
             catch (Exception e)
@@ -393,13 +432,14 @@ namespace troll_ui_app
             //return (DomainType)(Int64)row["type"];
         }
 
-        public PornItemStatus GetAutoDomainStatus(string domainName)
+        public ForbiddenItemStatus GetAutoDomainStatus(string domainName)
         {
-            SQLiteCommand cmd = new SQLiteCommand(String.Format(kPornItemGetStatus, domainName, PornItemType.PornDomain), PornDBConnection);
+            //SQLiteCommand cmd = new SQLiteCommand(String.Format(kPornItemGetStatus, domainName, PornItemType.PornDomain), PornDBConnection);
+            SQLiteCommand cmd = new SQLiteCommand(String.Format(kForbiddenItemGetStatus, domainName, ForbiddenItemType.PornDomain), PornDBConnection);
             Object t = cmd.ExecuteScalar();
             if (t == null)
-                return PornItemStatus.Undefined;
-            return (PornItemStatus)(Int64)t;
+                return ForbiddenItemStatus.Undefined;
+            return (ForbiddenItemStatus)(Int64)t;
         }
 
         static public void Test()
@@ -414,6 +454,11 @@ namespace troll_ui_app
 
             //porndb.MaintainDatabase();
             Task t = porndb.InsertBlackDomainDetecedAsync("kkk.com");
+        }
+        static public void DeleteOldDatabase()
+        {
+            try { File.Delete(Program.AppLocalDir + Properties.Settings.Default.pornDbFileName); }
+            catch(Exception e) {log.Error(e.ToString());}
         }
         static public void Init()
         {
@@ -438,8 +483,9 @@ namespace troll_ui_app
                     //"create table blocked_pages(id integer primary key autoincrement, url text not null, created_at datetime default current_timestamp);" +
                     //"create index blocked_pages_created_at_index on blocked_pages(created_at);" +
                                     String sql =
-                    "create table porn_items(id integer primary key autoincrement, info text not null, item_type integer not null default 0, desc text, status integer not null default 0, created_at datetime default current_timestamp, CONSTRAINT unq UNIQUE (info, item_type));" + 
+                    "create table porn_items(id integer primary key autoincrement, info text not null, item_type integer not null default 0, desc text, status integer not null default 0, created_at datetime default current_timestamp);" + 
                     "create index porn_items_created_at_index on porn_items(created_at);" +
+                    "create table forbidden_items(id integer primary key autoincrement, info text not null, item_type integer not null default 0, desc text, status integer not null default 0, created_at datetime default current_timestamp, CONSTRAINT unq UNIQUE (info, item_type));" + 
                     "create table porn_pages(id integer primary key autoincrement, domain_name text not null, page_url text not null, porn_pic_url text not null, created_at datetime default current_timestamp, unique(page_url, porn_pic_url));" +
                     "create table domain_list(id integer primary key autoincrement, domain_name text not null unique, type integer not null default 0, created_at datetime default current_timestamp);" +
                     "create table configs (id integer primary key autoincrement, name text not null unique, value text);";
@@ -452,6 +498,8 @@ namespace troll_ui_app
                                     conn.Close();
                 }
                 //instance = new PornDatabase();
+                _TableChangedProgress = new Progress<string>();
+                _TableChangedProgressInt  = _TableChangedProgress;
             }
             catch (Exception e)
             {

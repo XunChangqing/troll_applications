@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Win32;
+using Titanium.Web.Proxy.Helpers;
 
 namespace troll_ui_app
 {
@@ -16,9 +18,14 @@ namespace troll_ui_app
 
         Panel _settingPanel;
         Label _logoLabel;
-        ImageButton _activeImageBtn;
-        ImageButton _networkImageBtn;
-        ImageButton _websiteBtn;
+        ImageSwitchButton _websiteBtn;
+        Label _websiteDescLabel;
+        ImageSwitchButton _activeImageBtn;
+        Label _activeImageDescLabel;
+        ImageSwitchButton _activeVideoBtn;
+        Label _activeVideoDescLabel;
+        ImageSwitchButton _networkImageBtn;
+        Label _networkImageDescLabel;
         Panel _returnBackImage;
         Label _returnBtn;
 
@@ -47,6 +54,7 @@ namespace troll_ui_app
             Controls.Add(_titleBar);
 
             _settingPanel = new Panel();
+            Controls.Add(_settingPanel);
             //_settingPanel.BackColor = Color.Red;
             _settingPanel.BackgroundImage = Properties.Resources.top_green_bg;
             _settingPanel.BackgroundImageLayout = ImageLayout.Tile;
@@ -55,14 +63,82 @@ namespace troll_ui_app
             _settingPanel.Location = new Point(0, _titleBar.Height);
 
             _logoLabel = new Label();
-            _logoLabel.Image = Properties.Resources.fh_icon_animation_;
+            //_logoLabel.Image = Properties.Resources.fh_icon_animation_n;
+            SetLogoImage();
             _logoLabel.BackColor = Color.Transparent;
             _logoLabel.Height = 150;
             _logoLabel.Width = 174;
             _logoLabel.Location = new Point(54, 30);
             _settingPanel.Controls.Add(_logoLabel);
 
-            Controls.Add(_settingPanel);
+            int btnsX = 300;
+            int heightDist = 30;
+            _websiteBtn = new ImageSwitchButton(Properties.Settings.Default.IsPornWebsiteProtectionTurnOn,
+                Properties.Resources.switch_on,
+                Properties.Resources.switch_off);
+            _websiteBtn.Location = new Point(btnsX, 36);
+            _websiteDescLabel = new Label();
+            _websiteDescLabel.AutoSize = true;
+            _websiteDescLabel.Text = "不良网站检测防护";
+            _websiteDescLabel.ForeColor = Color.FromArgb(0x5e, 0x5e, 0x5e);
+            _websiteDescLabel.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
+            _websiteDescLabel.Location = new Point(btnsX + _websiteBtn.Width + 4,
+                _websiteBtn.Location.Y+_websiteBtn.Height/2-_websiteDescLabel.Height/2);
+            _websiteDescLabel.BackColor = Color.Transparent;
+            _settingPanel.Controls.Add(_websiteBtn);
+            _settingPanel.Controls.Add(_websiteDescLabel);
+            _websiteBtn.SwitchChanged += _websiteBtnOnSwitchChanged;
+
+            _activeImageBtn = new ImageSwitchButton(Properties.Settings.Default.IsLocalActiveImageTurnOn,
+                Properties.Resources.switch_on,
+                Properties.Resources.switch_off);
+            _activeImageBtn.Location = new Point(btnsX, _websiteBtn.Location.Y+_websiteBtn.Height+heightDist);
+            _activeImageDescLabel = new Label();
+            _activeImageDescLabel.AutoSize = true;
+            _activeImageDescLabel.Text = "本地活跃图片文件监控";
+            _activeImageDescLabel.ForeColor = Color.FromArgb(0x5e, 0x5e, 0x5e);
+            _activeImageDescLabel.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
+            _activeImageDescLabel.BackColor = Color.Transparent;
+            _activeImageDescLabel.Location = new Point(btnsX + _activeImageBtn.Width + 4,
+                _activeImageBtn.Location.Y+_activeImageBtn.Height/2-_activeImageDescLabel.Height/2);
+            _settingPanel.Controls.Add(_activeImageBtn);
+            _settingPanel.Controls.Add(_activeImageDescLabel);
+            _activeImageBtn.SwitchChanged += _activeImageBtnOnSwitchChanged;
+            if (Properties.Settings.Default.IsLocalActiveImageTurnOn)
+                MainForm.Instance._activeFileMonitor.EnableImageDetection();
+
+            _activeVideoBtn = new ImageSwitchButton(Properties.Settings.Default.IsLocalActiveVideoTurnOn,
+                Properties.Resources.switch_on,
+                Properties.Resources.switch_off);
+            _activeVideoBtn.Location = new Point(btnsX, _activeImageBtn.Location.Y+_activeImageBtn.Height+heightDist);
+            _activeVideoDescLabel = new Label();
+            _activeVideoDescLabel.AutoSize = true;
+            _activeVideoDescLabel.Text = "本地活跃视频文件监控";
+            _activeVideoDescLabel.ForeColor = Color.FromArgb(0x5e, 0x5e, 0x5e);
+            _activeVideoDescLabel.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
+            _activeVideoDescLabel.BackColor = Color.Transparent;
+            _activeVideoDescLabel.Location = new Point(btnsX + _activeVideoBtn.Width + 4,
+                _activeVideoBtn.Location.Y+_activeVideoBtn.Height/2-_activeVideoDescLabel.Height/2);
+            _settingPanel.Controls.Add(_activeVideoBtn);
+            _settingPanel.Controls.Add(_activeVideoDescLabel);
+            _activeVideoBtn.SwitchChanged += _activeVideoBtnOnSwitchChanged;
+            _activeVideoBtn.Enabled = false;
+
+            _networkImageBtn = new ImageSwitchButton(Properties.Settings.Default.IsNetworkImageTurnOn,
+                Properties.Resources.switch_on,
+                Properties.Resources.switch_off);
+            _networkImageBtn.Location = new Point(btnsX, _activeVideoBtn.Location.Y+_activeVideoBtn.Height+heightDist);
+            _networkImageDescLabel = new Label();
+            _networkImageDescLabel.AutoSize = true;
+            _networkImageDescLabel.Text = "网页不良图片过滤";
+            _networkImageDescLabel.ForeColor = Color.FromArgb(0x5e, 0x5e, 0x5e);
+            _networkImageDescLabel.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
+            _networkImageDescLabel.BackColor = Color.Transparent;
+            _networkImageDescLabel.Location = new Point(btnsX + _networkImageBtn.Width + 4,
+                _networkImageBtn.Location.Y+_networkImageBtn.Height/2-_networkImageDescLabel.Height/2);
+            _settingPanel.Controls.Add(_networkImageBtn);
+            _settingPanel.Controls.Add(_networkImageDescLabel);
+            _networkImageBtn.SwitchChanged += _networkImageBtnOnSwitchChanged;
 
             _returnBackImage = new Panel();
             _returnBackImage.BackColor = Color.Transparent;
@@ -81,9 +157,6 @@ namespace troll_ui_app
             _returnBtn.MouseDown += _returnBtnOnMouseDown;
             _returnBtn.MouseUp += _returnBtnOnMouseUp;
 
-            //_activeImageBtn = new ImageButton();
-            //_activeImageBtn.Height = ;
-            //_activeImageBtn.Width = ;
             _tabHeaderPanel = new Panel();
             _tabHeaderPanel.BackColor = Color.FromArgb(0xf3, 0xf3, 0xf3);
             //_tabHeaderPanel.BackColor = Color.Green;
@@ -171,6 +244,70 @@ namespace troll_ui_app
             _returnBtn.Click += _returnBtnOnClick;
         }
 
+        static readonly string kAutoRunRegisstryKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
+        static readonly string kAutoRunKey = "trollwiz";
+        void TurnOnAutoStart()
+        {
+            RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
+            autorun_registry_key.SetValue(kAutoRunKey, Application.ExecutablePath + " -notvisible");
+        }
+        void TurnOffAutoStart()
+        {
+            RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
+            autorun_registry_key.SetValue(kAutoRunKey, "");
+        }
+        void SetLogoImage()
+        {
+            if (Properties.Settings.Default.IsNetworkImageTurnOn ||
+                Properties.Settings.Default.IsLocalActiveImageTurnOn ||
+                Properties.Settings.Default.IsPornWebsiteProtectionTurnOn ||
+                Properties.Settings.Default.IsLocalActiveVideoTurnOn)
+            {
+                _logoLabel.Image = Properties.Resources.fh_icon_animation_n;
+                TurnOnAutoStart();
+            }
+            else
+            {
+                _logoLabel.Image = Properties.Resources.fh_icon_animation_d;
+                TurnOffAutoStart();
+            }
+        }
+        void _websiteBtnOnSwitchChanged(object sender, bool e)
+        {
+            Properties.Settings.Default.IsPornWebsiteProtectionTurnOn = e;
+            Properties.Settings.Default.Save();
+            SetLogoImage();
+//#if !DEBUG
+            //if (e)
+            //{
+            //    SystemProxyHelper.EnableProxyHTTP("127.0.0.1", 8090);
+            //    FireFoxHelper.AddFirefox();
+            //}
+//#endif
+        }
+        void _activeImageBtnOnSwitchChanged(object sender, bool e)
+        {
+            Properties.Settings.Default.IsLocalActiveImageTurnOn = e;
+            Properties.Settings.Default.Save();
+            SetLogoImage();
+            if (e)
+                MainForm.Instance._activeFileMonitor.EnableImageDetection();
+            else
+                MainForm.Instance._activeFileMonitor.DisableImageDetection();
+        }
+        void _activeVideoBtnOnSwitchChanged(object sender, bool e)
+        {
+            Properties.Settings.Default.IsLocalActiveVideoTurnOn = e;
+            Properties.Settings.Default.Save();
+            SetLogoImage();
+        }
+        void _networkImageBtnOnSwitchChanged(object sender, bool e)
+        {
+            Properties.Settings.Default.IsNetworkImageTurnOn = e;
+            Properties.Settings.Default.Save();
+            SetLogoImage();
+        }
+
         void _returnBtnOnClick(object sender, EventArgs e)
         {
             MainForm.Animate(this, MainForm.Effect.Slide, 200, 180);
@@ -179,7 +316,7 @@ namespace troll_ui_app
 
         void _clearAllBtnOnClick(object sender, EventArgs e)
         {
-            _pornItemTableView.ClearChecked();
+            _pornItemTableView.ClearAllPornItems();
         }
 
         //void _pornFileTabBtnOnClick(object sender, EventArgs e)
@@ -225,6 +362,5 @@ namespace troll_ui_app
         {
             _returnBackImage.BackgroundImage = Properties.Resources.btn_return_h;
         }
-
     }
 }

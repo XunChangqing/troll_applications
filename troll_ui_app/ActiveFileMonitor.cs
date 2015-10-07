@@ -11,7 +11,7 @@ using log4net;
 
 namespace troll_ui_app
 {
-    class ActiveFileMonitor
+    public class ActiveFileMonitor
     {
         static readonly ILog log = Log.Get();
         public class PornActiveFile
@@ -59,8 +59,8 @@ namespace troll_ui_app
                     fsWatcher.IncludeSubdirectories = true;
                     fsWatcher.Created += _fileSystemWatcherOnChanged;
                     fsWatcher.Changed += _fileSystemWatcherOnChanged;
-                    fsWatcher.Deleted += _fileSystemWatcherOnDeleted;
-                    fsWatcher.Renamed += _fileSystemWatcherOnRenamed;
+                    //fsWatcher.Deleted += _fileSystemWatcherOnDeleted;
+                    //fsWatcher.Renamed += _fileSystemWatcherOnRenamed;
 
                     ofsWatchers.Add(fsWatcher);
                 }
@@ -76,7 +76,7 @@ namespace troll_ui_app
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
+                    log.Error(ex.ToString());
                 }
             }
         }
@@ -90,7 +90,7 @@ namespace troll_ui_app
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
+                    log.Error(ex.ToString());
                 }
             }
         }
@@ -140,7 +140,7 @@ namespace troll_ui_app
         {
             if (DirFilter(e.FullPath))
                 return;
-            Console.WriteLine(e.ChangeType.ToString()+e.FullPath);
+            log.Info(e.ChangeType.ToString() + e.FullPath);
             _taskQueue.Enqueue(e.FullPath);
             _newFileEvent.Set();
         }
@@ -150,7 +150,7 @@ namespace troll_ui_app
                 return;
             //从数据库中删除旧文件
             //将新文件送入分类器，为保持最新，这里有可能对新文件进行了重复分类
-            Console.WriteLine("File Renamed: " + e.OldFullPath + " to " + e.FullPath);
+            log.Info("File Renamed: " + e.OldFullPath + " to " + e.FullPath);
             _taskQueue.Enqueue(e.FullPath);
             _newFileEvent.Set();
         }
@@ -161,9 +161,9 @@ namespace troll_ui_app
             int dummySize;
             _fileProcessed.TryRemove(e.FullPath, out dummySize);
             //从数据库中删除
-            PornDatabase pdb = new PornDatabase();
-            pdb.DeletePornFile(e.FullPath, PornDatabase.PornItemType.LocalImage);
-            Console.WriteLine("Deleted: " + e.FullPath);
+            //PornDatabase pdb = new PornDatabase();
+            //pdb.DeletePornFile(e.FullPath, PornDatabase.PornItemType.LocalImage);
+            log.Info("Deleted: " + e.FullPath);
         }
         string GetMd5Hash(MD5 md5Hash, byte[] input)
         {
@@ -205,7 +205,7 @@ namespace troll_ui_app
                 {
                     try
                     {
-                        Console.WriteLine("Process: " + key);
+                        log.Info("Process: " + key);
                         FileAttributes attr = File.GetAttributes(key);
                         if (!attr.HasFlag(FileAttributes.Directory))
                         {
@@ -213,7 +213,7 @@ namespace troll_ui_app
                             if (!_fileProcessed.ContainsKey(key) || _fileProcessed[key] != finfo.Length)
                             {
                                 string shash = GetMd5Hash(_md5hash, File.ReadAllBytes(key));
-                                Console.WriteLine("\tHash: " + shash + " Time: " + fileSet[key]);
+                                log.Info("\tHash: " + shash + " Time: " + fileSet[key]);
                                 PornClassifier.ImageType itype;
                                 if(md5Set.ContainsKey(shash))
                                     itype = (PornClassifier.ImageType)md5Set[shash];
@@ -224,6 +224,7 @@ namespace troll_ui_app
                                 }
                                 if(itype == PornClassifier.ImageType.Porn)
                                 {
+                                    log.Info("Detect Active Porn Image: " + key);
                                     PornDatabase pdb = new PornDatabase();
                                     pdb.InsertPornFile(key, PornDatabase.PornItemType.LocalImage);
                                 }
@@ -231,7 +232,7 @@ namespace troll_ui_app
                             }
                             else
                             {
-                                Console.WriteLine("\tIgnore same file: " + key);
+                                log.Info("\tIgnore same file: " + key);
                             }
                         }
                         tobeDeleted.Add(key);
@@ -242,15 +243,15 @@ namespace troll_ui_app
                         if (value + 1 > 5)
                         {
                             tobeDeleted.Add(key);
-                            Console.WriteLine("Delete: " + key);
+                            log.Info("Delete: " + key);
                         }
                         else
                             fileSet[key] = value + 1;
-                        Console.WriteLine(ioex.ToString());
+                        log.Info(ioex.ToString());
                     }
                     catch (Exception ex)
                     {
-                        //Console.WriteLine(ex.ToString());
+                        log.Error(ex.ToString());
                     }
                 }
                 foreach(string del in tobeDeleted)

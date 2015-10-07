@@ -97,8 +97,8 @@ namespace troll_ui_app
             MouseDown += MouseDownMove;
 
             closeBtn = new ImageButton();
-            closeBtn.BackgroundImage = Properties.Resources.btn_max_n;
-            closeBtn.Size = closeBtn.BackgroundImage.Size;
+            closeBtn.Image = Properties.Resources.btn_max_n;
+            closeBtn.Size = closeBtn.Image.Size;
             closeBtn.NormalBack = Properties.Resources.btn_max_n;
             closeBtn.HoverBack = Properties.Resources.btn_max_h;
             closeBtn.PressBack = Properties.Resources.btn_max_p;
@@ -107,8 +107,8 @@ namespace troll_ui_app
             closeBtn.Location = new Point(MainForm.MainFormWidth - rightPadding - closeBtn.Width, 0);
 
             minimizeBtn = new ImageButton();
-            minimizeBtn.BackgroundImage = Properties.Resources.btn_small_n;
-            minimizeBtn.Size = minimizeBtn.BackgroundImage.Size;
+            minimizeBtn.Image = Properties.Resources.btn_small_n;
+            minimizeBtn.Size = minimizeBtn.Image.Size;
             minimizeBtn.NormalBack = Properties.Resources.btn_small_n;
             minimizeBtn.HoverBack = Properties.Resources.btn_small_h;
             minimizeBtn.PressBack = Properties.Resources.btn_small_p;
@@ -117,8 +117,8 @@ namespace troll_ui_app
             minimizeBtn.Location = new Point(closeBtn.Location.X - minimizeBtn.Width, 0);
 
             menuBtn = new ImageButton();
-            menuBtn.BackgroundImage = Properties.Resources.btn_menu_n;
-            menuBtn.Size = menuBtn.BackgroundImage.Size;
+            menuBtn.Image = Properties.Resources.btn_menu_n;
+            menuBtn.Size = menuBtn.Image.Size;
             menuBtn.NormalBack = Properties.Resources.btn_menu_n;
             menuBtn.HoverBack = Properties.Resources.btn_menu_h;
             menuBtn.PressBack = Properties.Resources.btn_menu_p;
@@ -133,8 +133,10 @@ namespace troll_ui_app
             aboutItem.Click += TitleBarMenuAboutClick;
 
             logo = new Control();
-            logo.BackgroundImage = Properties.Resources.logo;
-            logo.MaximumSize = logo.MinimumSize = logo.BackgroundImage.Size;
+            logo.BackgroundImage = Properties.Resources.icon_big_png;
+            logo.BackgroundImageLayout = ImageLayout.Zoom;
+            //logo.MaximumSize = logo.MinimumSize = logo.BackgroundImage.Size;
+            logo.MaximumSize = logo.MinimumSize = new System.Drawing.Size(24, 24);
             logo.MouseDown += MouseDownMove;
             logo.Location = new Point(leftPadding, (titleBarHeight - logo.Height) / 2);
             //logo.Dock = DockStyle.Left;
@@ -175,11 +177,11 @@ namespace troll_ui_app
 
         void TitleBarMenuHelpClick(object sender, EventArgs e)
         {
-            Console.WriteLine("Help Menu!");
+            System.Diagnostics.Process.Start(Properties.Settings.Default.helpUrl);
         }
         void TitleBarMenuAboutClick(object sender, EventArgs e)
         {
-            Console.WriteLine("About!");
+            FormAbout.ShowAbout();
         }
 
         void closeBtnOnClick(object sender, EventArgs e)

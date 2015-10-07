@@ -42,10 +42,10 @@ namespace troll_ui_app
         {
             AllocConsole();
             AppLocalDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "/masatek/trollwiz/";
-            PornDatabase.Init();
-            PornDatabase pdb = new PornDatabase();
-            pdb.InsertPornFile("C:/xyz", PornDatabase.PornItemType.LocalImage);
-            Application.Run(new MainForm());
+            Utils.Log_Init();
+            PornClassifier.Init();
+            Application.Run(new MainForm(args));
+            //Application.Run(new WechatForm());
             return;
             //for (int i = 0; i < 1000;i++ )
             //{
@@ -85,7 +85,8 @@ namespace troll_ui_app
 
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
-                    Application.Run(new FormMain(args));
+                    //Application.Run(new FormMain(args));
+                    Application.Run(new MainForm(args));
                     //Application.Run(new WechatForm());
                     log.Info("Exit from Main!");
                 }
@@ -97,8 +98,10 @@ namespace troll_ui_app
         static private void Init()
         {
             //change workdir to the path of executable
+#if !DEBUG
             var fi = new FileInfo(Application.ExecutablePath);
             Directory.SetCurrentDirectory(fi.DirectoryName);
+#endif
 #if DEBUG
             AllocConsole();
 #endif
@@ -106,11 +109,13 @@ namespace troll_ui_app
             //var companyName = versionInfo.CompanyName;
             AppLocalDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "/masatek/trollwiz/";
             //upgrade user settings
+//#if !DEBUG
             if (!Properties.Settings.Default.upgraded)
             {
                 Properties.Settings.Default.Upgrade();
                 Properties.Settings.Default.upgraded = true;
                 Properties.Settings.Default.Save();
+                PornDatabase.DeleteOldDatabase();
             }
             if (Properties.Settings.Default.firstTime)
             {
@@ -123,6 +128,7 @@ namespace troll_ui_app
                 Properties.Settings.Default.guid = System.Guid.NewGuid().ToString();
                 Properties.Settings.Default.Save();
             }
+//#endif
 
             //create directory for work
             if (!Directory.Exists(Program.AppLocalDir))
@@ -134,7 +140,6 @@ namespace troll_ui_app
             if (!Directory.Exists(Program.AppLocalDir + Properties.Settings.Default.updateDir))
                 Directory.CreateDirectory(Program.AppLocalDir + Properties.Settings.Default.updateDir);
             Utils.Log_Init();
-            PornDatabase.Init();
             PornClassifier.Init();
             //RegisterApplicationRestart("", 0);
 
@@ -150,6 +155,10 @@ namespace troll_ui_app
             if (Server.InitListenException != null)
                 throw Server.InitListenException;
 
+#if !DEBUG
+            SystemProxyHelper.EnableProxyHTTP("127.0.0.1", 8090);
+            FireFoxHelper.AddFirefox();
+#endif
             update_domain_list_timer = new System.Threading.Timer(PornDatabase.UpdateDatabase, null, new TimeSpan(0, 0, 5), new TimeSpan(4, 0, 0));
             delete_history_timer = new System.Threading.Timer(PornDatabase.DeleteHistroy, null, new TimeSpan(0, 1, 0), System.Threading.Timeout.InfiniteTimeSpan);
         }
@@ -158,7 +167,8 @@ namespace troll_ui_app
             try
             {
                 //unset proxy again to make sure
-                ProxyRoutines.SetProxy(false);
+                SystemProxyHelper.DisableAllProxy();
+                FireFoxHelper.RemoveFirefox();
                 //dispose timer and wait for callback complete
                 WaitHandle[] whs = new WaitHandle[]{
                 new AutoResetEvent(false),

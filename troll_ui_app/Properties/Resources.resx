@@ -117,34 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="advancedsettings" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\advancedsettings.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="help" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\help.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="LocalScan" xml:space="preserve">
     <value>本地扫描</value>
-  </data>
-  <data name="powerblack_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\powerblack-small .png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="powerblue_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\powerblue-small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="RunLocalScanFirstTime" xml:space="preserve">
     <value>您是初次使用，是否运行本地扫描？</value>
   </data>
-  <data name="symbol_delete_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\symbol-delete-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="TrollIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\troll.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="search_button" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\search-button.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="btn_Clear_h" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\btn_Clear_h.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -153,15 +132,6 @@
   </data>
   <data name="btn_Clear_p" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\btn_Clear_p.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btn_Confirm_h" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_Confirm_h.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btn_Confirm_n" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_Confirm_n.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btn_Confirm_p" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_Confirm_p.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="btn_down_h" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\btn_down_h.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -187,24 +157,6 @@
   <data name="btn_menu_p" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\btn_menu_p.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="btn_Onekeyclean_h" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_Onekeyclean_h.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btn_Onekeyclean_n" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_Onekeyclean_n.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btn_Onekeyclean_p" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_Onekeyclean_p.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btn_Pause_h" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_Pause_h.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btn_Pause_n" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_Pause_n.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btn_Pause_p" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_Pause_p.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="btn_return_h" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\btn_return_h.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -223,38 +175,17 @@
   <data name="btn_small_p" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\btn_small_p.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="btn_stop_h" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_stop_h.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btn_stop_n" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_stop_n.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btn_stop_p" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_stop_p.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="btn_up_h" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\btn_up_h.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="btn_up_n" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\btn_up_n.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="btn_zbcl_h" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_zbcl_h.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btn_zbcl_n" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_zbcl_n.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btn_zbcl_p" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_zbcl_p.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="checkbox" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\checkbox.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Complete" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Complete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="fh_icon_animation_" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\fh_icon_animation_.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="home_BottomBar_bg" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\home_BottomBar_bg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -268,20 +199,11 @@
   <data name="home_fh_icon_animation_n" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\home_fh_icon_animation_n.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="home_scannern_ks_n_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\home_scannern_ks_n.png.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="home_scannern_zdy_n_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\home_scannern_zdy_n.png.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="home_scanner_ks_h" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\home_scanner_ks_h.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="home_scanner_ks_n" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\home_scanner_ks_n.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="home_scanner_ks_p" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\home_scanner_ks_p.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="home_scanner_qp_h" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\home_scanner_qp_h.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -289,17 +211,11 @@
   <data name="home_scanner_qp_n" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\home_scanner_qp_n.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="home_scanner_qp_p" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\home_scanner_qp_p.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="home_scanner_zdy_h" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\home_scanner_zdy_h.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="home_scanner_zdy_n" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\home_scanner_zdy_n.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="home_scanner_zdy_p" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\home_scanner_zdy_p.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -336,5 +252,35 @@
   </data>
   <data name="login_btn_Close_p" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\login_btn_Close_p.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fh_icon_animation_d" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fh_icon_animation_d.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fh_icon_animation_n" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fh_icon_animation_n.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btn_primary_h" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btn-primary-h.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btn_primary_n" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btn-primary-n.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btn_primary_p" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btn-primary-p.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btn_secondary_h" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btn-secondary-h.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btn_secondary_n" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btn-secondary-n.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btn_secondary_p" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btn-secondary-p.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_big_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon-big-png.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_main_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon-main-icon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

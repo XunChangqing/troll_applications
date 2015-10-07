@@ -35,7 +35,7 @@ namespace troll_ui_app
             Icon = Properties.Resources.TrollIcon;
             //settingsToolStripDropDownButton.Image = Properties.Resources.advancedsettings;
             //helpToolStripDropDownButton.Image = Properties.Resources.help;
-            localScanButton.Image = Properties.Resources.search_button;
+            //localScanButton.Image = Properties.Resources.search_button;
             if (args.Contains("-notvisible"))
             {
                 WindowState = FormWindowState.Minimized;
@@ -88,7 +88,7 @@ namespace troll_ui_app
 #endif
                 //notify_icon_main.Icon = Properties.Resources.on;
             tool_strip_menu_item_toggle_onff.Checked = true;
-            toggleOnOffButton.Image = Properties.Resources.powerblue_small;
+            //toggleOnOffButton.Image = Properties.Resources.powerblue_small;
             Properties.Settings.Default.isProtected = true;
             Properties.Settings.Default.Save();
             //同时设置
@@ -105,7 +105,7 @@ namespace troll_ui_app
 #endif
                     //notify_icon_main.Icon = Properties.Resources.off;
                 tool_strip_menu_item_toggle_onff.Checked = false;
-                toggleOnOffButton.Image = Properties.Resources.powerblack_small;
+                //toggleOnOffButton.Image = Properties.Resources.powerblack_small;
                 Properties.Settings.Default.isProtected = false;
                 Properties.Settings.Default.Save();
                 //同时设置
@@ -245,8 +245,8 @@ namespace troll_ui_app
 
             if (Properties.Settings.Default.isProtected)
                 TurnOnProxy();
-            else
-                toggleOnOffButton.Image = Properties.Resources.powerblack_small;
+            //else
+                //toggleOnOffButton.Image = Properties.Resources.powerblack_small;
                
             InitAutoStart();
             //binding, update and local scan
@@ -254,8 +254,8 @@ namespace troll_ui_app
             {
                 log.Info("binding wechat, openid: "+Properties.Settings.Default.openid);
                 //binding wechat
-                WechatForm wechatForm = new WechatForm(false);
-                wechatForm.ShowDialog();
+                //WechatForm wechatForm = new WechatForm(false);
+                //wechatForm.ShowDialog();
             }
 
             //new instance and get update info asyncly

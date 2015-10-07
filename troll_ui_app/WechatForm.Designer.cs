@@ -30,17 +30,16 @@
         {
             this.qrCodePictureBox = new System.Windows.Forms.PictureBox();
             this.tipLabel = new System.Windows.Forms.Label();
-            this.refreshButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.titleLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.qrCodePictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // qrCodePictureBox
             // 
-            this.qrCodePictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.qrCodePictureBox.Location = new System.Drawing.Point(12, 38);
+            this.qrCodePictureBox.Location = new System.Drawing.Point(30, 60);
             this.qrCodePictureBox.Name = "qrCodePictureBox";
-            this.qrCodePictureBox.Size = new System.Drawing.Size(509, 384);
+            this.qrCodePictureBox.Size = new System.Drawing.Size(168, 168);
             this.qrCodePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.qrCodePictureBox.TabIndex = 0;
             this.qrCodePictureBox.TabStop = false;
@@ -49,22 +48,13 @@
             // 
             this.tipLabel.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.tipLabel.AutoSize = true;
-            this.tipLabel.Location = new System.Drawing.Point(193, 9);
+            this.tipLabel.Font = new System.Drawing.Font("微软雅黑", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            this.tipLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(79)))), ((int)(((byte)(181)))), ((int)(((byte)(44)))));
+            this.tipLabel.Location = new System.Drawing.Point(25, 237);
             this.tipLabel.Name = "tipLabel";
-            this.tipLabel.Size = new System.Drawing.Size(113, 12);
+            this.tipLabel.Size = new System.Drawing.Size(186, 21);
             this.tipLabel.TabIndex = 1;
-            this.tipLabel.Text = "请用微信扫描二维码";
-            // 
-            // refreshButton
-            // 
-            this.refreshButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.refreshButton.Location = new System.Drawing.Point(207, 428);
-            this.refreshButton.Name = "refreshButton";
-            this.refreshButton.Size = new System.Drawing.Size(90, 23);
-            this.refreshButton.TabIndex = 2;
-            this.refreshButton.Text = "刷新二维码";
-            this.refreshButton.UseVisualStyleBackColor = true;
-            this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
+            this.tipLabel.Text = "请用微信扫描二维码绑定";
             // 
             // label1
             // 
@@ -75,16 +65,25 @@
             this.label1.TabIndex = 3;
             this.label1.Text = "如果二维码失效，请点击刷新";
             // 
+            // titleLabel
+            // 
+            this.titleLabel.AutoSize = true;
+            this.titleLabel.Location = new System.Drawing.Point(14, 12);
+            this.titleLabel.Name = "titleLabel";
+            this.titleLabel.Size = new System.Drawing.Size(53, 12);
+            this.titleLabel.TabIndex = 4;
+            this.titleLabel.Text = "山妖卫士";
+            // 
             // WechatForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(528, 453);
+            this.ClientSize = new System.Drawing.Size(230, 320);
+            this.Controls.Add(this.titleLabel);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.refreshButton);
             this.Controls.Add(this.tipLabel);
             this.Controls.Add(this.qrCodePictureBox);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "WechatForm";
@@ -102,7 +101,7 @@
 
         private System.Windows.Forms.PictureBox qrCodePictureBox;
         private System.Windows.Forms.Label tipLabel;
-        private System.Windows.Forms.Button refreshButton;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label titleLabel;
     }
 }

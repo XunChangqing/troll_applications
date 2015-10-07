@@ -19,10 +19,96 @@ namespace troll_ui_app
             public string TargetFilePath { get; set; }
             public PornClassifier.ImageType TargetType { get; set; }
         }
-        public enum ScanType{AllScan, FastScan, CustomScan};
+        public event EventHandler<ScanProgress> ScanProgressChanged;
+        public event EventHandler ScanComplete;
         private int PercentageOffset { set; get; }
         private int PercentageRatio { set; get; }
-        public void AllLocalFileScan(CancellationToken ct, IProgress<ScanProgress> progress)
+        Task _scanTask;
+        public Task ScanTask { get { return _scanTask; } }
+        
+        Progress<ScanProgress> _scanProgress;
+        IProgress<ScanProgress> _scanProgressReport;
+        ManualResetEvent _scanPauseEvent;
+        CancellationTokenSource _scanCancellationTokenSource;
+        //ScanStatus _scanStatus;
+        public LocalScan()
+        {
+            _scanPauseEvent = new ManualResetEvent(true);
+            _scanProgress = new Progress<ScanProgress>();
+            _scanProgressReport = _scanProgress;
+            _scanProgress.ProgressChanged += _scanProgressOnProgressChanged;
+        }
+        void _scanProgressOnProgressChanged(object sender, LocalScan.ScanProgress e)
+        {
+            if (ScanProgressChanged != null)
+                ScanProgressChanged(sender, e);
+        }
+        public void Pause()
+        {
+            _scanPauseEvent.Reset();
+        }
+        public void Resume()
+        {
+            _scanPauseEvent.Set();
+        }
+        public void Stop()
+        {
+            _scanPauseEvent.Set();
+            _scanCancellationTokenSource.Cancel();
+            _scanTask.Wait();
+        }
+        public void StartFastScan()
+        {
+            _scanPauseEvent.Set();
+            _scanCancellationTokenSource = new CancellationTokenSource();
+            _scanTask = Task.Factory.StartNew(()=> {
+                if(_scanProgressReport!=null)
+                {
+                    ScanProgress npro = new ScanProgress();
+                    npro.Percentage = 0;
+                    npro.TargetFilePath = null;
+                    npro.Description = "正在准备快速扫描";
+                    _scanProgressReport.Report(npro);
+                }
+                PercentageOffset = 0;
+                PercentageRatio = 100;
+                FastLocalScan(_scanCancellationTokenSource.Token, _scanPauseEvent, _scanProgressReport);
+            });
+            _scanTask.ContinueWith(atask =>
+            {
+                if (ScanComplete != null)
+                    ScanComplete(this, EventArgs.Empty);
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+        public void StartAllScan()
+        {
+
+        }
+        async Task AllLocalScanAsync(CancellationToken ct, ManualResetEvent pauseEvent, IProgress<ScanProgress> progress)
+        {
+            await Task.Factory.StartNew(()=> {
+                if(progress!=null)
+                {
+                    ScanProgress npro = new ScanProgress();
+                    npro.Percentage = 0;
+                    npro.TargetFilePath = null;
+                    npro.Description = "正在准备全盘扫描";
+                    progress.Report(npro);
+                }
+                PercentageOffset = 0;
+                PercentageRatio = 30;
+                FastLocalScan(ct, pauseEvent, progress);
+                PercentageOffset = 30;
+                PercentageRatio = 70;
+                AllLocalFileScan(ct, pauseEvent, progress);
+            });
+            //Task UITask = task.ContinueWith(() =>
+            //{
+            //    this.TextBlock1.Text = "Complete";
+            //}, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        void AllLocalFileScan(CancellationToken ct, ManualResetEvent pauseEvent, IProgress<ScanProgress> progress)
         {
             try
             {
@@ -49,6 +135,7 @@ namespace troll_ui_app
                                 npro.TargetType = t;
                                 progress.Report(npro);
                             }
+                            pauseEvent.WaitOne();
                             if (ct.IsCancellationRequested)
                                 ct.ThrowIfCancellationRequested();
                         }
@@ -89,7 +176,7 @@ namespace troll_ui_app
                 log.Error(ex.ToString());
             }
         }
-        public void FastLocalScan(CancellationToken ct, IProgress<ScanProgress> progress)
+        void FastLocalScan(CancellationToken ct, ManualResetEvent pauseEvent, IProgress<ScanProgress> progress)
         {
             try
             {
@@ -126,6 +213,7 @@ namespace troll_ui_app
                         npro.TargetType = t;
                         progress.Report(npro);
                     }
+                    pauseEvent.WaitOne();
                     if (ct.IsCancellationRequested)
                         ct.ThrowIfCancellationRequested();
                 }
@@ -135,44 +223,6 @@ namespace troll_ui_app
                 log.Error(exception.ToString());
             }
         }
-        public async Task FastLocalScanAsync(CancellationToken ct, IProgress<ScanProgress> progress)
-        {
-            await Task.Factory.StartNew(()=> {
-                if(progress!=null)
-                {
-                    ScanProgress npro = new ScanProgress();
-                    npro.Percentage = 0;
-                    npro.TargetFilePath = null;
-                    npro.Description = "正在准备快速扫描";
-                    progress.Report(npro);
-                }
-                PercentageOffset = 0;
-                PercentageRatio = 100;
-                FastLocalScan(ct, progress);
-            });
-        }
-        public async Task AllLocalScanAsync(CancellationToken ct, IProgress<ScanProgress> progress)
-        {
-            await Task.Factory.StartNew(()=> {
-                if(progress!=null)
-                {
-                    ScanProgress npro = new ScanProgress();
-                    npro.Percentage = 0;
-                    npro.TargetFilePath = null;
-                    npro.Description = "正在准备全盘扫描";
-                    progress.Report(npro);
-                }
-                PercentageOffset = 0;
-                PercentageRatio = 30;
-                FastLocalScan(ct, progress);
-                PercentageOffset = 30;
-                PercentageRatio = 70;
-                AllLocalFileScan(ct, progress);
-            });
-            //Task UITask = task.ContinueWith(() =>
-            //{
-            //    this.TextBlock1.Text = "Complete";
-            //}, TaskScheduler.FromCurrentSynchronizationContext());
-        }
+
     }
 }

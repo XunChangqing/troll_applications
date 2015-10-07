@@ -18,7 +18,7 @@ namespace troll_ui_app
         private FormAbout()
         {
             InitializeComponent();
-            Icon = Properties.Resources.TrollIcon;
+            Icon = Properties.Resources.icon_main_icon;
         }
 
         private void FormAbout_Load(object sender, EventArgs e)

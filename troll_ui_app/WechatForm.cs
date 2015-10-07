@@ -18,6 +18,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Threading;
 using QRCoder;
+using System.Runtime.InteropServices;
 
 namespace troll_ui_app
 {
@@ -26,35 +27,112 @@ namespace troll_ui_app
         static readonly string webToken = "masa417";
         static readonly ILog log = Log.Get();
         static bool hasBeenAuth = false;
+        public const int WM_NCLBUTTONDOWN = 0xA1;
+        public const int HTCAPTION = 0x2;
+        [DllImport("User32.dll")]
+        public static extern bool ReleaseCapture();
+        [DllImport("User32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        private void MouseDownMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                ReleaseCapture();
+                //SendMessage(this.ParentForm.Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0);
+                SendMessage(Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0);
+            }
+        }
         public static bool Auth()
         {
             if (hasBeenAuth || Properties.Settings.Default.openid == "")
                 return true;
             else
             {
-                log.Info("auth wechat, openid new version: "+Properties.Settings.Default.openid);
-                WechatForm wechatForm = new WechatForm(true);
-                wechatForm.ShowDialog();
-                if (wechatForm.authSuccess)
-                {
-                    hasBeenAuth = true;
-                    return true;
-                }
-                else
-                    return false;
+                //log.Info("auth wechat, openid new version: "+Properties.Settings.Default.openid);
+                //WechatForm wechatForm = new WechatForm(true);
+                //wechatForm.ShowDialog();
+                //if (wechatForm.authSuccess)
+                //{
+                //    hasBeenAuth = true;
+                //    return true;
+                //}
+                //else
+                //    return false;
+                return false;
             }
         }
         public bool authSuccess { get; set; }
         //binding mode if false;
-        bool authMode = false;
         private Task getQrCodeTask;
         CancellationTokenSource cancellationTokenSource;
-        public WechatForm(bool mode)
+        TextButton _refreshButton;
+        Panel _closeBackImage;
+        Label _closeBtn;
+        public WechatForm()
         {
-            authMode = mode;
-            authSuccess = false;
             InitializeComponent();
-            Icon = Properties.Resources.TrollIcon;
+            MouseDown += MouseDownMove;
+            titleLabel.MouseDown += MouseDownMove;
+
+            _refreshButton = new TextButton();
+            _refreshButton.Text = "刷新二维码";
+            _refreshButton.Font = new System.Drawing.Font("微软雅黑", 12, GraphicsUnit.Pixel);
+            _refreshButton.ForeColor = Color.FromArgb(0x4f, 0xb5, 0x2c);
+            Controls.Add(_refreshButton);
+            _refreshButton.Location = new Point(Width / 2 - _refreshButton.Width / 2,
+                tipLabel.Location.Y + tipLabel.Height);
+            _refreshButton.Click += _refreshButtonOnClick;
+
+            _closeBackImage = new Panel();
+            _closeBackImage.BackColor = Color.Transparent;
+            _closeBackImage.BackgroundImage = Properties.Resources.login_btn_Close_n;
+            _closeBackImage.Size = _closeBackImage.BackgroundImage.Size;
+            _closeBackImage.Location = new Point(Width - _closeBackImage.Width, 0);
+            Controls.Add(_closeBackImage);
+
+            _closeBtn = new Label();
+            //_closeBtn.BackColor = Color.Red;
+            _closeBtn.Width = _closeBtn.Height = 24;
+            _closeBtn.Location = new Point(_closeBackImage.Width - 4 - _closeBtn.Width, 4);
+            _closeBackImage.Controls.Add(_closeBtn);
+            _closeBtn.MouseEnter += _closeBtnOnMouseEnter;
+            _closeBtn.MouseLeave += _closeBtnOnMouseLeave;
+            _closeBtn.MouseDown += _closeBtnOnMouseDown;
+            _closeBtn.MouseUp += _closeBtnOnMouseUp;
+            _closeBtn.Click += _closeBtnOnClick;
+        }
+
+        void _closeBtnOnClick(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        void _closeBtnOnMouseUp(object sender, MouseEventArgs e)
+        {
+            _closeBackImage.BackgroundImage = Properties.Resources.login_btn_Close_n;
+        }
+
+        void _closeBtnOnMouseDown(object sender, MouseEventArgs e)
+        {
+            _closeBackImage.BackgroundImage = Properties.Resources.login_btn_Close_p;
+        }
+
+        void _closeBtnOnMouseLeave(object sender, EventArgs e)
+        {
+            _closeBackImage.BackgroundImage = Properties.Resources.login_btn_Close_n;
+        }
+
+        void _closeBtnOnMouseEnter(object sender, EventArgs e)
+        {
+            _closeBackImage.BackgroundImage = Properties.Resources.login_btn_Close_h;
+        }
+
+        void _refreshButtonOnClick(object sender, EventArgs e)
+        {
+            cancellationTokenSource.Cancel();
+            cancellationTokenSource = new CancellationTokenSource();
+            //getQrCodeTask.Wait();
+            getQrCodeTask = SetQrcodeAsync(cancellationTokenSource.Token);
         }
 
         private async Task SetQrcodeAsync(CancellationToken cancellationToken)
@@ -120,27 +198,27 @@ namespace troll_ui_app
                     string openid = retObj["openid"].ToString();
                     if (openid != "")
                     {
-                        if (authMode)
-                        {
-                            if(openid == Properties.Settings.Default.openid)
-                            {
-                                authSuccess = true;
-                                tipLabel.Text = "授权成功！";
-                                await Task.Delay(2000);
-                                Close();
-                                break;
-                            }
-                            else
-                            {
-                                tipLabel.Text = "您的微信与绑定微信不一致，授权失败！";
-                                authSuccess = false;
-                                await Task.Delay(2000);
-                                Close();
-                                break;
-                            }
-                        }
-                        else
-                        {
+                        //if (authMode)
+                        //{
+                        //    if(openid == Properties.Settings.Default.openid)
+                        //    {
+                        //        authSuccess = true;
+                        //        tipLabel.Text = "授权成功！";
+                        //        await Task.Delay(2000);
+                        //        Close();
+                        //        break;
+                        //    }
+                        //    else
+                        //    {
+                        //        tipLabel.Text = "您的微信与绑定微信不一致，授权失败！";
+                        //        authSuccess = false;
+                        //        await Task.Delay(2000);
+                        //        Close();
+                        //        break;
+                        //    }
+                        //}
+                        //else
+                        //{
                             log.Info("scaned by: " + openid);
                             tipLabel.Text = "微信绑定成功！";
                             Properties.Settings.Default.openid = openid;
@@ -158,7 +236,7 @@ namespace troll_ui_app
                             await Task.Delay(2000);
                             Close();
                             break;
-                        }
+                        //}
                     }
                     await Task.Delay(2000);
                     log.Info("one time again!");
@@ -172,13 +250,13 @@ namespace troll_ui_app
 
         private void WechatForm_Load(object sender, EventArgs e)
         {
-            if (!authMode)
-            {
-                //ControlBox = false;
-                Text = "微信绑定";
-            }
-            else
-                Text = "您需要验证一次身份才能进行停止和退出操作！";
+            //if (!authMode)
+            //{
+            //    //ControlBox = false;
+            //    Text = "微信绑定";
+            //}
+            //else
+            //    Text = "您需要验证一次身份才能进行停止和退出操作！";
             cancellationTokenSource = new CancellationTokenSource();
             getQrCodeTask = SetQrcodeAsync(cancellationTokenSource.Token);
         }
@@ -188,13 +266,6 @@ namespace troll_ui_app
             cancellationTokenSource.Cancel();
         }
 
-        private void refreshButton_Click(object sender, EventArgs e)
-        {
-            cancellationTokenSource.Cancel();
-            cancellationTokenSource = new CancellationTokenSource();
-            //getQrCodeTask.Wait();
-            getQrCodeTask = SetQrcodeAsync(cancellationTokenSource.Token);
-        }
         private static async Task SendTemplateMessageAsync(JObject msgObj)
         {
             try

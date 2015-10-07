@@ -63,16 +63,6 @@ namespace troll_ui_app.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap advancedsettings {
-            get {
-                object obj = ResourceManager.GetObject("advancedsettings", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
         internal static System.Drawing.Bitmap btn_Clear_h {
             get {
                 object obj = ResourceManager.GetObject("btn_Clear_h", resourceCulture);
@@ -96,36 +86,6 @@ namespace troll_ui_app.Properties {
         internal static System.Drawing.Bitmap btn_Clear_p {
             get {
                 object obj = ResourceManager.GetObject("btn_Clear_p", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap btn_Confirm_h {
-            get {
-                object obj = ResourceManager.GetObject("btn_Confirm_h", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap btn_Confirm_n {
-            get {
-                object obj = ResourceManager.GetObject("btn_Confirm_n", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap btn_Confirm_p {
-            get {
-                object obj = ResourceManager.GetObject("btn_Confirm_p", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -213,9 +173,9 @@ namespace troll_ui_app.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap btn_Onekeyclean_h {
+        internal static System.Drawing.Bitmap btn_primary_h {
             get {
-                object obj = ResourceManager.GetObject("btn_Onekeyclean_h", resourceCulture);
+                object obj = ResourceManager.GetObject("btn_primary_h", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -223,9 +183,9 @@ namespace troll_ui_app.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap btn_Onekeyclean_n {
+        internal static System.Drawing.Bitmap btn_primary_n {
             get {
-                object obj = ResourceManager.GetObject("btn_Onekeyclean_n", resourceCulture);
+                object obj = ResourceManager.GetObject("btn_primary_n", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -233,39 +193,9 @@ namespace troll_ui_app.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap btn_Onekeyclean_p {
+        internal static System.Drawing.Bitmap btn_primary_p {
             get {
-                object obj = ResourceManager.GetObject("btn_Onekeyclean_p", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap btn_Pause_h {
-            get {
-                object obj = ResourceManager.GetObject("btn_Pause_h", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap btn_Pause_n {
-            get {
-                object obj = ResourceManager.GetObject("btn_Pause_n", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap btn_Pause_p {
-            get {
-                object obj = ResourceManager.GetObject("btn_Pause_p", resourceCulture);
+                object obj = ResourceManager.GetObject("btn_primary_p", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -303,6 +233,36 @@ namespace troll_ui_app.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap btn_secondary_h {
+            get {
+                object obj = ResourceManager.GetObject("btn_secondary_h", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap btn_secondary_n {
+            get {
+                object obj = ResourceManager.GetObject("btn_secondary_n", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap btn_secondary_p {
+            get {
+                object obj = ResourceManager.GetObject("btn_secondary_p", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap btn_small_h {
             get {
                 object obj = ResourceManager.GetObject("btn_small_h", resourceCulture);
@@ -333,36 +293,6 @@ namespace troll_ui_app.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap btn_stop_h {
-            get {
-                object obj = ResourceManager.GetObject("btn_stop_h", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap btn_stop_n {
-            get {
-                object obj = ResourceManager.GetObject("btn_stop_n", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap btn_stop_p {
-            get {
-                object obj = ResourceManager.GetObject("btn_stop_p", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
         internal static System.Drawing.Bitmap btn_up_h {
             get {
                 object obj = ResourceManager.GetObject("btn_up_h", resourceCulture);
@@ -376,36 +306,6 @@ namespace troll_ui_app.Properties {
         internal static System.Drawing.Bitmap btn_up_n {
             get {
                 object obj = ResourceManager.GetObject("btn_up_n", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap btn_zbcl_h {
-            get {
-                object obj = ResourceManager.GetObject("btn_zbcl_h", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap btn_zbcl_n {
-            get {
-                object obj = ResourceManager.GetObject("btn_zbcl_n", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap btn_zbcl_p {
-            get {
-                object obj = ResourceManager.GetObject("btn_zbcl_p", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -433,9 +333,9 @@ namespace troll_ui_app.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap fh_icon_animation_ {
+        internal static System.Drawing.Bitmap fh_icon_animation_d {
             get {
-                object obj = ResourceManager.GetObject("fh_icon_animation_", resourceCulture);
+                object obj = ResourceManager.GetObject("fh_icon_animation_d", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -443,9 +343,9 @@ namespace troll_ui_app.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap help {
+        internal static System.Drawing.Bitmap fh_icon_animation_n {
             get {
-                object obj = ResourceManager.GetObject("help", resourceCulture);
+                object obj = ResourceManager.GetObject("fh_icon_animation_n", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -513,16 +413,6 @@ namespace troll_ui_app.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap home_scanner_ks_p {
-            get {
-                object obj = ResourceManager.GetObject("home_scanner_ks_p", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
         internal static System.Drawing.Bitmap home_scanner_qp_h {
             get {
                 object obj = ResourceManager.GetObject("home_scanner_qp_h", resourceCulture);
@@ -536,16 +426,6 @@ namespace troll_ui_app.Properties {
         internal static System.Drawing.Bitmap home_scanner_qp_n {
             get {
                 object obj = ResourceManager.GetObject("home_scanner_qp_n", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap home_scanner_qp_p {
-            get {
-                object obj = ResourceManager.GetObject("home_scanner_qp_p", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -573,30 +453,20 @@ namespace troll_ui_app.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap home_scanner_zdy_p {
+        internal static System.Drawing.Bitmap icon_big_png {
             get {
-                object obj = ResourceManager.GetObject("home_scanner_zdy_p", resourceCulture);
+                object obj = ResourceManager.GetObject("icon_big_png", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
         /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        ///   查找类似于 (Icon) 的 System.Drawing.Icon 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap home_scannern_ks_n_png {
+        internal static System.Drawing.Icon icon_main_icon {
             get {
-                object obj = ResourceManager.GetObject("home_scannern_ks_n_png", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap home_scannern_zdy_n_png {
-            get {
-                object obj = ResourceManager.GetObject("home_scannern_zdy_n_png", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                object obj = ResourceManager.GetObject("icon_main_icon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -650,26 +520,6 @@ namespace troll_ui_app.Properties {
         }
         
         /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap powerblack_small {
-            get {
-                object obj = ResourceManager.GetObject("powerblack_small", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap powerblue_small {
-            get {
-                object obj = ResourceManager.GetObject("powerblue_small", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   查找类似 您是初次使用，是否运行本地扫描？ 的本地化字符串。
         /// </summary>
         internal static string RunLocalScanFirstTime {
@@ -684,16 +534,6 @@ namespace troll_ui_app.Properties {
         internal static System.Drawing.Bitmap scanning {
             get {
                 object obj = ResourceManager.GetObject("scanning", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap search_button {
-            get {
-                object obj = ResourceManager.GetObject("search_button", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -721,16 +561,6 @@ namespace troll_ui_app.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap symbol_delete_icon {
-            get {
-                object obj = ResourceManager.GetObject("symbol_delete_icon", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
         internal static System.Drawing.Bitmap top_gray_bg {
             get {
                 object obj = ResourceManager.GetObject("top_gray_bg", resourceCulture);
@@ -745,16 +575,6 @@ namespace troll_ui_app.Properties {
             get {
                 object obj = ResourceManager.GetObject("top_green_bg", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找类似于 (Icon) 的 System.Drawing.Icon 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Icon TrollIcon {
-            get {
-                object obj = ResourceManager.GetObject("TrollIcon", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
             }
         }
         

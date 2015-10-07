@@ -29,7 +29,7 @@ namespace troll_ui_app
         private String FullRequestUri;
         private String DomainName;
         private PornDatabase.DomainType DomainType;
-        private PornDatabase.PornItemStatus _autoDomainStatus;
+        private PornDatabase.ForbiddenItemStatus _autoDomainStatus;
         private PornDatabase PornDB = new PornDatabase();
 
         private HashSet<String> GetPornSet(String domainName)
@@ -352,7 +352,7 @@ namespace troll_ui_app
             log.Debug(GetDomain.GetDomainFromUrl(RequestLine.URI));
                 //DomainType == PornDatabase.DomainType.Black ||
             if (DomainType != PornDatabase.DomainType.White &&
-                _autoDomainStatus == PornDatabase.PornItemStatus.Normal &&
+                _autoDomainStatus == PornDatabase.ForbiddenItemStatus.Normal &&
                 Properties.Settings.Default.IsPornWebsiteProtectionTurnOn)
             {
                 PornDB.InsertBlockedPage(FullRequestUri);

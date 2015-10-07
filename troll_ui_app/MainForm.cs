@@ -10,11 +10,14 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Net.Http;
 using System.Runtime.InteropServices;
+using Titanium.Web.Proxy.Helpers;
+using log4net;
 
 namespace troll_ui_app
 {
     public class MainForm : Form
     {
+        static readonly ILog log = Log.Get();
         public static readonly int MainFormWidth = 900;
         public static readonly int MainFormHeight = 600;
         public enum Effect { Roll, Slide, Center, Blend }
@@ -53,11 +56,22 @@ namespace troll_ui_app
         public MainPanelControl mainPanelControl;
         public ScanPanelControl scanPanelControl;
         public ProtectionPanelControl _protectionPanelControl;
+        public ActiveFileMonitor _activeFileMonitor;
 
         public static MainForm Instance;
-        public MainForm()
+
+        NotifyIcon _mainNotifyIcon;
+        ContextMenuStrip _mainContextMenuTrip;
+        public MainForm(String []args)
         {
             Instance = this;
+            //必须在UI内部初始化，保证progress对象是由UI线程初始化的
+            PornDatabase.Init();
+            //PornDatabase pdb = new PornDatabase();
+            //pdb.InsertPornFile("C:/xyz", PornDatabase.PornItemType.LocalImage);
+
+            _activeFileMonitor = new ActiveFileMonitor();
+
             m_aeroEnabled = false;
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             //InitializeComponent();
@@ -72,22 +86,62 @@ namespace troll_ui_app
             Controls.Add(scanPanelControl);
             Controls.Add(mainPanelControl);
 
-            mainPanelControl.ScanEvent += mainPanelOnScanEvent;
-            scanPanelControl.ReturnEvent += scanPanelOnReturnEvent;
+            _mainContextMenuTrip = new System.Windows.Forms.ContextMenuStrip();
+            ToolStripItem openMainPanel = _mainContextMenuTrip.Items.Add("打开主界面");
+            ToolStripItem quitItem = _mainContextMenuTrip.Items.Add("退出");
+            openMainPanel.Click += openMainPanelOnClick;
+            quitItem.Click += quitItemOnClick;
+
+            _mainNotifyIcon = new NotifyIcon();
+            _mainNotifyIcon.ContextMenuStrip = _mainContextMenuTrip;
+            _mainNotifyIcon.Icon = Properties.Resources.icon_main_icon;
+            _mainNotifyIcon.Visible = true;
+            _mainNotifyIcon.DoubleClick += _mainNotifyIconOnDoubleClick;
+
+            //mainPanelControl.ScanEvent += mainPanelOnScanEvent;
             Load += MainFormOnLoad;
+            FormClosed += MainFormOnFormClosed;
+
+            if (args.Contains("-notvisible"))
+            {
+                WindowState = FormWindowState.Minimized;
+                ShowInTaskbar = false;
+            }
+            //set hotkey as ctrl+alt+backspace
+            //Boolean success = FormMain.RegisterHotKey(this.Handle, this.GetType().GetHashCode(), MOD_CTRL | MOD_ALT, 0x08);//Set hotkey as 'b'
+            //set the owner to avoid the main form in atl-table window
+            Form form1 = new Form();
+            form1.FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            form1.ShowInTaskbar = false;
+            Owner = form1;
         }
+
+        void MainFormOnFormClosed(object sender, FormClosedEventArgs e)
+        {
+            SystemProxyHelper.DisableAllProxy();
+            FireFoxHelper.RemoveFirefox();
+            log.Info("MainForm Closed!");
+        }
+
+        void _mainNotifyIconOnDoubleClick(object sender, EventArgs e)
+        {
+            Show();
+        }
+
 
         void MainFormOnLoad(object sender, EventArgs e)
         {
             Console.WriteLine("load Event!");
             scanPanelControl.Visible = false;
+            _protectionPanelControl.Visible = false;
+            UpdateInfoForm.GetInstance();
         }
-        void scanPanelOnReturnEvent(object sender, troll_ui_app.ScanPanelControl.ReturnEventArgs e)
-        {
-            //scanPanel.Visible = false;
-            Animate(scanPanelControl, Effect.Slide, 200, 180);
-            mainPanelControl.Refresh();
-        }
+        //void scanPanelOnReturnEvent(object sender, troll_ui_app.ScanPanelControl.ReturnEventArgs e)
+        //{
+        //    //scanPanel.Visible = false;
+        //    Animate(scanPanelControl, Effect.Slide, 200, 180);
+        //    mainPanelControl.Refresh();
+        //}
         void mainPanelOnScanEvent(object sender, troll_ui_app.MainPanelControl.ScanEventArgs e)
         {
             Console.WriteLine("Scan Event!");
@@ -183,6 +237,15 @@ namespace troll_ui_app
             if (m.Msg == WM_NCHITTEST && (int)m.Result == HTCLIENT)     // drag the form
                 m.Result = (IntPtr)HTCAPTION;
 
+        }
+        void quitItemOnClick(object sender, EventArgs e)
+        {
+            _mainNotifyIcon.Visible = false;
+            Application.Exit();
+        }
+        void openMainPanelOnClick(object sender, EventArgs e)
+        {
+            Show();
         }
     }
 }

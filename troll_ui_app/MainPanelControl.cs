@@ -14,8 +14,8 @@ namespace troll_ui_app
     {
         static readonly int scanBtnTopPadding = 84;
         static readonly int scanBtnBottomPadding = 106;
-        public delegate void ScanEventHandler(object sender, ScanEventArgs e);
-        public event ScanEventHandler ScanEvent;
+        //public delegate void ScanEventHandler(object sender, ScanEventArgs e);
+        //public event ScanEventHandler ScanEvent;
         TitleBarControl titleBar;
         Label mainFuncBtn;
         Panel guradNormalPanel;
@@ -57,7 +57,7 @@ namespace troll_ui_app
 
             mainFuncBtn = new Label();
             mainFuncBtn.BackColor = Color.Transparent;
-            mainFuncBtn.Image = Properties.Resources.home_fh_icon_animation_n;
+            mainFuncBtn.Image = Properties.Resources.home_fh_icon_animation_h;
             mainFuncBtn.Size = mainFuncBtn.Image.Size;
             mainFuncBtn.Location = new Point(24, 60);
             mainFuncBtn.MouseEnter += mainFuncBtnOnMouseEnter;
@@ -100,10 +100,16 @@ namespace troll_ui_app
 
             analysisResultViewBtn = new TextButton();
             analysisResultViewBtn.Text = "立即查看";
-            analysisResultViewBtn.Font = new System.Drawing.Font("微软雅黑", 14, GraphicsUnit.Pixel);;
+            analysisResultViewBtn.Font = new System.Drawing.Font("微软雅黑", 14, GraphicsUnit.Pixel); ;
             analysisResultViewBtn.ForeColor = Color.FromArgb(0x4f, 0x4f, 0x00);
             analysisResultViewBtn.HoverColor = Color.FromArgb(0xff, 0xa4, 0x05);
             guradNormalPanel.Controls.Add(analysisResultViewBtn);
+            analysisResultViewBtn.Click += mainFuncBtnOnClick;
+
+            analysisItemsDescLabel.Visible = false;
+            analysisItemsNumLabel.Visible = false;
+            analysisResultDescLabel.Visible = false;
+            analysisResultViewBtn.Visible = false;
 
             scanningPanel = new Panel();
             scanningPanel .BackColor = Color.Transparent;
@@ -120,13 +126,25 @@ namespace troll_ui_app
             scanningPanel.Controls.Add(scanningLabel);
 
             viewScanningBtn = new TextButton();
+            viewScanningBtn.Text = "查看详情";
+            viewScanningBtn.Font = new System.Drawing.Font("微软雅黑", 14, GraphicsUnit.Pixel);;
+            viewScanningBtn.ForeColor = Color.FromArgb(0x4f, 0x4f, 0x00);
+            viewScanningBtn.HoverColor = Color.FromArgb(0xff, 0xa4, 0x05);
+            scanningPanel.Controls.Add(viewScanningBtn);
+            viewScanningBtn.Click += viewScanningBtnOnClick;
+
+            scanBtnsPanel = new Panel();
+            scanBtnsPanel.BackColor = Color.FromArgb(0xf8, 0xf8, 0xf8);
+            scanBtnsPanel.Size = new System.Drawing.Size(MainForm.MainFormWidth, 318);
+            scanBtnsPanel.Location = new Point(0, titleBar.Height);
+            Controls.Add(scanBtnsPanel);
 
             allScanBtn = new ImageButton();
             allScanBtn.Image = Properties.Resources.home_scanner_qp_n;
             allScanBtn.Size = allScanBtn.Image.Size;
             allScanBtn.NormalBack = Properties.Resources.home_scanner_qp_n;
             allScanBtn.HoverBack = Properties.Resources.home_scanner_qp_h;
-            allScanBtn.PressBack = Properties.Resources.home_scanner_qp_p;
+            allScanBtn.PressBack = Properties.Resources.home_scanner_qp_n;
             allScanBtn.Location = new Point(130, scanBtnTopPadding);
 
             fastScanBtn = new ImageButton();
@@ -134,21 +152,17 @@ namespace troll_ui_app
             fastScanBtn .Size = fastScanBtn .Image.Size;
             fastScanBtn .NormalBack = Properties.Resources.home_scanner_ks_n;
             fastScanBtn .HoverBack = Properties.Resources.home_scanner_ks_h;
-            fastScanBtn .PressBack = Properties.Resources.home_scanner_ks_p;
+            fastScanBtn .PressBack = Properties.Resources.home_scanner_ks_n;
             fastScanBtn .Location = new Point(allScanBtn.Location.X+allScanBtn.Width*2, scanBtnTopPadding);
 
             customScanBtn = new ImageButton();
-            customScanBtn .Image = Properties.Resources.home_scanner_ks_n;
-            customScanBtn .Size = customScanBtn .Image.Size;
-            customScanBtn .NormalBack = Properties.Resources.home_scanner_ks_n;
-            customScanBtn .HoverBack = Properties.Resources.home_scanner_ks_h;
-            customScanBtn .PressBack = Properties.Resources.home_scanner_ks_p;
-            customScanBtn .Location = new Point(fastScanBtn.Location.X+fastScanBtn.Width*2, scanBtnTopPadding);
-
-            scanBtnsPanel = new Panel();
-            scanBtnsPanel.BackColor = Color.FromArgb(0xf8, 0xf8, 0xf8);
-            scanBtnsPanel.Size = new System.Drawing.Size(MainForm.MainFormWidth, scanBtnTopPadding + allScanBtn.Height +scanBtnBottomPadding);
-            scanBtnsPanel.Location = new Point(0, titleBar.Height);
+            customScanBtn.Image = Properties.Resources.home_scanner_zdy_n;
+            customScanBtn.Size = customScanBtn .Image.Size;
+            customScanBtn.NormalBack = Properties.Resources.home_scanner_zdy_n;
+            customScanBtn.HoverBack = Properties.Resources.home_scanner_zdy_h;
+            customScanBtn.PressBack = Properties.Resources.home_scanner_zdy_n;
+            customScanBtn.Location = new Point(fastScanBtn.Location.X+fastScanBtn.Width*2, scanBtnTopPadding);
+            customScanBtn.Enabled = false;
 
             allScanLabel = new Label();
             allScanLabel.AutoSize = true;
@@ -193,6 +207,7 @@ namespace troll_ui_app
             checkUpdateBtn.Font = new System.Drawing.Font("微软雅黑", 11, GraphicsUnit.Pixel);
             checkUpdateBtn.ForeColor = Color.FromArgb(0x4f, 0xb5, 0x2c);
             checkUpdateBtn.HoverColor = Color.FromArgb(0xff, 0xa4, 0x05);
+            checkUpdateBtn.Click += checkUpdateBtnOnClick;
             statusPanel.Controls.Add(checkUpdateBtn);
 
             versionLabel = new Label();
@@ -216,17 +231,39 @@ namespace troll_ui_app
             statusPanel.Controls.Add(wechatStatusLabel);
 
             Controls.Add(titleBar);
-            Controls.Add(scanBtnsPanel);
             Controls.Add(statusPanel);
 
             Load += MainPanelControlOnLoad;
             fastScanBtn.Click += fastScanBtnOnClick;
             allScanBtn.Click += allScanBtnOnClick;
             mainFuncBtn.Click += mainFuncBtnOnClick;
-            analysisResultViewBtn.Click += mainFuncBtnOnClick;
             //Paint += MainPanelOnPaint;
         }
 
+        void checkUpdateBtnOnClick(object sender, EventArgs e)
+        {
+            UpdateInfoForm.GetInstance().Show();
+            UpdateInfoForm.GetInstance().WindowState = FormWindowState.Normal;
+        }
+
+        public void EnterScanStatus()
+        {
+            guradNormalPanel.Visible = false;
+            scanningPanel.Visible = true;
+            mainFuncBtn.Image = Properties.Resources.home_fh_icon_animation_n;
+        }
+
+        public void ExitScanStatus()
+        {
+            scanningPanel.Visible = false;
+            guradNormalPanel.Visible = true;
+            mainFuncBtn.Image = Properties.Resources.home_fh_icon_animation_h;
+        }
+
+        void viewScanningBtnOnClick(object sender, EventArgs e)
+        {
+            MainForm.Animate(MainForm.Instance.scanPanelControl, MainForm.Effect.Slide, 200, 180);
+        }
 
         void MainPanelControlOnLoad(object sender, EventArgs e)
         {
@@ -244,6 +281,7 @@ namespace troll_ui_app
             analysisResultDescLabel.Location = new Point(0, analysisItemsDescLabel.Location.Y + analysisItemsDescLabel.Height + 5);
             analysisResultViewBtn.Location = new Point(analysisResultDescLabel.Width, analysisResultDescLabel.Location.Y);
 
+            viewScanningBtn.Location = new Point(0, scanningLabel.Height);
             //guradNormalPanel.Visible = false;
             scanningPanel.Visible = false;
         }
@@ -274,11 +312,12 @@ namespace troll_ui_app
         void fastScanBtnOnClick(object sender, EventArgs e)
         {
             //ScanEvent(this, new ScanEventArgs(ScanType.FastScan, null));
-            MainForm.Animate(MainForm.Instance.scanPanelControl, MainForm.Effect.Slide, 200, 180);
+            //MainForm.Animate(MainForm.Instance.scanPanelControl, MainForm.Effect.Slide, 200, 180);
+            MainForm.Instance.scanPanelControl.StartFastScan();
         }
         void allScanBtnOnClick(object sender, EventArgs e)
         {
-            MainForm.Animate(MainForm.Instance.scanPanelControl, MainForm.Effect.Slide, 200, 180);
+            MainForm.Instance.scanPanelControl.StartAllScan();
         }
 
         void mainFuncBtnOnClick(object sender, EventArgs e)
