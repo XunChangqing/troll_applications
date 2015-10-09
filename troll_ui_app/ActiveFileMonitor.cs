@@ -222,12 +222,17 @@ namespace troll_ui_app
                                     itype = PornClassifier.Instance.Classify(key);
                                     md5Set[shash] = (int)itype;
                                 }
+                                IProgress<PornDatabase.PornItemType> ip = MainForm.Instance.TargetProcessedProgress as IProgress<PornDatabase.PornItemType>;
                                 if(itype == PornClassifier.ImageType.Porn)
                                 {
                                     log.Info("Detect Active Porn Image: " + key);
                                     PornDatabase pdb = new PornDatabase();
                                     pdb.InsertPornFile(key, PornDatabase.PornItemType.LocalImage);
+                                    ip.Report(PornDatabase.PornItemType.LocalImage);
                                 }
+                                else
+                                    ip.Report(PornDatabase.PornItemType.Undefined);
+
                                 _fileProcessed[key] = (int)finfo.Length;
                             }
                             else

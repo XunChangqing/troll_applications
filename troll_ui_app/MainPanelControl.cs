@@ -7,11 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using log4net;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace troll_ui_app
 {
     public class MainPanelControl : UserControl
     {
+        static readonly ILog log = Log.Get();
         static readonly int scanBtnTopPadding = 84;
         static readonly int scanBtnBottomPadding = 106;
         //public delegate void ScanEventHandler(object sender, ScanEventArgs e);
@@ -24,6 +28,8 @@ namespace troll_ui_app
         Label analysisItemsNumLabel;
         Label analysisResultDescLabel;
         TextButton analysisResultViewBtn;
+        PictureBox wechatHeadImage;
+        Label wechatNickname;
 
         Panel scanningPanel;
         Label scanningLabel;
@@ -51,7 +57,9 @@ namespace troll_ui_app
 
         public MainPanelControl()
         {
-            Dock = DockStyle.Fill;
+            Location = new Point(0,0);
+            Size = new System.Drawing.Size(MainForm.MainFormWidth, MainForm.MainFormHeight);
+            //Dock = DockStyle.Fill;
             titleBar = new TitleBarControl();
             titleBar.Height = 252;
 
@@ -63,6 +71,26 @@ namespace troll_ui_app
             mainFuncBtn.MouseEnter += mainFuncBtnOnMouseEnter;
             mainFuncBtn.MouseLeave += mainFuncBtnOnMouseLeave;
             titleBar.Controls.Add(mainFuncBtn);
+
+            wechatHeadImage = new PictureBox();
+            wechatHeadImage.SizeMode = PictureBoxSizeMode.Zoom;
+            wechatHeadImage.Size = new System.Drawing.Size(32,32);
+            wechatHeadImage.ImageLocation = Program.AppLocalDir + "UserHeadImage";
+            //wechatHeadImage.Location = new Point(wechatxLocation, 
+            //    mainFuncBtn.Location.Y+mainFuncBtn.Height/2-wechatHeadImage.Height/2);
+            wechatHeadImage.Location = new Point(788, 214);
+            titleBar.Controls.Add(wechatHeadImage);
+
+            wechatNickname = new Label();
+            wechatNickname.BackColor = Color.Transparent;
+            wechatNickname.AutoSize = true;
+            //wechatNickname.TextAlign = ContentAlignment.MiddleCenter;
+            wechatNickname.Text = Properties.Settings.Default.userNickname;
+            wechatNickname.Font = new System.Drawing.Font("微软雅黑", 10, GraphicsUnit.Pixel);
+            wechatNickname.ForeColor = Color.White;
+            wechatNickname.MaximumSize = new System.Drawing.Size(80,0);
+            wechatNickname.AutoEllipsis = true;
+            titleBar.Controls.Add(wechatNickname);
 
             guradNormalPanel = new Panel();
             guradNormalPanel.BackColor = Color.Transparent;
@@ -91,13 +119,6 @@ namespace troll_ui_app
             analysisItemsNumLabel.ForeColor = Color.White;
             guradNormalPanel.Controls.Add(analysisItemsNumLabel);
 
-            analysisResultDescLabel = new Label();
-            analysisResultDescLabel.AutoSize = true;
-            analysisResultDescLabel.Text = "检测到不良项目！";
-            analysisResultDescLabel.Font = new System.Drawing.Font("微软雅黑", 14, GraphicsUnit.Pixel);
-            analysisResultDescLabel.ForeColor = Color.FromArgb(0x4f, 0x4f, 0x00);
-            guradNormalPanel.Controls.Add(analysisResultDescLabel);
-
             analysisResultViewBtn = new TextButton();
             analysisResultViewBtn.Text = "立即查看";
             analysisResultViewBtn.Font = new System.Drawing.Font("微软雅黑", 14, GraphicsUnit.Pixel); ;
@@ -106,8 +127,16 @@ namespace troll_ui_app
             guradNormalPanel.Controls.Add(analysisResultViewBtn);
             analysisResultViewBtn.Click += mainFuncBtnOnClick;
 
-            analysisItemsDescLabel.Visible = false;
-            analysisItemsNumLabel.Visible = false;
+            analysisResultDescLabel = new Label();
+            analysisResultDescLabel.AutoSize = true;
+            analysisResultDescLabel.Text = "检测到不良项目！";
+            analysisResultDescLabel.Font = new System.Drawing.Font("微软雅黑", 14, GraphicsUnit.Pixel);
+            analysisResultDescLabel.ForeColor = Color.FromArgb(0x4f, 0x4f, 0x00);
+            analysisResultDescLabel.SizeChanged += analysisResultDescLabelOnSizeChanged;
+            guradNormalPanel.Controls.Add(analysisResultDescLabel);
+
+            //analysisItemsDescLabel.Visible = false;
+            //analysisItemsNumLabel.Visible = false;
             analysisResultDescLabel.Visible = false;
             analysisResultViewBtn.Visible = false;
 
@@ -212,20 +241,23 @@ namespace troll_ui_app
 
             versionLabel = new Label();
             versionLabel.AutoSize = true;
-            versionLabel.Text = "程序版本 " + "0.9.0.23";
+            FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
+            Version curVersion = new Version(versionInfo.ProductVersion);
+            versionLabel.Text = "程序版本 " + curVersion.ToString();
             versionLabel.Font = new System.Drawing.Font("微软雅黑", 11, GraphicsUnit.Pixel);
             versionLabel.ForeColor = Color.FromArgb(0x5e, 0x5e, 0x5e);
             statusPanel.Controls.Add(versionLabel);
 
             wechatStatusIcon = new Label();
-            wechatStatusIcon.Image = Properties.Resources.wechatauth;
+            //wechatStatusIcon.Image = Properties.Resources.wechatauth;
+            wechatStatusIcon.Image = Properties.Resources.wechatnotauth;
             wechatStatusIcon.Size = wechatStatusIcon.Image.Size;
             wechatStatusIcon.Location = new Point(statusPanel.Width-12-wechatStatusIcon.Width, statusPanel.Height/2-wechatStatusIcon.Height/2);
             statusPanel.Controls.Add(wechatStatusIcon);
 
             wechatStatusLabel = new Label();
             wechatStatusLabel.AutoSize = true;
-            wechatStatusLabel.Text = "微信已授权";
+            wechatStatusLabel.Text = "微信未授权";
             wechatStatusLabel.Font = new System.Drawing.Font("微软雅黑", 11, GraphicsUnit.Pixel);
             wechatStatusLabel.ForeColor = Color.FromArgb(0x5e, 0x5e, 0x5e);
             statusPanel.Controls.Add(wechatStatusLabel);
@@ -237,7 +269,50 @@ namespace troll_ui_app
             fastScanBtn.Click += fastScanBtnOnClick;
             allScanBtn.Click += allScanBtnOnClick;
             mainFuncBtn.Click += mainFuncBtnOnClick;
+            MainForm.Instance.TargetProcessedProgress.ProgressChanged += TargetProcessedProgressOnProgressChanged;
             //Paint += MainPanelOnPaint;
+        }
+
+        void analysisResultDescLabelOnSizeChanged(object sender, EventArgs e)
+        {
+            analysisResultViewBtn.Location = new Point(analysisResultDescLabel.Width, analysisResultDescLabel.Location.Y);
+        }
+        int TargetProcessedNum = 0;
+        int PornDetectedNum = 0;
+        void TargetProcessedProgressOnProgressChanged(object sender, PornDatabase.PornItemType e)
+        {
+            TargetProcessedNum++;
+            analysisItemsNumLabel.Text = TargetProcessedNum.ToString();
+            if(e != PornDatabase.PornItemType.Undefined)
+            {
+                log.Info("Show analysisview button!");
+                PornDetectedNum++;
+                string cont = "检测到{0}个不良项目！";
+                analysisResultDescLabel.Text = string.Format(cont, PornDetectedNum);
+                analysisResultDescLabel.Visible = true;
+                analysisResultViewBtn.Visible = true;
+            }
+            log.Info("Target Processed Progress: " + e.ToString()+TargetProcessedNum+PornDetectedNum);
+        }
+        public void ClearPornLogs()
+        {
+            PornDetectedNum = 0;
+            analysisResultDescLabel.Visible = false;
+            analysisResultViewBtn.Visible = false;
+        }
+
+        public void AuthWechat(bool st)
+        {
+            if (st)
+            {
+                wechatStatusLabel.Text = "微信已授权";
+                wechatStatusIcon.Image = Properties.Resources.wechatauth;
+            }
+            else
+            { 
+                wechatStatusLabel.Text = "微信未授权";
+                wechatStatusIcon.Image = Properties.Resources.wechatnotauth;
+            }
         }
 
         void checkUpdateBtnOnClick(object sender, EventArgs e)
@@ -262,11 +337,14 @@ namespace troll_ui_app
 
         void viewScanningBtnOnClick(object sender, EventArgs e)
         {
-            MainForm.Animate(MainForm.Instance.scanPanelControl, MainForm.Effect.Slide, 200, 180);
+            MainForm.Instance.SlideWindow(MainForm.Instance.scanPanelControl);
         }
 
         void MainPanelControlOnLoad(object sender, EventArgs e)
         {
+            wechatNickname.Location = new Point(wechatHeadImage.Location.X+wechatHeadImage.Width+2,
+                wechatHeadImage.Location.Y+wechatHeadImage.Height/2-wechatNickname.Height/2);
+
             checkUpdateBtn.Location = new Point(statusPanel.Width / 2 - checkUpdateBtn.Width / 2, statusPanel.Height/2 - checkUpdateBtn.Height/2);
             versionLabel.Location = new Point(24, statusPanel.Height / 2 - versionLabel.Height / 2);
             wechatStatusLabel.Location = new Point(wechatStatusIcon.Location.X - wechatStatusLabel.Width, statusPanel.Height / 2 - wechatStatusLabel.Height / 2);
@@ -278,6 +356,7 @@ namespace troll_ui_app
             guardDescLabel.Location = new Point(0,0);
             analysisItemsDescLabel.Location = new Point(0, guardDescLabel.Location.Y + guardDescLabel.Height+5);
             analysisItemsNumLabel.Location = new Point(analysisItemsDescLabel.Width, analysisItemsDescLabel.Location.Y);
+
             analysisResultDescLabel.Location = new Point(0, analysisItemsDescLabel.Location.Y + analysisItemsDescLabel.Height + 5);
             analysisResultViewBtn.Location = new Point(analysisResultDescLabel.Width, analysisResultDescLabel.Location.Y);
 
@@ -311,18 +390,23 @@ namespace troll_ui_app
 
         void fastScanBtnOnClick(object sender, EventArgs e)
         {
-            //ScanEvent(this, new ScanEventArgs(ScanType.FastScan, null));
-            //MainForm.Animate(MainForm.Instance.scanPanelControl, MainForm.Effect.Slide, 200, 180);
-            MainForm.Instance.scanPanelControl.StartFastScan();
+            if (WechatForm.Auth())
+                MainForm.Instance.scanPanelControl.StartFastScan();
+            else
+                return;
         }
         void allScanBtnOnClick(object sender, EventArgs e)
         {
-            MainForm.Instance.scanPanelControl.StartAllScan();
+            if (WechatForm.Auth())
+                MainForm.Instance.scanPanelControl.StartAllScan();
+            else
+                return;
         }
 
         void mainFuncBtnOnClick(object sender, EventArgs e)
         {
-            MainForm.Animate(MainForm.Instance._protectionPanelControl, MainForm.Effect.Slide, 200, 180);
+            if(WechatForm.Auth())
+                MainForm.Instance.SlideWindow(MainForm.Instance._protectionPanelControl);
         }
     }
 }

@@ -66,6 +66,7 @@ namespace troll_ui_app
         {
             _pornItemDataTable.Clear();
             _previewPictureBox.ImageLocation = null;
+            _previewPictureBox.Image = null;
         }
         void TableChangedProgressOnProgressChanged(object sender, string e)
         {
@@ -88,6 +89,8 @@ namespace troll_ui_app
             dr.SetField<PornDatabase.PornItemType>("item_type", itype);
             dr.SetField<DateTime>("created_at", DateTime.Now);
             _pornItemDataTable.Rows.Add(dr);
+            try { _dataGridView.CurrentCell = _dataGridView.Rows[0].Cells["info"]; }
+            catch (Exception exp) { log.Error(exp.ToString()); }
         }
 
         public int ClearCheckedFiles()
@@ -112,6 +115,8 @@ namespace troll_ui_app
         {
             _pornDB.DeleteAllPornItmes();
             _pornItemDataTable.Clear();
+            _previewPictureBox.ImageLocation = null;
+            _previewPictureBox.Image = null;
         }
 
         void PornItemTableViewWithPreviewOnSizeChanged(object sender, EventArgs e)
@@ -133,7 +138,7 @@ namespace troll_ui_app
                 }
                 else if (type == PornDatabase.PornItemType.NetworkImage)
                 {
-                    string filename = Properties.Settings.Default.imagesDir + "\\" + HttpUtility.UrlEncode(info);
+                    string filename = Program.AppLocalDir + Properties.Settings.Default.imagesDir + "\\" + HttpUtility.UrlEncode(info);
                     _previewPictureBox.ImageLocation = filename;
                 }
                 else

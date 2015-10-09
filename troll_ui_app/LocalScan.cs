@@ -82,32 +82,31 @@ namespace troll_ui_app
         }
         public void StartAllScan()
         {
-
-        }
-        async Task AllLocalScanAsync(CancellationToken ct, ManualResetEvent pauseEvent, IProgress<ScanProgress> progress)
-        {
-            await Task.Factory.StartNew(()=> {
-                if(progress!=null)
+            _scanPauseEvent.Set();
+            _scanCancellationTokenSource = new CancellationTokenSource();
+            _scanTask = Task.Factory.StartNew(()=> {
+                if(_scanProgressReport!=null)
                 {
                     ScanProgress npro = new ScanProgress();
                     npro.Percentage = 0;
                     npro.TargetFilePath = null;
                     npro.Description = "正在准备全盘扫描";
-                    progress.Report(npro);
+                    _scanProgressReport.Report(npro);
                 }
                 PercentageOffset = 0;
                 PercentageRatio = 30;
-                FastLocalScan(ct, pauseEvent, progress);
+                FastLocalScan(_scanCancellationTokenSource.Token, _scanPauseEvent, _scanProgressReport);
                 PercentageOffset = 30;
                 PercentageRatio = 70;
-                AllLocalFileScan(ct, pauseEvent, progress);
+                AllLocalFileScan(_scanCancellationTokenSource.Token, _scanPauseEvent, _scanProgressReport);
             });
-            //Task UITask = task.ContinueWith(() =>
-            //{
-            //    this.TextBlock1.Text = "Complete";
-            //}, TaskScheduler.FromCurrentSynchronizationContext());
-        }
+            _scanTask.ContinueWith(atask =>
+            {
+                if (ScanComplete != null)
+                    ScanComplete(this, EventArgs.Empty);
+            }, TaskScheduler.FromCurrentSynchronizationContext());
 
+        }
         void AllLocalFileScan(CancellationToken ct, ManualResetEvent pauseEvent, IProgress<ScanProgress> progress)
         {
             try
@@ -182,7 +181,8 @@ namespace troll_ui_app
             {
                 String iecachepath = Environment.GetFolderPath(Environment.SpecialFolder.InternetCache);
                 log.Info("IE cache path: " + iecachepath);
-                var totalfiles = Directory.EnumerateFiles(iecachepath, "*.*", SearchOption.AllDirectories).Where<String>(s => (s.EndsWith(".jpg") || s.EndsWith(".png")));
+                //var totalfiles = Directory.EnumerateFiles(iecachepath, "*.*", SearchOption.AllDirectories).Where<String>(s => (s.EndsWith(".jpg") || s.EndsWith(".png")));
+                var totalfiles = SafeFileEnumerator.EnumerateFiles(iecachepath, "*.*", SearchOption.AllDirectories).Where<String>(s => (s.EndsWith(".jpg") || s.EndsWith(".png")));
 
                 string roamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                 var dirs = SafeFileEnumerator.EnumerateDirectories(roamingPath, "*Cache*", SearchOption.AllDirectories);

@@ -47,9 +47,11 @@ namespace troll_ui_app
         public ProtectionPanelControl()
         {
             //InitializeComponent();
-            Dock = DockStyle.Fill;
+            //Dock = DockStyle.Fill;
+            Location = new Point(0,0);
+            Size = new System.Drawing.Size(MainForm.MainFormWidth, MainForm.MainFormHeight);
             _titleBar = new TitleBarControl();
-            _titleBar.TitleText = "山妖卫士-安全防护中心";
+            //_titleBar.TitleText = "山妖卫士-安全防护中心";
             _titleBar.Height = 44;
             Controls.Add(_titleBar);
 
@@ -310,13 +312,14 @@ namespace troll_ui_app
 
         void _returnBtnOnClick(object sender, EventArgs e)
         {
-            MainForm.Animate(this, MainForm.Effect.Slide, 200, 180);
+            MainForm.Instance.SlideWindow(this);
             MainForm.Instance.mainPanelControl.Refresh();
         }
 
         void _clearAllBtnOnClick(object sender, EventArgs e)
         {
             _pornItemTableView.ClearAllPornItems();
+            MainForm.Instance.mainPanelControl.ClearPornLogs();
         }
 
         //void _pornFileTabBtnOnClick(object sender, EventArgs e)

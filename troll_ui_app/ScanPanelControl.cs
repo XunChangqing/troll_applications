@@ -49,7 +49,9 @@ namespace troll_ui_app
         public ScanPanelControl()
         {
             //InitializeComponent();
-            Dock = DockStyle.Fill;
+            //Dock = DockStyle.Fill;
+            Location = new Point(0,0);
+            Size = new System.Drawing.Size(MainForm.MainFormWidth, MainForm.MainFormHeight);
             titleBar = new TitleBarControl();
             Controls.Add(titleBar);
 
@@ -284,7 +286,7 @@ namespace troll_ui_app
         {
             Status = ScanStatus.Idle;
             MainForm.Instance.mainPanelControl.ExitScanStatus();
-            MainForm.Animate(this, MainForm.Effect.Slide, 200, 180);
+            MainForm.Instance.SlideWindow(this);
         }
 
         void AskForConfirmation()
@@ -336,6 +338,7 @@ namespace troll_ui_app
                 _scanningResultPanel.Visible = true;
                 string summary = "共扫描对象：{0} 共检出项：{1}";
                 _scanResultSummary.Text = string.Format(summary, _totalTargetNum, _totalPornNum);
+                _scanningResultTitleWarning.Text = string.Format("本次扫描发现{0}个待处理文件！", _totalPornNum);
                 _scanningResultPanel.Visible = true;
             }
             else
@@ -387,12 +390,12 @@ namespace troll_ui_app
                 SetTitle("山妖卫士-快速扫描");
                 InitForNewScan();
                 MainForm.Instance.mainPanelControl.EnterScanStatus();
-                MainForm.Animate(this, MainForm.Effect.Slide, 200, 180);
+                MainForm.Instance.SlideWindow(this);
                 _localScan.StartFastScan();
             }
             else if(Status == ScanStatus.FastScan)
             {
-                MainForm.Animate(this, MainForm.Effect.Slide, 200, 180);
+                MainForm.Instance.SlideWindow(this);
                 //MainForm.Instance.mainPanelControl.Refresh();
             }
             else
@@ -408,12 +411,12 @@ namespace troll_ui_app
                 SetTitle("山妖卫士-全盘扫描");
                 InitForNewScan();
                 MainForm.Instance.mainPanelControl.EnterScanStatus();
-                MainForm.Animate(this, MainForm.Effect.Slide, 200, 180);
+                MainForm.Instance.SlideWindow(this);
                 _localScan.StartAllScan();
             }
             else if(Status == ScanStatus.AllScan)
             {
-                MainForm.Animate(this, MainForm.Effect.Slide, 200, 180);
+                MainForm.Instance.SlideWindow(this);
             }
             else
             {
@@ -434,7 +437,7 @@ namespace troll_ui_app
 
         void _returnBtnOnClick(object sender, EventArgs e)
         {
-            MainForm.Animate(this, MainForm.Effect.Slide, 200, 180);
+            MainForm.Instance.SlideWindow(this);
             MainForm.Instance.mainPanelControl.Refresh();
         }
         void _returnBtnOnMouseUp(object sender, MouseEventArgs e)

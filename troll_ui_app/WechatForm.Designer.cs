@@ -48,11 +48,9 @@
             // 
             this.tipLabel.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.tipLabel.AutoSize = true;
-            this.tipLabel.Font = new System.Drawing.Font("微软雅黑", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.tipLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(79)))), ((int)(((byte)(181)))), ((int)(((byte)(44)))));
             this.tipLabel.Location = new System.Drawing.Point(25, 237);
             this.tipLabel.Name = "tipLabel";
-            this.tipLabel.Size = new System.Drawing.Size(186, 21);
+            this.tipLabel.Size = new System.Drawing.Size(137, 12);
             this.tipLabel.TabIndex = 1;
             this.tipLabel.Text = "请用微信扫描二维码绑定";
             // 
@@ -76,8 +74,7 @@
             // 
             // WechatForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(230, 320);
             this.Controls.Add(this.titleLabel);
             this.Controls.Add(this.label1);

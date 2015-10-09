@@ -72,7 +72,7 @@ namespace troll_ui_app
         static readonly string kPornItemInsertOrReplace = "insert or replace into porn_items (info, item_type, desc, status) values ('{0}','{1}','{2}','{3}')";
         static readonly string kPornItemDeleteAll = "delete from porn_items";
 
-        static readonly string kForbiddenItemInsertOrReplace = "insert or replace into blocked_items (info, item_type, desc, status) values ('{0}','{1}','{2}', '{3}')";
+        static readonly string kForbiddenItemInsertOrReplace = "insert or replace into forbidden_items (info, item_type, desc, status) values ('{0}','{1}','{2}', '{3}')";
         static readonly string kForbiddenItemGetStatus = "select status from forbidden_items where info='{0}' and item_type='{1}'";
 
         //static readonly string kPornItemDeleteItem = "delete from porn_items where info='{0}' and item_type='{1}'";
@@ -208,6 +208,9 @@ namespace troll_ui_app
                 SQLiteCommand cmd = new SQLiteCommand(kPornItemDeleteAll, PornDBConnection);
                 cmd.ExecuteNonQuery();
                 _TableChangedProgressInt.Report("porn_items");
+                //删除所有缓存图片文件
+                foreach(var file in Directory.GetFiles(Program.AppLocalDir + Properties.Settings.Default.imagesDir))
+                    File.Delete(file);
             }
             catch(Exception e)
             {
@@ -261,11 +264,12 @@ namespace troll_ui_app
         {
             try
             {
-                SQLiteCommand cmd = new SQLiteCommand(String.Format(kPornItemInsertOrReplace, url, PornItemType.NetworkImage,
-                    "网络不良图片", PornItemStatus.Normal), PornDBConnection);
+                SQLiteCommand cmd = new SQLiteCommand(String.Format(kPornItemInsertOrReplace, url, (Int64)PornItemType.NetworkImage,
+                    "网络不良图片", (Int64)PornItemStatus.Normal), PornDBConnection);
                 cmd.ExecuteNonQuery();
                 _TableChangedProgressInt.Report("porn_items");
                 //lock (PornPicsTable)
+                   
                 //{
                 //    PornPicsTable.Rows.Add(null, url, (int)prop);
                 //    PornPicsDataAdapter.Update(PornPicsTable);
@@ -285,6 +289,7 @@ namespace troll_ui_app
                     (Int64)ftype, "本地不良文件", (Int64)PornItemStatus.Normal), PornDBConnection);
                 cmd.ExecuteNonQuery();
                 _TableChangedProgressInt.Report("porn_items");
+                //Directory.
             }
             catch(Exception e)
             { log.Error(e.ToString()); }
@@ -435,7 +440,7 @@ namespace troll_ui_app
         public ForbiddenItemStatus GetAutoDomainStatus(string domainName)
         {
             //SQLiteCommand cmd = new SQLiteCommand(String.Format(kPornItemGetStatus, domainName, PornItemType.PornDomain), PornDBConnection);
-            SQLiteCommand cmd = new SQLiteCommand(String.Format(kForbiddenItemGetStatus, domainName, ForbiddenItemType.PornDomain), PornDBConnection);
+            SQLiteCommand cmd = new SQLiteCommand(String.Format(kForbiddenItemGetStatus, domainName, (Int64)ForbiddenItemType.PornDomain), PornDBConnection);
             Object t = cmd.ExecuteScalar();
             if (t == null)
                 return ForbiddenItemStatus.Undefined;
@@ -460,12 +465,10 @@ namespace troll_ui_app
             try { File.Delete(Program.AppLocalDir + Properties.Settings.Default.pornDbFileName); }
             catch(Exception e) {log.Error(e.ToString());}
         }
-        static public void Init()
+        static public void CreateDatabase()
         {
             try
             {
-                //if (!Directory.Exists(Program.kWorkDir))
-                //    Directory.CreateDirectory(Program.kWorkDir);
                 if (!File.Exists(Program.AppLocalDir + Properties.Settings.Default.pornDbFileName))
                 {
                     //File.Copy(Properties.Settings.Default.pornDbFileName, Program.AppLocalDir + Properties.Settings.Default.pornDbFileName);
@@ -497,7 +500,16 @@ namespace troll_ui_app
                                     command.ExecuteNonQuery();
                                     conn.Close();
                 }
-                //instance = new PornDatabase();
+            }
+            catch (Exception e)
+            {
+                log.Error(e.ToString());
+            }
+        }
+        static public void Init()
+        {
+            try
+            {
                 _TableChangedProgress = new Progress<string>();
                 _TableChangedProgressInt  = _TableChangedProgress;
             }

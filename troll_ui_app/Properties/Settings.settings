@@ -33,10 +33,10 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="minWidth" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">400</Value>
+      <Value Profile="(Default)">224</Value>
     </Setting>
     <Setting Name="minHeight" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">400</Value>
+      <Value Profile="(Default)">224</Value>
     </Setting>
     <Setting Name="upgraded" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -99,16 +99,28 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="IsNetworkImageTurnOn" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="IsPornWebsiteProtectionTurnOn" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="IsLocalActiveImageTurnOn" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="IsLocalActiveVideoTurnOn" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="getUserInfoUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://domain.shanyaows.com/wechat_apis/get_user_info.json</Value>
+    </Setting>
+    <Setting Name="getAuthInfoUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://domain.shanyaows.com/wechat_apis/get_auth_info.json</Value>
+    </Setting>
+    <Setting Name="userNickname" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="userHeadimgurl" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

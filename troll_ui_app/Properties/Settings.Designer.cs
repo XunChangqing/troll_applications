@@ -145,7 +145,7 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("400")]
+        [global::System.Configuration.DefaultSettingValueAttribute("224")]
         public int minWidth {
             get {
                 return ((int)(this["minWidth"]));
@@ -157,7 +157,7 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("400")]
+        [global::System.Configuration.DefaultSettingValueAttribute("224")]
         public int minHeight {
             get {
                 return ((int)(this["minHeight"]));
@@ -409,7 +409,7 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool IsNetworkImageTurnOn {
             get {
                 return ((bool)(this["IsNetworkImageTurnOn"]));
@@ -433,7 +433,7 @@ namespace troll_ui_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool IsLocalActiveImageTurnOn {
             get {
                 return ((bool)(this["IsLocalActiveImageTurnOn"]));
@@ -452,6 +452,54 @@ namespace troll_ui_app.Properties {
             }
             set {
                 this["IsLocalActiveVideoTurnOn"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://domain.shanyaows.com/wechat_apis/get_user_info.json")]
+        public string getUserInfoUrl {
+            get {
+                return ((string)(this["getUserInfoUrl"]));
+            }
+            set {
+                this["getUserInfoUrl"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://domain.shanyaows.com/wechat_apis/get_auth_info.json")]
+        public string getAuthInfoUrl {
+            get {
+                return ((string)(this["getAuthInfoUrl"]));
+            }
+            set {
+                this["getAuthInfoUrl"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string userNickname {
+            get {
+                return ((string)(this["userNickname"]));
+            }
+            set {
+                this["userNickname"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string userHeadimgurl {
+            get {
+                return ((string)(this["userHeadimgurl"]));
+            }
+            set {
+                this["userHeadimgurl"] = value;
             }
         }
     }

@@ -43,7 +43,7 @@ namespace troll_ui_app
                 xmlDoc.LoadXml(xmlstr);
                 Version latestVersion = curVersion;
                 string latestUrl = null;
-                string latestInfo = null;
+                string latestInfo = "";
                 XmlElement root = xmlDoc.DocumentElement;//取到根结点
                 foreach (var element in root.ChildNodes)
                 {
@@ -57,7 +57,7 @@ namespace troll_ui_app
                             {
                                 latestVersion = cv;
                                 latestUrl = ele.Attributes["url"].Value;
-                                latestInfo = ele.InnerText;
+                                latestInfo += cv.ToString()+":\n"+ele.InnerText;
                             }
                         }
                     }

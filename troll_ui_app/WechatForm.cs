@@ -19,6 +19,7 @@ using Newtonsoft.Json.Linq;
 using System.Threading;
 using QRCoder;
 using System.Runtime.InteropServices;
+using System.Net;
 
 namespace troll_ui_app
 {
@@ -42,23 +43,62 @@ namespace troll_ui_app
                 SendMessage(Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0);
             }
         }
-        public static bool Auth()
+        public bool BindingSuccess { get; set; }
+        static public bool Auth()
         {
-            if (hasBeenAuth || Properties.Settings.Default.openid == "")
+            //return true;
+            if (hasBeenAuth)
                 return true;
             else
             {
-                //log.Info("auth wechat, openid new version: "+Properties.Settings.Default.openid);
-                //WechatForm wechatForm = new WechatForm(true);
-                //wechatForm.ShowDialog();
-                //if (wechatForm.authSuccess)
-                //{
-                //    hasBeenAuth = true;
-                //    return true;
-                //}
-                //else
-                //    return false;
-                return false;
+                CancellationTokenSource cts = new CancellationTokenSource();
+                DateTime n = UpdateAuth(cts.Token);
+                if (n.AddMinutes(20) > DateTime.Now)
+                {
+                    hasBeenAuth = true;
+                    MainForm.Instance.mainPanelControl.AuthWechat(true);
+                    return true;
+                }
+                else
+                {
+                    MessageBox.Show("执行此操作需要微信绑定者点击公众号授权按钮进行授权！\n请在公众号菜单中点击授权按钮后重试！",
+                        "操作未授权", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+            }
+        }
+        public static DateTime UpdateAuth(CancellationToken cancellationToken)
+        {
+            try
+            {
+                HttpClientHandler handler = new HttpClientHandler() { UseProxy = false };
+                HttpClient client = new HttpClient(handler);
+
+                JObject getAuthInfoObj = new JObject();
+                getAuthInfoObj["token"] = webToken;
+                getAuthInfoObj["openid"] = Properties.Settings.Default.openid;
+
+                HttpResponseMessage msg = client.PostAsync(Properties.Settings.Default.getAuthInfoUrl,
+                    new StringContent(getAuthInfoObj.ToString(),
+                    Encoding.UTF8, "application/json"), cancellationToken).Result;
+                msg.EnsureSuccessStatusCode();
+                string retStr = msg.Content.ReadAsStringAsync().Result;
+                JObject retObj = JObject.Parse(retStr);
+                JToken usedToken = retObj["used"];
+                JToken updatedatToken = retObj["updated_at"];
+                if (usedToken != null && !bool.Parse(usedToken.ToString()))
+                {
+                    CancellationTokenSource cts = new CancellationTokenSource();
+                    Task t = UpdateUserInfo(cts.Token);
+                    return DateTime.Parse(updatedatToken.ToString()).ToLocalTime();
+                }
+                else
+                    return DateTime.MinValue;
+            }
+            catch(Exception err)
+            {
+                log.Error(err.ToString());
+                return DateTime.MinValue;
             }
         }
         public bool authSuccess { get; set; }
@@ -71,8 +111,12 @@ namespace troll_ui_app
         public WechatForm()
         {
             InitializeComponent();
+            Icon = Properties.Resources.icon_main_icon;
             MouseDown += MouseDownMove;
             titleLabel.MouseDown += MouseDownMove;
+
+            tipLabel.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
+            tipLabel.ForeColor = Color.FromArgb(0x4f, 0xb5, 0x2c);
 
             _refreshButton = new TextButton();
             _refreshButton.Text = "刷新二维码";
@@ -100,6 +144,13 @@ namespace troll_ui_app
             _closeBtn.MouseDown += _closeBtnOnMouseDown;
             _closeBtn.MouseUp += _closeBtnOnMouseUp;
             _closeBtn.Click += _closeBtnOnClick;
+            tipLabel.SizeChanged += tipLabelOnSizeChanged;
+        }
+
+        void tipLabelOnSizeChanged(object sender, EventArgs e)
+        {
+            tipLabel.Location = new Point(Width / 2 - tipLabel.Width / 2,
+                qrCodePictureBox.Location.Y + qrCodePictureBox.Height + 5);
         }
 
         void _closeBtnOnClick(object sender, EventArgs e)
@@ -133,6 +184,42 @@ namespace troll_ui_app
             cancellationTokenSource = new CancellationTokenSource();
             //getQrCodeTask.Wait();
             getQrCodeTask = SetQrcodeAsync(cancellationTokenSource.Token);
+        }
+
+        static async Task UpdateUserInfo(CancellationToken cancellationToken)
+        {
+            try
+            {
+                HttpClientHandler handler = new HttpClientHandler() { UseProxy = false };
+                HttpClient client = new HttpClient(handler);
+                JObject userInfoRequestObj = new JObject();
+                userInfoRequestObj["token"] = webToken;
+                userInfoRequestObj["openid"] = Properties.Settings.Default.openid;
+                HttpResponseMessage msg = await client.PostAsync(Properties.Settings.Default.getUserInfoUrl,
+                    new StringContent(userInfoRequestObj.ToString(), Encoding.UTF8, "application/json"),
+                    cancellationToken);
+                msg.EnsureSuccessStatusCode();
+                string retStr = await msg.Content.ReadAsStringAsync();
+                JObject retObj = JObject.Parse(retStr);
+                JToken openidToken = retObj["openid"];
+                JToken nicknameToken = retObj["nickname"];
+                JToken headimgurlToken = retObj["headimgurl"];
+                if (nicknameToken != null && nicknameToken.ToString() != "")
+                {
+                    string nickname = nicknameToken.ToString();
+                    string headimgurl = headimgurlToken.ToString();
+                    Properties.Settings.Default.userNickname = nickname;
+                    Properties.Settings.Default.userHeadimgurl = headimgurl;
+                    Properties.Settings.Default.Save();
+                    WebClient downloadClient = new WebClient();
+                    downloadClient.Proxy = null;
+                    downloadClient.DownloadFile(headimgurl, Program.AppLocalDir + "UserHeadImage");
+                }
+            }
+            catch(Exception ex)
+            {
+                log.Error(ex.ToString());
+            }
         }
 
         private async Task SetQrcodeAsync(CancellationToken cancellationToken)
@@ -195,52 +282,59 @@ namespace troll_ui_app
                     msg.EnsureSuccessStatusCode();
                     retStr = await msg.Content.ReadAsStringAsync();
                     retObj = JObject.Parse(retStr);
-                    string openid = retObj["openid"].ToString();
-                    if (openid != "")
+                    if (retObj["openid"]!=null && retObj["openid"].ToString() != "")
                     {
-                        //if (authMode)
-                        //{
-                        //    if(openid == Properties.Settings.Default.openid)
-                        //    {
-                        //        authSuccess = true;
-                        //        tipLabel.Text = "授权成功！";
-                        //        await Task.Delay(2000);
-                        //        Close();
-                        //        break;
-                        //    }
-                        //    else
-                        //    {
-                        //        tipLabel.Text = "您的微信与绑定微信不一致，授权失败！";
-                        //        authSuccess = false;
-                        //        await Task.Delay(2000);
-                        //        Close();
-                        //        break;
-                        //    }
-                        //}
-                        //else
-                        //{
-                            log.Info("scaned by: " + openid);
-                            tipLabel.Text = "微信绑定成功！";
-                            Properties.Settings.Default.openid = openid;
-                            Properties.Settings.Default.Save();
-                            ////注册用户信息到服务器
-                            //JObject registerRequestObj = new JObject();
-                            //sceneRequestObj["token"] = webToken;
-                            //sceneRequestObj["guid"] = Properties.Settings.Default.guid;
-                            //sceneRequestObj["machine-name"] = Environment.MachineName;
-                            //sceneRequestObj["openid"] = openid;
-                            //msg = await client.PostAsync(Properties.Settings.Default.registerTrollwizUserUrl,
-                            //    new StringContent(sceneRequestObj.ToString(), Encoding.UTF8, "application/json"),
-                            //    cancellationToken);
-                            //msg.EnsureSuccessStatusCode();
-                            await Task.Delay(2000);
-                            Close();
-                            break;
-                        //}
+                        string openid = retObj["openid"].ToString();
+                        log.Info("scaned by: " + openid);
+                        tipLabel.Text = "扫码成功，正在获取用户信息！";
+                        Properties.Settings.Default.openid = openid;
+                        Properties.Settings.Default.Save();
+                        break;
                     }
-                    await Task.Delay(2000);
+                    //await Task.Delay(2000);
                     log.Info("one time again!");
                 }
+                while (true)
+                {
+                    JObject userInfoRequestObj = new JObject();
+                    userInfoRequestObj["token"] = webToken;
+                    userInfoRequestObj["openid"] = Properties.Settings.Default.openid;
+                    msg = await client.PostAsync(Properties.Settings.Default.getUserInfoUrl,
+                        new StringContent(userInfoRequestObj.ToString(), Encoding.UTF8, "application/json"),
+                        cancellationToken);
+                    msg.EnsureSuccessStatusCode();
+                    retStr = await msg.Content.ReadAsStringAsync();
+                    retObj = JObject.Parse(retStr);
+                    JToken openidToken = retObj["openid"];
+                    JToken nicknameToken = retObj["nickname"];
+                    JToken headimgurlToken = retObj["headimgurl"];
+                    if (nicknameToken != null && nicknameToken.ToString()!="")
+                    {
+                        string nickname = nicknameToken.ToString();
+                        string headimgurl = headimgurlToken.ToString();
+                        log.Info("binding by: " + nickname);
+                        tipLabel.Text = "绑定成功！";
+                        Properties.Settings.Default.userNickname = nickname;
+                        Properties.Settings.Default.userHeadimgurl = headimgurl;
+                        Properties.Settings.Default.Save();
+                        try
+                        {
+                            WebClient downloadClient = new WebClient();
+                            downloadClient.Proxy = null;
+                            downloadClient.DownloadFile(headimgurl, Program.AppLocalDir + "UserHeadImage");
+                        }
+                        catch(Exception excep)
+                        {
+                            log.Error(excep.ToString());
+                        }
+                        BindingSuccess = true;
+                        break;
+                    }
+                    else
+                        tipLabel.Text = "请点击公众号绑定按钮完成绑定！";
+                }
+                //await Task.Delay(2000);
+                Close();
             }
             catch(Exception err)
             {
@@ -250,13 +344,6 @@ namespace troll_ui_app
 
         private void WechatForm_Load(object sender, EventArgs e)
         {
-            //if (!authMode)
-            //{
-            //    //ControlBox = false;
-            //    Text = "微信绑定";
-            //}
-            //else
-            //    Text = "您需要验证一次身份才能进行停止和退出操作！";
             cancellationTokenSource = new CancellationTokenSource();
             getQrCodeTask = SetQrcodeAsync(cancellationTokenSource.Token);
         }

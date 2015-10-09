@@ -83,7 +83,10 @@ namespace troll_ui_app
                     //var fi = new FileInfo(Application.ExecutablePath);
                     //process.StartInfo.WorkingDirectory = fi.DirectoryName;
                     if (process.Start())
+                    {
+                        MainForm.Instance.ForceToQuit = true;
                         Application.Exit();
+                    }
                     else
                         this.Close();
                 }

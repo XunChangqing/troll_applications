@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Runtime.InteropServices;
 using Titanium.Web.Proxy.Helpers;
 using log4net;
+using TrotiNet;
 
 namespace troll_ui_app
 {
@@ -36,37 +37,82 @@ namespace troll_ui_app
             if (!ok) throw new Exception("Animation failed");
             ctl.Visible = !ctl.Visible;
         }
+        public bool ForceToQuit { get; set;}
 
         private static int[] dirmap = { 1, 5, 4, 6, 2, 10, 8, 9 };
         private static int[] effmap = { 0, 0x40000, 0x10, 0x80000 };
 
         [DllImport("user32.dll")]
         private static extern bool AnimateWindow(IntPtr handle, int msec, int flags);
-        //protected override CreateParams CreateParams
-        //{
-        //    get
-        //    {
-        //        const int CS_DROPSHADOW = 0x20000;
-        //        CreateParams cp = base.CreateParams;
-        //        cp.ClassStyle |= CS_DROPSHADOW;
-        //        return cp;
-        //    }
-        //}
+
+        public void SlideWindow(Control window)
+        {
+            Animate(window, Effect.Slide, 100, 180);
+            //bool origVisible = window.Visible;
+            //int sx, dx;
+            //int stride = 180;
+            //if(origVisible)
+            //{
+            //    sx = 0;
+            //    dx = 901;
+            //    window.Location = new Point(sx, 0);
+            //}
+            //else
+            //{
+            //    sx = 901;
+            //    dx = 0;
+            //    stride = -stride;
+            //    window.Location = new Point(sx, 0);
+            //    window.Visible = true;
+            //}
+
+            //for (int i = sx; Math.Abs(i-sx) < MainForm.MainFormWidth; i+=stride)
+            //{
+            //    window.Location = new Point(i, 0);
+            //    if (origVisible)
+            //        mainPanelControl.Refresh();
+            //    window.Refresh();
+            //    //System.Threading.Thread.Sleep(10);
+            //}
+            //window.Location = new Point(dx, 0);
+
+            //if (origVisible)
+            //    window.Visible = false;
+        }
 
         public MainPanelControl mainPanelControl;
         public ScanPanelControl scanPanelControl;
         public ProtectionPanelControl _protectionPanelControl;
         public ActiveFileMonitor _activeFileMonitor;
+        public TcpServer Server;
+        public Progress<PornDatabase.PornItemType> TargetProcessedProgress;
 
         public static MainForm Instance;
 
         NotifyIcon _mainNotifyIcon;
         ContextMenuStrip _mainContextMenuTrip;
+        bool bindingSuccess = true;
         public MainForm(String []args)
         {
             Instance = this;
+            ForceToQuit = false;
+            Icon = Properties.Resources.icon_main_icon;
+
             //必须在UI内部初始化，保证progress对象是由UI线程初始化的
             PornDatabase.Init();
+
+            TargetProcessedProgress = new Progress<PornDatabase.PornItemType>();
+
+            const bool bUseIPv6 = false;
+            Server = new TcpServer(Properties.Settings.Default.bindPort, bUseIPv6);
+            Server.Start(GreenProxy.CreateProxy);
+            Server.InitListenFinished.WaitOne();
+            if (Server.InitListenException != null)
+                throw Server.InitListenException;
+#if !DEBUG
+            SystemProxyHelper.EnableProxyHTTP("127.0.0.1", 8090);
+            FireFoxHelper.AddFirefox();
+#endif
             //PornDatabase pdb = new PornDatabase();
             //pdb.InsertPornFile("C:/xyz", PornDatabase.PornItemType.LocalImage);
 
@@ -101,6 +147,7 @@ namespace troll_ui_app
             //mainPanelControl.ScanEvent += mainPanelOnScanEvent;
             Load += MainFormOnLoad;
             FormClosed += MainFormOnFormClosed;
+            FormClosing += MainFormOnFormClosing;
 
             if (args.Contains("-notvisible"))
             {
@@ -116,16 +163,30 @@ namespace troll_ui_app
             Owner = form1;
         }
 
+        void MainFormOnFormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!ForceToQuit && !WechatForm.Auth())
+                e.Cancel = true;
+            if (ForceToQuit)
+                log.Info("Force to quit");
+        }
+
         void MainFormOnFormClosed(object sender, FormClosedEventArgs e)
         {
+            _mainNotifyIcon.Visible = false;
+#if !DEBUG
             SystemProxyHelper.DisableAllProxy();
             FireFoxHelper.RemoveFirefox();
+#endif
+            Server.Stop();
             log.Info("MainForm Closed!");
         }
 
         void _mainNotifyIconOnDoubleClick(object sender, EventArgs e)
         {
             Show();
+            WindowState = FormWindowState.Normal;
+            ShowInTaskbar = true;
         }
 
 
@@ -145,7 +206,8 @@ namespace troll_ui_app
         void mainPanelOnScanEvent(object sender, troll_ui_app.MainPanelControl.ScanEventArgs e)
         {
             Console.WriteLine("Scan Event!");
-            Animate(scanPanelControl, Effect.Slide, 200, 180);
+            MainForm.Instance.SlideWindow(scanPanelControl);
+            //Animate(scanPanelControl, Effect.Slide, 200, 180);
         }
 
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
@@ -240,12 +302,17 @@ namespace troll_ui_app
         }
         void quitItemOnClick(object sender, EventArgs e)
         {
-            _mainNotifyIcon.Visible = false;
-            Application.Exit();
+            if (WechatForm.Auth())
+            {
+                _mainNotifyIcon.Visible = false;
+                Application.Exit();
+            }
         }
         void openMainPanelOnClick(object sender, EventArgs e)
         {
             Show();
+            WindowState = FormWindowState.Normal;
+            ShowInTaskbar = true;
         }
     }
 }

@@ -104,7 +104,6 @@ namespace troll_ui_app
 
         private void AddPorn()
         {
-            PornDB.InsertPornPic(FullRequestUri, PornClassifier.ImageType.Porn);
             lock (SyncObject)
             {
                 foreach (Tuple<String, HashSet<String>> tset in ImageSrcSetList)
@@ -138,24 +137,37 @@ namespace troll_ui_app
             Bitmap bm = new Bitmap(stream);
 
             PornClassifier.ImageType imgType = PornClassifier.Instance.Classify(bm);
-            Pen p = null;
+            IProgress<PornDatabase.PornItemType> ip = MainForm.Instance.TargetProcessedProgress as IProgress<PornDatabase.PornItemType>;
+            bool isImageBad = false;
             if (imgType == PornClassifier.ImageType.Disguise)
             {
-                p = new Pen(Color.Yellow, 20);
-                PornDB.InsertPornPic(FullRequestUri, PornClassifier.ImageType.Disguise);
-                bm.Save(Program.AppLocalDir + Properties.Settings.Default.imagesDir + "\\" + HttpUtility.UrlEncode(FullRequestUri));
+                isImageBad = true;
             }
             else if (imgType == PornClassifier.ImageType.Porn)
             {
-                p = new Pen(Color.Red, 20);
-                AddPorn();
-                bm.Save(Program.AppLocalDir + Properties.Settings.Default.imagesDir + "\\" + HttpUtility.UrlEncode(FullRequestUri));
+                isImageBad = true;
+                //添加到不良网页中，以进行不良网站检查，只针对色情图片进行处理
+                //只在启用了色情网站侦测时才处理，但实际上由于未启用色情网站侦测时
+                //html不处理，这里其实即使处理也无法hit
+                if(Properties.Settings.Default.IsPornWebsiteProtectionTurnOn)
+                    AddPorn();
             }
+            else
+                ip.Report(PornDatabase.PornItemType.Undefined);
 
-            if (p != null)
+            //if (p != null)
+            //只在图片过滤功能开启时才将色情图片加入数据库，并替换图片
+            if (isImageBad && Properties.Settings.Default.IsNetworkImageTurnOn)
             {
+                PornDB.InsertPornPic(FullRequestUri, PornClassifier.ImageType.Disguise);
+                bm.Save(Program.AppLocalDir + Properties.Settings.Default.imagesDir + "\\" + HttpUtility.UrlEncode(FullRequestUri));
+                ip.Report(PornDatabase.PornItemType.NetworkImage);
+
                 Graphics g = Graphics.FromImage(bm);
-                g.DrawRectangle(p, 0, 0, bm.Width, bm.Height);
+                SolidBrush solidBrush = new SolidBrush(Color.Red);
+                g.FillRectangle(solidBrush, 0, 0, bm.Width, bm.Height);
+                SolidBrush stringBrush = new SolidBrush(Color.Yellow);
+                g.DrawString("山妖卫士", new Font("微软雅黑", bm.Width / 10, GraphicsUnit.Pixel), stringBrush, new Point(0, 0));
                 g.Flush();
             }
 
@@ -293,9 +305,11 @@ namespace troll_ui_app
             //if (!(DomainType == PornDatabase.DomainType.White) && ResponseHeaders.Headers.ContainsKey("content-type"))
             if (ResponseHeaders.Headers.ContainsKey("content-type"))
             {
-                if (DomainType != PornDatabase.DomainType.White)
+                if (DomainType != PornDatabase.DomainType.White && Properties.Settings.Default.IsPornWebsiteProtectionTurnOn)
                     bProcessHtml = ResponseHeaders.Headers["content-type"].Contains("text/html");
-                if (DomainType != PornDatabase.DomainType.White || Properties.Settings.Default.IsNetworkImageTurnOn)
+                //if (DomainType != PornDatabase.DomainType.White &&
+                //    (Properties.Settings.Default.IsPornWebsiteProtectionTurnOn || Properties.Settings.Default.IsNetworkImageTurnOn))
+                if (Properties.Settings.Default.IsPornWebsiteProtectionTurnOn || Properties.Settings.Default.IsNetworkImageTurnOn)
                     bProcessImage = ResponseHeaders.Headers["content-type"].Contains("image/jpeg") ||
                         ResponseHeaders.Headers["content-type"].Contains("image/png");
             }

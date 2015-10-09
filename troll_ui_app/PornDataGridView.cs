@@ -144,6 +144,10 @@ namespace troll_ui_app
             Columns["info"].DisplayIndex = didx++;
             Columns["item_type"].DisplayIndex = didx++;
             Columns["status"].DisplayIndex = didx++;
+
+            Sort(Columns["created_at"], System.ComponentModel.ListSortDirection.Descending);
+            //SortedColumn = Columns["created_at"];
+            //SortOrder = System.Windows.Forms.SortOrder.Descending;
         }
 
         void PornDataGridViewOnCellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
