@@ -37,7 +37,7 @@ namespace troll_ui_app
             if (!ok) throw new Exception("Animation failed");
             ctl.Visible = !ctl.Visible;
         }
-        public bool ForceToQuit { get; set;}
+        //public bool ForceToQuit { get; set;}
 
         private static int[] dirmap = { 1, 5, 4, 6, 2, 10, 8, 9 };
         private static int[] effmap = { 0, 0x40000, 0x10, 0x80000 };
@@ -95,7 +95,7 @@ namespace troll_ui_app
         public MainForm(String []args)
         {
             Instance = this;
-            ForceToQuit = false;
+            //ForceToQuit = false;
             Icon = Properties.Resources.icon_main_icon;
 
             //必须在UI内部初始化，保证progress对象是由UI线程初始化的
@@ -109,10 +109,10 @@ namespace troll_ui_app
             Server.InitListenFinished.WaitOne();
             if (Server.InitListenException != null)
                 throw Server.InitListenException;
-#if !DEBUG
+//#if !DEBUG
             SystemProxyHelper.EnableProxyHTTP("127.0.0.1", 8090);
             FireFoxHelper.AddFirefox();
-#endif
+//#endif
             //PornDatabase pdb = new PornDatabase();
             //pdb.InsertPornFile("C:/xyz", PornDatabase.PornItemType.LocalImage);
 
@@ -148,6 +148,7 @@ namespace troll_ui_app
             Load += MainFormOnLoad;
             FormClosed += MainFormOnFormClosed;
             FormClosing += MainFormOnFormClosing;
+            Disposed += MainFormOnDisposed;
 
             if (args.Contains("-notvisible"))
             {
@@ -157,42 +158,57 @@ namespace troll_ui_app
             //set hotkey as ctrl+alt+backspace
             //Boolean success = FormMain.RegisterHotKey(this.Handle, this.GetType().GetHashCode(), MOD_CTRL | MOD_ALT, 0x08);//Set hotkey as 'b'
             //set the owner to avoid the main form in atl-table window
-            Form form1 = new Form();
-            form1.FormBorderStyle = FormBorderStyle.FixedToolWindow;
-            form1.ShowInTaskbar = false;
-            Owner = form1;
+            //Form form1 = new Form();
+            //form1.FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            //form1.ShowInTaskbar = false;
+            //Owner = form1;
+        }
+
+        void MainFormOnDisposed(object sender, EventArgs e)
+        {
+            _mainNotifyIcon.Visible = false;
+            Server.Stop();
+            log.Info("Mainform Disposed!");
         }
 
         void MainFormOnFormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!ForceToQuit && !WechatForm.Auth())
-                e.Cancel = true;
-            if (ForceToQuit)
-                log.Info("Force to quit");
+            log.Info("MainForm Closing: " + e.CloseReason.ToString());
+            //if (!(e.CloseReason == CloseReason.) !ForceToQuit && !WechatForm.Auth())
+            if (e.CloseReason == CloseReason.UserClosing || e.CloseReason == CloseReason.TaskManagerClosing)
+            //|| e.CloseReason == CloseReason.WindowsShutDown)
+            {
+                if (!WechatForm.Auth())
+                {
+                    e.Cancel = true;
+                }
+            }
+            //else if (e.CloseReason == CloseReason.WindowsShutDown)
+            //    Application.Exit();
         }
 
         void MainFormOnFormClosed(object sender, FormClosedEventArgs e)
         {
-            _mainNotifyIcon.Visible = false;
-#if !DEBUG
-            SystemProxyHelper.DisableAllProxy();
-            FireFoxHelper.RemoveFirefox();
-#endif
-            Server.Stop();
+            //Application.Exit();
+            if(e.CloseReason == CloseReason.WindowsShutDown)
+            {
+                Program.CleanUp();
+            }
             log.Info("MainForm Closed!");
+            //确保触发application.exit事件，系统关机时不会自动触发Application.Exit事件
         }
 
         void _mainNotifyIconOnDoubleClick(object sender, EventArgs e)
         {
-            Show();
             WindowState = FormWindowState.Normal;
             ShowInTaskbar = true;
+            Show();
         }
 
 
         void MainFormOnLoad(object sender, EventArgs e)
         {
-            Console.WriteLine("load Event!");
+            log.Info("MainForm Load!");
             scanPanelControl.Visible = false;
             _protectionPanelControl.Visible = false;
             UpdateInfoForm.GetInstance();
@@ -304,15 +320,14 @@ namespace troll_ui_app
         {
             if (WechatForm.Auth())
             {
-                _mainNotifyIcon.Visible = false;
                 Application.Exit();
             }
         }
         void openMainPanelOnClick(object sender, EventArgs e)
         {
-            Show();
             WindowState = FormWindowState.Normal;
             ShowInTaskbar = true;
+            Show();
         }
     }
 }

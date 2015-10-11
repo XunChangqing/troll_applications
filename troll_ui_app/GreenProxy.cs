@@ -40,9 +40,14 @@ namespace troll_ui_app
                     return tset.Item2;
             }
             Tuple<String, HashSet<String>> nset = new Tuple<string, HashSet<string>>(domainName, new HashSet<string>());
+            //添加在结尾处，所有后面必须从头部删除，否则会发生bug
             ImageSrcSetList.Add(nset);
             if (ImageSrcSetList.Count > Properties.Settings.Default.maxNumDomainList)
-                ImageSrcSetList.RemoveAt(ImageSrcSetList.Count-1);
+            {
+                log.Info("Remove the first domain in domainList: " + ImageSrcSetList[0].Item1);
+                ImageSrcSetList.RemoveAt(0);
+            }
+                //ImageSrcSetList.RemoveAt(ImageSrcSetList.Count-1);
             return nset.Item2;
         }
 
@@ -104,6 +109,7 @@ namespace troll_ui_app
 
         private void AddPorn()
         {
+            log.Info("Try to find the page including: " + FullRequestUri);
             lock (SyncObject)
             {
                 foreach (Tuple<String, HashSet<String>> tset in ImageSrcSetList)

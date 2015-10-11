@@ -71,6 +71,7 @@ namespace troll_ui_app
                     //NotificationRoutines.SendUninstallNotification().Wait();
                     return;
                 }
+                RegisterApplicationRestart(null, 0);
                 //Init();
                 InitLogAndDirs();
 
@@ -100,7 +101,9 @@ namespace troll_ui_app
                 {
                     InitForBusinessLogic();
                     Application.ApplicationExit += OnApplicationExit;
-                    Application.Run(new MainForm(args));
+                    MainForm mainform = new MainForm(args);
+                    Application.Run(mainform);
+                    CleanUp();
                 }
                 log.Info("Exit from Main!");
             }
@@ -164,19 +167,23 @@ namespace troll_ui_app
             update_domain_list_timer = new System.Threading.Timer(PornDatabase.UpdateDatabase, null, new TimeSpan(0, 0, 5), new TimeSpan(4, 0, 0));
             delete_history_timer = new System.Threading.Timer(PornDatabase.DeleteHistroy, null, new TimeSpan(0, 1, 0), System.Threading.Timeout.InfiniteTimeSpan);
         }
-        static void OnApplicationExit(object sender, EventArgs e)
+        static bool _cleanUp = false;
+        public static void CleanUp()
         {
             try
             {
+                if (_cleanUp)
+                    return;
                 //unset proxy again to make sure
-#if !DEBUG
-                try
-                {
-                    SystemProxyHelper.DisableAllProxy();
-                    FireFoxHelper.RemoveFirefox();
-                }
-                catch (Exception exp) { log.Error(exp.ToString()); }
-#endif
+//#if !DEBUG
+                //try
+                //{
+                //    log.Info("Disable proxy!");
+                //    SystemProxyHelper.DisableAllProxyWithourRestore();
+                //    FireFoxHelper.RemoveFirefox();
+                //}
+                //catch (Exception exp) { log.Error(exp.ToString()); }
+//#endif
                 //dispose timer and wait for callback complete
                 WaitHandle[] whs = new WaitHandle[]{
                 new AutoResetEvent(false),
@@ -188,12 +195,17 @@ namespace troll_ui_app
                     wh.WaitOne();
                 //updateTask.Wait();
                 //exitMailTask.Wait();
+                _cleanUp = true;
                 log.Info("Exit gracefully!");
             }
             catch (Exception exception)
             {
                 log.Error(exception.ToString());
             }
+        }
+        static void OnApplicationExit(object sender, EventArgs e)
+        {
+            CleanUp();
         }
     }
 }

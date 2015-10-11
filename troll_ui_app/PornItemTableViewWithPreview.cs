@@ -131,18 +131,35 @@ namespace troll_ui_app
             {
                 PornDatabase.PornItemType type = (PornDatabase.PornItemType)currentRow.Row.Field<Int64>("item_type");
                 string info = currentRow.Row.Field<string>("info");
+                string fname;
                 if (type == PornDatabase.PornItemType.LocalImage ||
                     type == PornDatabase.PornItemType.LocalVideo)
                 {
-                    _previewPictureBox.ImageLocation = info;
+                    //_previewPictureBox.ImageLocation = info;
+                    fname = info;
                 }
                 else if (type == PornDatabase.PornItemType.NetworkImage)
                 {
                     string filename = Program.AppLocalDir + Properties.Settings.Default.imagesDir + "\\" + HttpUtility.UrlEncode(info);
-                    _previewPictureBox.ImageLocation = filename;
+                    //_previewPictureBox.ImageLocation = filename;
+                    fname = filename;
                 }
                 else
-                    _previewPictureBox.ImageLocation = null;
+                {
+                    //_previewPictureBox.ImageLocation = null;
+                    fname = null;
+                }
+                log.Info("PornPreview image location: " + _previewPictureBox.ImageLocation);
+                try
+                {
+                    Image x = Image.FromFile(fname);
+                    _previewPictureBox.Image = x;
+                }
+                catch(Exception ex)
+                {
+                    log.Info(ex.ToString());
+                    _previewPictureBox.Image = null;
+                }
             }
             //if (data_grid_view_porn_pics.SelectedRows.Count > 0)
             //{

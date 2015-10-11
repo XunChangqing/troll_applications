@@ -97,6 +97,8 @@ namespace troll_ui_app
             }
             catch(Exception err)
             {
+                MessageBox.Show("获取授权失败，请检查网络是否连接！",
+                        "获取授权失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 log.Error(err.ToString());
                 return DateTime.MinValue;
             }
