@@ -502,5 +502,17 @@ namespace troll_ui_app.Properties {
                 this["userHeadimgurl"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://domain.shanyaows.com/wechat_apis/error_report.json")]
+        public string errorReportUrl {
+            get {
+                return ((string)(this["errorReportUrl"]));
+            }
+            set {
+                this["errorReportUrl"] = value;
+            }
+        }
     }
 }

@@ -15,6 +15,8 @@ using System.Net.Mail;
 using TrotiNet;
 using Titanium.Web.Proxy.Helpers;
 using System.Drawing;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
 
 namespace troll_ui_app
 {
@@ -109,7 +111,12 @@ namespace troll_ui_app
             }
             catch (Exception e)
             {
+                //如果意外退出，一定要记得关闭代理，否则会导致用户无法上网
+                CleanUp();
                 log.Error(e.ToString());
+                //ReportErrorOnline(e.ToString());
+                //MessageBox.Show("程序由于未知问题崩溃，症状已上传，我们尽快处理，给您带来的不便敬请谅解！",
+                //        "程序崩溃", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         static private void InitLogAndDirs()
@@ -126,6 +133,15 @@ namespace troll_ui_app
             //var companyName = versionInfo.CompanyName;
             AppLocalDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "/masatek/trollwiz/";
             //upgrade user settings
+            //create directory for work
+            if (!Directory.Exists(Program.AppLocalDir))
+                Directory.CreateDirectory(Program.AppLocalDir);
+            //create directory for images
+            if (!Directory.Exists(Program.AppLocalDir + Properties.Settings.Default.imagesDir))
+                Directory.CreateDirectory(Program.AppLocalDir + Properties.Settings.Default.imagesDir);
+            //create directory for updates
+            if (!Directory.Exists(Program.AppLocalDir + Properties.Settings.Default.updateDir))
+                Directory.CreateDirectory(Program.AppLocalDir + Properties.Settings.Default.updateDir);
             Utils.Log_Init();
             //#if !DEBUG
             if (!Properties.Settings.Default.upgraded)
@@ -147,16 +163,6 @@ namespace troll_ui_app
                 Properties.Settings.Default.guid = System.Guid.NewGuid().ToString();
                 Properties.Settings.Default.Save();
             }
-
-            //create directory for work
-            if (!Directory.Exists(Program.AppLocalDir))
-                Directory.CreateDirectory(Program.AppLocalDir);
-            //create directory for images
-            if (!Directory.Exists(Program.AppLocalDir + Properties.Settings.Default.imagesDir))
-                Directory.CreateDirectory(Program.AppLocalDir + Properties.Settings.Default.imagesDir);
-            //create directory for updates
-            if (!Directory.Exists(Program.AppLocalDir + Properties.Settings.Default.updateDir))
-                Directory.CreateDirectory(Program.AppLocalDir + Properties.Settings.Default.updateDir);
         }
         static void InitForBusinessLogic()
         {
@@ -175,15 +181,17 @@ namespace troll_ui_app
                 if (_cleanUp)
                     return;
                 //unset proxy again to make sure
-//#if !DEBUG
-                //try
-                //{
-                //    log.Info("Disable proxy!");
-                //    SystemProxyHelper.DisableAllProxyWithourRestore();
-                //    FireFoxHelper.RemoveFirefox();
-                //}
-                //catch (Exception exp) { log.Error(exp.ToString()); }
-//#endif
+#if !DEBUG
+                try
+                {
+                    log.Info("Disable proxy!");
+                    SystemProxyHelper.DisableAllProxyWithourRestore();
+                    FireFoxHelper.RemoveFirefox();
+                }
+                catch (Exception exp) { log.Error(exp.ToString()); }
+                try { ProxyRoutines.SetProxy(false); }
+                catch (Exception exp) { log.Equals(exp.ToString()); }
+#endif
                 //dispose timer and wait for callback complete
                 WaitHandle[] whs = new WaitHandle[]{
                 new AutoResetEvent(false),
@@ -206,6 +214,32 @@ namespace troll_ui_app
         static void OnApplicationExit(object sender, EventArgs e)
         {
             CleanUp();
+        }
+
+        static readonly string webToken = "masa417";
+        static void ReportErrorOnline(string errMsg)
+        {
+            try
+            {
+                HttpClientHandler handler = new HttpClientHandler() { UseProxy = false };
+                HttpClient client = new HttpClient(handler);
+
+                JObject errReportObj = new JObject();
+                errReportObj["token"] = webToken;
+                FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
+                Version curVersion = new Version(versionInfo.ProductVersion);
+                errReportObj["errmsg"] = curVersion.ToString() + "\n" + errMsg;
+
+                HttpResponseMessage msg = client.PostAsync(Properties.Settings.Default.getAuthInfoUrl,
+                    new StringContent(errReportObj.ToString(),
+                    Encoding.UTF8, "application/json")).Result;
+                msg.EnsureSuccessStatusCode();
+                string retStr = msg.Content.ReadAsStringAsync().Result;
+            }
+            catch(Exception err)
+            {
+                log.Error("提交崩溃错误失败: "+err.ToString());
+            }
         }
     }
 }

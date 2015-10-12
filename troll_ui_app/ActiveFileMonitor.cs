@@ -51,18 +51,25 @@ namespace troll_ui_app
             {
                 if (dinfo.DriveType == DriveType.Fixed)
                 {
-                    FileSystemWatcher fsWatcher = new FileSystemWatcher(dinfo.RootDirectory.ToString());
-                    //fsWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
-                    //_fileSystemWatcher.NotifyFilter = | NotifyFilters.Size;
-                    //NotifyFilters.
-                    fsWatcher.Filter = filter;
-                    fsWatcher.IncludeSubdirectories = true;
-                    fsWatcher.Created += _fileSystemWatcherOnChanged;
-                    fsWatcher.Changed += _fileSystemWatcherOnChanged;
-                    //fsWatcher.Deleted += _fileSystemWatcherOnDeleted;
-                    //fsWatcher.Renamed += _fileSystemWatcherOnRenamed;
+                    try
+                    {
+                        FileSystemWatcher fsWatcher = new FileSystemWatcher(dinfo.RootDirectory.ToString());
+                        //fsWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
+                        //_fileSystemWatcher.NotifyFilter = | NotifyFilters.Size;
+                        //NotifyFilters.
+                        fsWatcher.Filter = filter;
+                        fsWatcher.IncludeSubdirectories = true;
+                        fsWatcher.Created += _fileSystemWatcherOnChanged;
+                        fsWatcher.Changed += _fileSystemWatcherOnChanged;
+                        //fsWatcher.Deleted += _fileSystemWatcherOnDeleted;
+                        //fsWatcher.Renamed += _fileSystemWatcherOnRenamed;
 
-                    ofsWatchers.Add(fsWatcher);
+                        ofsWatchers.Add(fsWatcher);
+                    }
+                    catch(Exception exp)
+                    {
+                        log.Error(exp.ToString());
+                    }
                 }
             }
         }

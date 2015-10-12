@@ -109,10 +109,10 @@ namespace troll_ui_app
             Server.InitListenFinished.WaitOne();
             if (Server.InitListenException != null)
                 throw Server.InitListenException;
-//#if !DEBUG
+#if !DEBUG
             SystemProxyHelper.EnableProxyHTTP("127.0.0.1", 8090);
             FireFoxHelper.AddFirefox();
-//#endif
+#endif
             //PornDatabase pdb = new PornDatabase();
             //pdb.InsertPornFile("C:/xyz", PornDatabase.PornItemType.LocalImage);
 

@@ -278,64 +278,78 @@ namespace troll_ui_app
                 sceneRequestObj["scene_id"] = userid;
                 while(true)
                 {
-                    msg = await client.PostAsync(Properties.Settings.Default.getSceneUrl,
-                        new StringContent(sceneRequestObj.ToString(), Encoding.UTF8, "application/json"),
-                        cancellationToken);
-                    msg.EnsureSuccessStatusCode();
-                    retStr = await msg.Content.ReadAsStringAsync();
-                    retObj = JObject.Parse(retStr);
-                    if (retObj["openid"]!=null && retObj["openid"].ToString() != "")
+                    //防止由于某次连接异常，导致无法继续的问题
+                    try
                     {
-                        string openid = retObj["openid"].ToString();
-                        log.Info("scaned by: " + openid);
-                        tipLabel.Text = "扫码成功，正在获取用户信息！";
-                        Properties.Settings.Default.openid = openid;
-                        Properties.Settings.Default.Save();
-                        break;
+                        msg = await client.PostAsync(Properties.Settings.Default.getSceneUrl,
+                            new StringContent(sceneRequestObj.ToString(), Encoding.UTF8, "application/json"),
+                            cancellationToken);
+                        msg.EnsureSuccessStatusCode();
+                        retStr = await msg.Content.ReadAsStringAsync();
+                        retObj = JObject.Parse(retStr);
+                        if (retObj["openid"] != null && retObj["openid"].ToString() != "")
+                        {
+                            string openid = retObj["openid"].ToString();
+                            log.Info("scaned by: " + openid);
+                            tipLabel.Text = "扫码成功，正在获取用户信息！";
+                            Properties.Settings.Default.openid = openid;
+                            Properties.Settings.Default.Save();
+                            break;
+                        }
                     }
+                    catch(Exception exp)
+                    { log.Error("error of getting scene: " + exp.ToString()); }
                     //await Task.Delay(2000);
-                    log.Info("one time again!");
+                    log.Info("one time again for getting scene!");
                 }
                 while (true)
                 {
-                    JObject userInfoRequestObj = new JObject();
-                    userInfoRequestObj["token"] = webToken;
-                    userInfoRequestObj["openid"] = Properties.Settings.Default.openid;
-                    msg = await client.PostAsync(Properties.Settings.Default.getUserInfoUrl,
-                        new StringContent(userInfoRequestObj.ToString(), Encoding.UTF8, "application/json"),
-                        cancellationToken);
-                    msg.EnsureSuccessStatusCode();
-                    retStr = await msg.Content.ReadAsStringAsync();
-                    retObj = JObject.Parse(retStr);
-                    JToken openidToken = retObj["openid"];
-                    JToken nicknameToken = retObj["nickname"];
-                    JToken headimgurlToken = retObj["headimgurl"];
-                    if (nicknameToken != null && nicknameToken.ToString()!="")
+                    //防止由于某次连接异常，导致无法继续的问题
+                    try
                     {
-                        string nickname = nicknameToken.ToString();
-                        string headimgurl = headimgurlToken.ToString();
-                        log.Info("binding by: " + nickname);
-                        tipLabel.Text = "绑定成功！";
-                        Properties.Settings.Default.userNickname = nickname;
-                        Properties.Settings.Default.userHeadimgurl = headimgurl;
-                        Properties.Settings.Default.Save();
-                        try
+                        JObject userInfoRequestObj = new JObject();
+                        userInfoRequestObj["token"] = webToken;
+                        userInfoRequestObj["openid"] = Properties.Settings.Default.openid;
+                        msg = await client.PostAsync(Properties.Settings.Default.getUserInfoUrl,
+                            new StringContent(userInfoRequestObj.ToString(), Encoding.UTF8, "application/json"),
+                            cancellationToken);
+                        msg.EnsureSuccessStatusCode();
+                        retStr = await msg.Content.ReadAsStringAsync();
+                        retObj = JObject.Parse(retStr);
+                        JToken openidToken = retObj["openid"];
+                        JToken nicknameToken = retObj["nickname"];
+                        JToken headimgurlToken = retObj["headimgurl"];
+                        if (nicknameToken != null && nicknameToken.ToString() != "")
                         {
-                            WebClient downloadClient = new WebClient();
-                            downloadClient.Proxy = null;
-                            downloadClient.DownloadFile(headimgurl, Program.AppLocalDir + "UserHeadImage");
+                            string nickname = nicknameToken.ToString();
+                            string headimgurl = headimgurlToken.ToString();
+                            log.Info("binding by: " + nickname);
+                            tipLabel.Text = "绑定成功！";
+                            Properties.Settings.Default.userNickname = nickname;
+                            Properties.Settings.Default.userHeadimgurl = headimgurl;
+                            Properties.Settings.Default.Save();
+                            try
+                            {
+                                WebClient downloadClient = new WebClient();
+                                downloadClient.Proxy = null;
+                                downloadClient.DownloadFile(headimgurl, Program.AppLocalDir + "UserHeadImage");
+                            }
+                            catch (Exception excep)
+                            {
+                                log.Error(excep.ToString());
+                            }
+                            BindingSuccess = true;
+                            break;
                         }
-                        catch(Exception excep)
-                        {
-                            log.Error(excep.ToString());
-                        }
-                        BindingSuccess = true;
-                        break;
+                        else
+                            tipLabel.Text = "请点击公众号绑定按钮完成绑定！";
                     }
-                    else
-                        tipLabel.Text = "请点击公众号绑定按钮完成绑定！";
+                    catch(Exception exp)
+                    { log.Error("Error of getting user info: " + exp.ToString()); }
+                    log.Info("one time again for getting user info!");
                 }
                 //await Task.Delay(2000);
+                log.Info("Binding Success!");
                 Close();
             }
             catch(Exception err)
