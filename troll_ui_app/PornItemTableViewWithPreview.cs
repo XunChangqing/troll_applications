@@ -24,6 +24,8 @@ namespace troll_ui_app
         PictureBox _previewPictureBox;
         DataTable _pornItemDataTable;
         bool _viewProtectionLogs;
+        //是否总是显示最新的一个目标
+        bool _showLastestItem = true;
         public PornItemTableViewWithPreview(bool viewProtectionLogs)
         {
             _viewProtectionLogs = viewProtectionLogs;
@@ -65,8 +67,10 @@ namespace troll_ui_app
         public void Clear()
         {
             _pornItemDataTable.Clear();
-            _previewPictureBox.ImageLocation = null;
+            //_previewPictureBox.ImageLocation = null;
+            DisposeCurrentImage();
             _previewPictureBox.Image = null;
+            _showLastestItem = true;
         }
         void TableChangedProgressOnProgressChanged(object sender, string e)
         {
@@ -89,12 +93,17 @@ namespace troll_ui_app
             dr.SetField<PornDatabase.PornItemType>("item_type", itype);
             dr.SetField<DateTime>("created_at", DateTime.Now);
             _pornItemDataTable.Rows.Add(dr);
-            try { _dataGridView.CurrentCell = _dataGridView.Rows[0].Cells["info"]; }
-            catch (Exception exp) { log.Error(exp.ToString()); }
+            if (_showLastestItem)
+            {
+                try { _dataGridView.CurrentCell = _dataGridView.Rows[0].Cells["info"]; }
+                catch (Exception exp) { log.Error(exp.ToString()); }
+            }
         }
 
         public int ClearCheckedFiles()
         {
+            //释放当前显示的图像，以防无法删除
+            DisposeCurrentImage();
             int ret = 0;
             //foreach (DataRow x in _pornItemDataTable.Rows)
             foreach (DataRowView x in _pornItemBindingSource.List)
@@ -103,11 +112,18 @@ namespace troll_ui_app
                 if (x.Row.Field<bool>("checked"))
                 {
                     string fname = x.Row.Field<string>("info");
-                    try { File.Delete(fname); ret++; }
+                    try { 
+                        File.Delete(fname);
+                        log.Info("Delete local porn file: " + fname);
+                        ret++; 
+                    }
                     catch (Exception e) { log.Error(e.ToString()); }
-                    x.Delete();
+                    //如果在这里删除该行，则会触发selectionChange时间，导致再次打开图片文件，是的图片无法被删除
+                    //x.Delete();
                 }
             }
+            //将所有文件删除以后，统一清空
+            Clear();
             return ret;
         }
 
@@ -126,6 +142,7 @@ namespace troll_ui_app
 
         void _dataGridViewOnSelectionChanged(object sender, EventArgs e)
         {
+            //log.Info(sender.ToString());
             DataRowView currentRow = (DataRowView)_pornItemBindingSource.Current;
             if(currentRow != null)
             {
@@ -150,12 +167,21 @@ namespace troll_ui_app
                     fname = null;
                 }
                 log.Info("PornPreview image location: " + _previewPictureBox.ImageLocation);
+                //_previewPictureBox.ImageLocation = fname;
+                //这里没有直接设置ImageLocation，因为发现如果文件名为httpurl编码形式，在文件拷贝以后无法显示
                 try
                 {
-                    Image x = Image.FromFile(fname);
-                    _previewPictureBox.Image = x;
+                    //必须释放旧图像
+                    DisposeImage(_previewPictureBox.Image);
+                    using (Image x = Image.FromFile(fname))
+                    {
+                        //通过拷贝构造函数生成新的bitmap，可以解除对文件的锁定
+                        //这样正在打开的文件也可以被删除了
+                        _previewPictureBox.Image = new Bitmap(x);
+                        x.Dispose();
+                    }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     log.Info(ex.ToString());
                     _previewPictureBox.Image = null;
@@ -169,10 +195,26 @@ namespace troll_ui_app
             //    picture_box.SizeMode = PictureBoxSizeMode.Zoom;
             //}
         }
+        void DisposeImage(Image img)
+        {
+            try
+            {
+                if (img != null)
+                    img.Dispose();
+            }
+            catch(Exception e)
+            {
+                log.Error(e.ToString());
+            }
+        }
+        void DisposeCurrentImage()
+        {
+            DisposeImage(_previewPictureBox.Image);
+            _previewPictureBox.Image = null;
+        }
 
         void PornItemTabelViewWithPreviewOnLoad(object sender, EventArgs e)
         {
-
             _dataGridView.Width = MainForm.MainFormWidth - 260;
             _dataGridView.Height = Height;
             _dataGridView.Location = new Point(12, 0);

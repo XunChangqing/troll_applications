@@ -129,7 +129,7 @@ namespace troll_ui_app
         }
 
         protected void ProcessImage()
-        { 
+        {
             log.Info("Process Image: " + RequestLine.URI);
             byte[] response = GetContent();
 
@@ -139,64 +139,70 @@ namespace troll_ui_app
             State.NextStep = null;
 
             // Decompress the message stream, if necessary
-            Stream stream = GetResponseMessageStream(response);
-            Bitmap bm = new Bitmap(stream);
-
-            PornClassifier.ImageType imgType = PornClassifier.Instance.Classify(bm);
-            IProgress<PornDatabase.PornItemType> ip = MainForm.Instance.TargetProcessedProgress as IProgress<PornDatabase.PornItemType>;
-            bool isImageBad = false;
-            if (imgType == PornClassifier.ImageType.Disguise)
+            using (Stream stream = GetResponseMessageStream(response))
             {
-                isImageBad = true;
+                using (Bitmap bm = new Bitmap(stream))
+                {
+
+                    PornClassifier.ImageType imgType = PornClassifier.Instance.Classify(bm);
+
+                    IProgress<PornDatabase.PornItemType> ip = MainForm.Instance.TargetProcessedProgress as IProgress<PornDatabase.PornItemType>;
+                    bool isImageBad = false;
+                    if (imgType == PornClassifier.ImageType.Disguise)
+                    {
+                        isImageBad = true;
+                    }
+                    else if (imgType == PornClassifier.ImageType.Porn)
+                    {
+                        isImageBad = true;
+                        //添加到不良网页中，以进行不良网站检查，只针对色情图片进行处理
+                        //只在启用了色情网站侦测时才处理，但实际上由于未启用色情网站侦测时
+                        //html不处理，这里其实即使处理也无法hit
+                        if (Properties.Settings.Default.IsPornWebsiteProtectionTurnOn)
+                            AddPorn();
+                    }
+                    else
+                        ip.Report(PornDatabase.PornItemType.Undefined);
+
+                    //if (p != null)
+                    //只在图片过滤功能开启时才将色情图片加入数据库，并替换图片
+                    if (isImageBad && Properties.Settings.Default.IsNetworkImageTurnOn)
+                    {
+                        PornDB.InsertPornPic(FullRequestUri, PornClassifier.ImageType.Disguise);
+                        bm.Save(Program.AppLocalDir + Properties.Settings.Default.imagesDir + "\\" + HttpUtility.UrlEncode(FullRequestUri));
+                        ip.Report(PornDatabase.PornItemType.NetworkImage);
+
+                        using (Graphics g = Graphics.FromImage(bm))
+                        {
+                            SolidBrush solidBrush = new SolidBrush(Color.Red);
+                            g.FillRectangle(solidBrush, 0, 0, bm.Width, bm.Height);
+                            SolidBrush stringBrush = new SolidBrush(Color.Yellow);
+                            g.DrawString("山妖卫士", new Font("微软雅黑", bm.Width / 10, GraphicsUnit.Pixel), stringBrush, new Point(0, 0));
+                            g.Flush();
+                        }
+                    }
+
+                    // Even if the response was originally transferred
+                    // by chunks, we are going to send it unchunked.
+                    // (We could send it chunked, though, by calling
+                    // TunnelChunkedDataTo, instead of TunnelDataTo.)
+                    ResponseHeaders.TransferEncoding = null;
+
+                    // Encode the modified content, and recompress it, as necessary.
+                    //String text = htmlDoc.Save()
+                    //htmlDoc.Save(HttpUtility.UrlEncode(RequestLine.URI));
+                    MemoryStream mstr = new MemoryStream();
+                    bm.Save(mstr, bm.RawFormat);
+                    byte[] output = CompressResponse(mstr.GetBuffer());
+                    ResponseHeaders.ContentLength = (uint)output.Length;
+
+                    // Finally, send the result.
+                    SendResponseStatusAndHeaders();
+                    SocketBP.TunnelDataTo(TunnelBP, output);
+                    // We are done with the request.
+                    // Note that State.NextStep has been set to null earlier.
+                }
             }
-            else if (imgType == PornClassifier.ImageType.Porn)
-            {
-                isImageBad = true;
-                //添加到不良网页中，以进行不良网站检查，只针对色情图片进行处理
-                //只在启用了色情网站侦测时才处理，但实际上由于未启用色情网站侦测时
-                //html不处理，这里其实即使处理也无法hit
-                if(Properties.Settings.Default.IsPornWebsiteProtectionTurnOn)
-                    AddPorn();
-            }
-            else
-                ip.Report(PornDatabase.PornItemType.Undefined);
-
-            //if (p != null)
-            //只在图片过滤功能开启时才将色情图片加入数据库，并替换图片
-            if (isImageBad && Properties.Settings.Default.IsNetworkImageTurnOn)
-            {
-                PornDB.InsertPornPic(FullRequestUri, PornClassifier.ImageType.Disguise);
-                bm.Save(Program.AppLocalDir + Properties.Settings.Default.imagesDir + "\\" + HttpUtility.UrlEncode(FullRequestUri));
-                ip.Report(PornDatabase.PornItemType.NetworkImage);
-
-                Graphics g = Graphics.FromImage(bm);
-                SolidBrush solidBrush = new SolidBrush(Color.Red);
-                g.FillRectangle(solidBrush, 0, 0, bm.Width, bm.Height);
-                SolidBrush stringBrush = new SolidBrush(Color.Yellow);
-                g.DrawString("山妖卫士", new Font("微软雅黑", bm.Width / 10, GraphicsUnit.Pixel), stringBrush, new Point(0, 0));
-                g.Flush();
-            }
-
-            // Even if the response was originally transferred
-            // by chunks, we are going to send it unchunked.
-            // (We could send it chunked, though, by calling
-            // TunnelChunkedDataTo, instead of TunnelDataTo.)
-            ResponseHeaders.TransferEncoding = null;
-
-            // Encode the modified content, and recompress it, as necessary.
-            //String text = htmlDoc.Save()
-            //htmlDoc.Save(HttpUtility.UrlEncode(RequestLine.URI));
-            MemoryStream mstr = new MemoryStream();
-            bm.Save(mstr, bm.RawFormat);
-            byte[] output = CompressResponse(mstr.GetBuffer());
-            ResponseHeaders.ContentLength = (uint)output.Length;
-
-            // Finally, send the result.
-            SendResponseStatusAndHeaders();
-            SocketBP.TunnelDataTo(TunnelBP, output);
-
-            // We are done with the request.
-            // Note that State.NextStep has been set to null earlier.
         }
 
         protected void ProcessHtml()

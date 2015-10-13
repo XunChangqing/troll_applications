@@ -107,6 +107,29 @@ namespace troll_ui_app
             }, TaskScheduler.FromCurrentSynchronizationContext());
 
         }
+        public void StartCustomScan(string dir)
+        {
+            _scanPauseEvent.Set();
+            _scanCancellationTokenSource = new CancellationTokenSource();
+            _scanTask = Task.Factory.StartNew(()=> {
+                if(_scanProgressReport!=null)
+                {
+                    ScanProgress npro = new ScanProgress();
+                    npro.Percentage = 0;
+                    npro.TargetFilePath = null;
+                    npro.Description = "正在准备自定义扫描";
+                    _scanProgressReport.Report(npro);
+                }
+                PercentageOffset = 0;
+                PercentageRatio = 100;
+                CustomLocalScan(dir, _scanCancellationTokenSource.Token, _scanPauseEvent, _scanProgressReport);
+            });
+            _scanTask.ContinueWith(atask =>
+            {
+                if (ScanComplete != null)
+                    ScanComplete(this, EventArgs.Empty);
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+        }
         void AllLocalFileScan(CancellationToken ct, ManualResetEvent pauseEvent, IProgress<ScanProgress> progress)
         {
             try
@@ -150,7 +173,7 @@ namespace troll_ui_app
                 {
                     var allfiles = SafeFileEnumerator.EnumerateFiles(topdir, "*.*", SearchOption.AllDirectories,
                         d => !(d.Contains(iecachepath) || d.Contains(localAppDataPath))
-                        ).Where<String>(s => (s.EndsWith("*.jpg") || s.EndsWith("*.png")));
+                        ).Where<String>(s => (s.EndsWith(".jpg") || s.EndsWith(".png")));
 
                     foreach(string file in allfiles)
                     {
@@ -223,6 +246,41 @@ namespace troll_ui_app
                 log.Error(exception.ToString());
             }
         }
-
+        void CustomLocalScan(string dir, CancellationToken ct, ManualResetEvent pauseEvent, IProgress<ScanProgress> progress)
+        {
+            try
+            {
+                //要忽略程序自身的缓存
+                string localTempDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\masatek\\trollwiz";
+                var totalfiles = SafeFileEnumerator.EnumerateFiles(dir, "*.*", SearchOption.AllDirectories,
+                    d => !(d.Contains(localTempDir))
+                    ).Where<String>(s => (s.EndsWith(".jpg") || s.EndsWith(".png")));
+                //var totalfiles = SafeFileEnumerator.EnumerateFiles(dir, "*.*", SearchOption.AllDirectories).Where<String>(s => (s.EndsWith(".jpg") || s.EndsWith(".png")));
+                int tcount = totalfiles.Count();
+                int num = 0;
+                foreach (var file in totalfiles)
+                {
+                    log.Info("Scan: " + file);
+                    PornClassifier.ImageType t = PornClassifier.Instance.Classify(file);
+                    num++;
+                    if (progress != null)
+                    {
+                        ScanProgress npro = new ScanProgress();
+                        npro.Percentage = PercentageOffset + PercentageRatio * num / tcount;
+                        npro.TargetFilePath = file;
+                        npro.Description = "正在扫描：" + npro.TargetFilePath;
+                        npro.TargetType = t;
+                        progress.Report(npro);
+                    }
+                    pauseEvent.WaitOne();
+                    if (ct.IsCancellationRequested)
+                        ct.ThrowIfCancellationRequested();
+                }
+            }
+            catch (Exception exception)
+            {
+                log.Error(exception.ToString());
+            }
+        }
     }
 }

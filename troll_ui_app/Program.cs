@@ -67,6 +67,7 @@ namespace troll_ui_app
             //return;
             try
             {
+                //throw new Exception("test error 2");
                 //when uninstall send email and return
                 if (args.Contains("-uninstall"))
                 {
@@ -114,9 +115,9 @@ namespace troll_ui_app
                 //如果意外退出，一定要记得关闭代理，否则会导致用户无法上网
                 CleanUp();
                 log.Error(e.ToString());
-                //ReportErrorOnline(e.ToString());
-                //MessageBox.Show("程序由于未知问题崩溃，症状已上传，我们尽快处理，给您带来的不便敬请谅解！",
-                //        "程序崩溃", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ReportErrorOnline(e.ToString());
+                MessageBox.Show("程序由于未知问题崩溃，我们尽快处理，给您带来的不便敬请谅解！",
+                        "程序崩溃", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         static private void InitLogAndDirs()
@@ -228,9 +229,10 @@ namespace troll_ui_app
                 errReportObj["token"] = webToken;
                 FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
                 Version curVersion = new Version(versionInfo.ProductVersion);
-                errReportObj["errmsg"] = curVersion.ToString() + "\n" + errMsg;
+                errReportObj["version"] = curVersion.ToString();
+                errReportObj["errmsg"] = errMsg;
 
-                HttpResponseMessage msg = client.PostAsync(Properties.Settings.Default.getAuthInfoUrl,
+                HttpResponseMessage msg = client.PostAsync(Properties.Settings.Default.errorReportUrl,
                     new StringContent(errReportObj.ToString(),
                     Encoding.UTF8, "application/json")).Result;
                 msg.EnsureSuccessStatusCode();

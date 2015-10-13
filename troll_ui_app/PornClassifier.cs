@@ -44,8 +44,14 @@ namespace troll_ui_app
         {
             try
             {
-                Bitmap bmp = new Bitmap(fname);
-                return Classify(bmp);
+                //Bitmap bmp = new Bitmap(fname);
+                //return Classify(bmp);
+                //dispose方法不会被自动调用，必须显示调用，或是使用using
+                //否则图像文件会被锁住，这是由于bitmap可能会再次使用图像文件本身
+                using (Bitmap bmp = new Bitmap(fname))
+                {
+                    return Classify(bmp);
+                }
             }
             catch(Exception e)
             {

@@ -129,7 +129,7 @@ namespace troll_ui_app
 
             analysisResultDescLabel = new Label();
             analysisResultDescLabel.AutoSize = true;
-            analysisResultDescLabel.Text = "检测到不良项目！";
+            analysisResultDescLabel.Text = "新检测到不良项目！";
             analysisResultDescLabel.Font = new System.Drawing.Font("微软雅黑", 14, GraphicsUnit.Pixel);
             analysisResultDescLabel.ForeColor = Color.FromArgb(0x4f, 0x4f, 0x00);
             analysisResultDescLabel.SizeChanged += analysisResultDescLabelOnSizeChanged;
@@ -191,7 +191,6 @@ namespace troll_ui_app
             customScanBtn.HoverBack = Properties.Resources.home_scanner_zdy_h;
             customScanBtn.PressBack = Properties.Resources.home_scanner_zdy_n;
             customScanBtn.Location = new Point(fastScanBtn.Location.X+fastScanBtn.Width*2, scanBtnTopPadding);
-            customScanBtn.Enabled = false;
 
             allScanLabel = new Label();
             allScanLabel.AutoSize = true;
@@ -268,6 +267,7 @@ namespace troll_ui_app
             Load += MainPanelControlOnLoad;
             fastScanBtn.Click += fastScanBtnOnClick;
             allScanBtn.Click += allScanBtnOnClick;
+            customScanBtn.Click += customScanBtnOnClick;
             mainFuncBtn.Click += mainFuncBtnOnClick;
             MainForm.Instance.TargetProcessedProgress.ProgressChanged += TargetProcessedProgressOnProgressChanged;
             //Paint += MainPanelOnPaint;
@@ -287,7 +287,7 @@ namespace troll_ui_app
             {
                 log.Info("Show analysisview button!");
                 PornDetectedNum++;
-                string cont = "检测到{0}个不良项目！";
+                string cont = "新检测到{0}个不良项目！";
                 analysisResultDescLabel.Text = string.Format(cont, PornDetectedNum);
                 analysisResultDescLabel.Visible = true;
                 analysisResultViewBtn.Visible = true;
@@ -364,17 +364,14 @@ namespace troll_ui_app
             //guradNormalPanel.Visible = false;
             scanningPanel.Visible = false;
         }
-
         void mainFuncBtnOnMouseLeave(object sender, EventArgs e)
         {
             Cursor = Cursors.Default;
         }
-
         void mainFuncBtnOnMouseEnter(object sender, EventArgs e)
         {
             Cursor = Cursors.Hand;
         }
-
         void MainPanelOnPaint(object sender, PaintEventArgs e)
         {
             // Create pen.
@@ -392,17 +389,28 @@ namespace troll_ui_app
         {
             if (WechatForm.Auth())
                 MainForm.Instance.scanPanelControl.StartFastScan();
-            else
-                return;
         }
         void allScanBtnOnClick(object sender, EventArgs e)
         {
             if (WechatForm.Auth())
                 MainForm.Instance.scanPanelControl.StartAllScan();
-            else
-                return;
         }
-
+        void customScanBtnOnClick(object sender, EventArgs e)
+        {
+            if (WechatForm.Auth())
+            {
+                using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
+                {
+                    folderDialog.ShowNewFolderButton = false;
+                    DialogResult dr = folderDialog.ShowDialog();
+                    if (dr == DialogResult.OK)
+                    {
+                        log.Info("Custom Scan: " + folderDialog.SelectedPath);
+                        MainForm.Instance.scanPanelControl.StartCustomScan(folderDialog.SelectedPath);
+                    }
+                }
+            }
+        }
         void mainFuncBtnOnClick(object sender, EventArgs e)
         {
             if(WechatForm.Auth())

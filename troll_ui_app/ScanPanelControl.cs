@@ -380,6 +380,9 @@ namespace troll_ui_app
             _giveupBtn.Visible = true;
             _confirmBtn.Visible = false;
             _pornItemResultView.Clear();
+            _scanningResultTitleWarning.Text = string.Format("本次扫描发现{0}个待处理文件！", _totalPornNum);
+            string summary = "共扫描对象：{0} 共检出项：{1}";
+            _scanStatusSummary.Text = string.Format(summary, _totalTargetNum, _totalPornNum);
         }
 
         public void StartFastScan()
@@ -415,6 +418,27 @@ namespace troll_ui_app
                 _localScan.StartAllScan();
             }
             else if(Status == ScanStatus.AllScan)
+            {
+                MainForm.Instance.SlideWindow(this);
+            }
+            else
+            {
+                MessageBox.Show("有扫描任务正在进行，请等待扫描结束再启动新的扫描任务！");
+            }
+        }
+
+        public void StartCustomScan(string dir)
+        {
+            if(Status == ScanStatus.Idle)
+            {
+                Status = ScanStatus.CustomScan;
+                SetTitle("山妖卫士-自定义扫描");
+                InitForNewScan();
+                MainForm.Instance.mainPanelControl.EnterScanStatus();
+                MainForm.Instance.SlideWindow(this);
+                _localScan.StartCustomScan(dir);
+            }
+            else if(Status == ScanStatus.CustomScan)
             {
                 MainForm.Instance.SlideWindow(this);
             }
