@@ -56,6 +56,7 @@ namespace troll_ui_app
             _scanPauseEvent.Set();
             _scanCancellationTokenSource.Cancel();
             _scanTask.Wait();
+            log.Info("Stop Current Scan Task!");
         }
         public void StartFastScan()
         {

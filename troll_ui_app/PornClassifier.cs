@@ -21,7 +21,10 @@ namespace troll_ui_app
         extern static void ReleaseClassifier(IntPtr classifier);
 
         public enum ImageType{Normal, Disguise, Porn};
-        private enum InternalImageType{Other, Man, Sexy, Porn};
+        //private enum InternalImageType{Other, Man, Sexy, Porn};
+        //改成8类的nin模型
+        private enum InternalImageType{Other, Man, Sexy, Porn, NormalGrayCartoon, NormalColorCartoon,
+        PornGrayCartoon, PornColorCartoon};
         private static object syncRoot = new Object();
         private static PornClassifier instance;
 
@@ -76,17 +79,22 @@ namespace troll_ui_app
 
                 // Get the address of the first line.
                 IntPtr ptr = bmpData.Scan0;
-                float[] ratio = new float[4];
+                float[] ratio = new float[8];
                 int ret = ClassifyImage(classifier_handle_, ptr, bmp.Width, bmp.Height, bmpData.Stride, 3,
-                    4, ratio);
+                    ratio.Length, ratio);
                 // Unlock the bits.
                 bmp.UnlockBits(bmpData);
                 int[] indices = new int[ratio.Length];
                 for (int i = 0; i < indices.Length; i++) indices[i] = i;
                 Array.Sort(ratio, indices);
-                if (indices[3] == 3)
+                InternalImageType imt = (InternalImageType)indices[indices.Length - 1];
+                float maxRatio = ratio[indices.Length-1];
+                if (imt == InternalImageType.Porn && maxRatio > 0.5f)
                     return ImageType.Porn;
-                else if (indices[3] == 2)
+                else if ((imt == InternalImageType.PornGrayCartoon || imt == InternalImageType.PornColorCartoon) &&
+                    maxRatio > 0.9f)
+                    return ImageType.Porn;
+                else if (imt == InternalImageType.Sexy)
                     return ImageType.Disguise;
                 else
                     return ImageType.Normal;

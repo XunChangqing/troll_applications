@@ -143,9 +143,7 @@ namespace troll_ui_app
             {
                 using (Bitmap bm = new Bitmap(stream))
                 {
-
                     PornClassifier.ImageType imgType = PornClassifier.Instance.Classify(bm);
-
                     IProgress<PornDatabase.PornItemType> ip = MainForm.Instance.TargetProcessedProgress as IProgress<PornDatabase.PornItemType>;
                     bool isImageBad = false;
                     if (imgType == PornClassifier.ImageType.Disguise)
@@ -168,9 +166,13 @@ namespace troll_ui_app
                     //只在图片过滤功能开启时才将色情图片加入数据库，并替换图片
                     if (isImageBad && Properties.Settings.Default.IsNetworkImageTurnOn)
                     {
-                        PornDB.InsertPornPic(FullRequestUri, PornClassifier.ImageType.Disguise);
-                        bm.Save(Program.AppLocalDir + Properties.Settings.Default.imagesDir + "\\" + HttpUtility.UrlEncode(FullRequestUri));
-                        ip.Report(PornDatabase.PornItemType.NetworkImage);
+                        //只有色情图片才加入数据库，防止将性感图片加入以后带来不好的感觉
+                        if (imgType == PornClassifier.ImageType.Porn)
+                        {
+                            PornDB.InsertPornPic(FullRequestUri, PornClassifier.ImageType.Porn);
+                            bm.Save(Program.AppLocalDir + Properties.Settings.Default.imagesDir + "\\" + HttpUtility.UrlEncode(FullRequestUri));
+                            ip.Report(PornDatabase.PornItemType.NetworkImage);
+                        }
 
                         using (Graphics g = Graphics.FromImage(bm))
                         {

@@ -42,6 +42,28 @@ namespace troll_ui_app
         [STAThread]
         static void Main(String[] args)
         {
+            AllocConsole();
+            ProcessThreadCollection ptc = Process.GetCurrentProcess().Threads;
+            Console.WriteLine("Start Threads Num: " + ptc.Count);
+            //Thread t = new Thread(() =>
+            //{
+            //    //try
+            //    //{
+            //        while (true)
+            //        {
+            //            Console.WriteLine("loop!");
+            //        }
+            //    //}
+            //    //catch (Exception e)
+            //    //{
+            //    //    Console.WriteLine(e.ToString());
+            //    //}
+            //});
+            //t.Start();
+            //Console.WriteLine(t.ThreadState);
+            //t.Abort();
+            //t.Join();
+            //return;
             //Bitmap nbm = new Bitmap(400, 400);
             //Graphics g = Graphics.FromImage(nbm);
             //SolidBrush solidBrush = new SolidBrush(Color.Red);

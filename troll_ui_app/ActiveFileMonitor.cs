@@ -11,7 +11,7 @@ using log4net;
 
 namespace troll_ui_app
 {
-    public class ActiveFileMonitor
+    public class ActiveFileMonitor : IDisposable
     {
         static readonly ILog log = Log.Get();
         public class PornActiveFile
@@ -125,14 +125,30 @@ namespace troll_ui_app
             //start back worker
             _backWorker = Task.Factory.StartNew(() =>
                 {
-                    BackgroundWorker(_cts.Token, _progress);
+                    try
+                    {
+                        BackgroundWorker(_cts.Token, _progress);
+                    }
+                    catch (TaskCanceledException tce)
+                    {
+                        log.Info("Active File Monitor Backgroud Worker Task Canceled: "+tce.ToString());
+                    }
+                    catch(Exception exp)
+                    {
+                        log.Info("Active File Monitor Backgroud Worker Task Error: "+exp.ToString());
+                    }
                 });
         }
-        ~ActiveFileMonitor()
+        public void Dispose()
         {
             _cts.Cancel();
-            _backWorker.Wait(2000);
+            _backWorker.Wait();
+            //_backWorker.Wait(2000);
+            log.Info("Dispose Active File Monitor!");
         }
+        //~ActiveFileMonitor()
+        //{
+        //}
         public void EnableImageDetection()
         {
             EnableWatchers(_jpgFileSystemWatchers);

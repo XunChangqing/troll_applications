@@ -7,11 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using log4net;
 
 namespace troll_ui_app
 {
     public class ScanPanelControl : UserControl
     {
+        static readonly ILog log = Log.Get();
         TitleBarControl titleBar;
         Panel _scanningStatusPanel;
         Label _scanningLogo;
@@ -274,6 +276,18 @@ namespace troll_ui_app
             _giveupBtn.Click += _giveupBtnOnClick;
             _handleBtn.Click += _handleBtnOnClick;
             _confirmBtn.Click += _confirmBtnOnClick;
+
+            Disposed += ScanPanelControlOnDisposed;
+        }
+
+        void ScanPanelControlOnDisposed(object sender, EventArgs e)
+        {
+            log.Info("Dispose Scan Panel Control!");
+            if(Status != ScanStatus.Idle)
+            {
+                log.Info("Stop Running Scan Task When Quit!");
+                _localScan.Stop();
+            }
         }
 
         void _progressLabelOnSizeChanged(object sender, EventArgs e)

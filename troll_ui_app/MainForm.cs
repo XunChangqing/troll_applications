@@ -113,8 +113,6 @@ namespace troll_ui_app
             SystemProxyHelper.EnableProxyHTTP("127.0.0.1", 8090);
             FireFoxHelper.AddFirefox();
 #endif
-            //PornDatabase pdb = new PornDatabase();
-            //pdb.InsertPornFile("C:/xyz", PornDatabase.PornItemType.LocalImage);
 
             _activeFileMonitor = new ActiveFileMonitor();
 
@@ -168,6 +166,7 @@ namespace troll_ui_app
         {
             _mainNotifyIcon.Visible = false;
             Server.Stop();
+            _activeFileMonitor.Dispose();
             log.Info("Mainform Disposed!");
         }
 
