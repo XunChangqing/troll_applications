@@ -146,11 +146,7 @@ namespace troll_ui_app
                     PornClassifier.ImageType imgType = PornClassifier.Instance.Classify(bm);
                     IProgress<PornDatabase.PornItemType> ip = MainForm.Instance.TargetProcessedProgress as IProgress<PornDatabase.PornItemType>;
                     bool isImageBad = false;
-                    if (imgType == PornClassifier.ImageType.Disguise)
-                    {
-                        isImageBad = true;
-                    }
-                    else if (imgType == PornClassifier.ImageType.Porn)
+                    if (imgType == PornClassifier.ImageType.Porn)
                     {
                         isImageBad = true;
                         //添加到不良网页中，以进行不良网站检查，只针对色情图片进行处理
@@ -158,6 +154,11 @@ namespace troll_ui_app
                         //html不处理，这里其实即使处理也无法hit
                         if (Properties.Settings.Default.IsPornWebsiteProtectionTurnOn)
                             AddPorn();
+                    }
+                    else if (imgType == PornClassifier.ImageType.Disguise &&
+                        Properties.Settings.Default.IsStrongNetworkImageFilter)
+                    {
+                        isImageBad = true;
                     }
                     else
                         ip.Report(PornDatabase.PornItemType.Undefined);

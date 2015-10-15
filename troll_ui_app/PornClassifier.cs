@@ -84,6 +84,8 @@ namespace troll_ui_app
                     ratio.Length, ratio);
                 // Unlock the bits.
                 bmp.UnlockBits(bmpData);
+                float pornRatio = ratio[(int)InternalImageType.Porn];
+                float sexyRatio = ratio[(int)InternalImageType.Sexy];
                 int[] indices = new int[ratio.Length];
                 for (int i = 0; i < indices.Length; i++) indices[i] = i;
                 Array.Sort(ratio, indices);
@@ -94,7 +96,8 @@ namespace troll_ui_app
                 else if ((imt == InternalImageType.PornGrayCartoon || imt == InternalImageType.PornColorCartoon) &&
                     maxRatio > 0.9f)
                     return ImageType.Porn;
-                else if (imt == InternalImageType.Sexy)
+                else if (imt == InternalImageType.Sexy &&
+                    pornRatio+sexyRatio>0.8)
                     return ImageType.Disguise;
                 else
                     return ImageType.Normal;

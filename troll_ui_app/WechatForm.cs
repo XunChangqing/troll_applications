@@ -52,8 +52,15 @@ namespace troll_ui_app
             else
             {
                 CancellationTokenSource cts = new CancellationTokenSource();
-                DateTime n = UpdateAuth(cts.Token);
-                if (n.AddMinutes(20) > DateTime.Now)
+                bool networkException = false;
+                DateTime n = UpdateAuth(cts.Token, out networkException);
+                if(networkException)
+                {
+                    MessageBox.Show("获取授权失败，请检查网络是否连接！",
+                            "获取授权失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+                else if (n.AddMinutes(20) > DateTime.Now)
                 {
                     hasBeenAuth = true;
                     MainForm.Instance.mainPanelControl.AuthWechat(true);
@@ -67,10 +74,11 @@ namespace troll_ui_app
                 }
             }
         }
-        public static DateTime UpdateAuth(CancellationToken cancellationToken)
+        public static DateTime UpdateAuth(CancellationToken cancellationToken, out bool networkException)
         {
             try
             {
+                networkException = false;
                 HttpClientHandler handler = new HttpClientHandler() { UseProxy = false };
                 HttpClient client = new HttpClient(handler);
 
@@ -97,9 +105,8 @@ namespace troll_ui_app
             }
             catch(Exception err)
             {
-                MessageBox.Show("获取授权失败，请检查网络是否连接！",
-                        "获取授权失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 log.Error(err.ToString());
+                networkException = true;
                 return DateTime.MinValue;
             }
         }
@@ -107,6 +114,7 @@ namespace troll_ui_app
         //binding mode if false;
         private Task getQrCodeTask;
         CancellationTokenSource cancellationTokenSource;
+        Label _whyLabel;
         TextButton _refreshButton;
         Panel _closeBackImage;
         Label _closeBtn;
@@ -120,13 +128,25 @@ namespace troll_ui_app
             tipLabel.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
             tipLabel.ForeColor = Color.FromArgb(0x4f, 0xb5, 0x2c);
 
+            _whyLabel = new Label();
+            _whyLabel.Text = "为什么要绑定？";
+            _whyLabel.AutoSize = true;
+            _whyLabel.Font = new System.Drawing.Font("微软雅黑", 12, GraphicsUnit.Pixel);
+            _whyLabel.ForeColor = Color.FromArgb(0x4f, 0xb5, 0x2c);
+            Controls.Add(_whyLabel);
+            _whyLabel.Location = new Point(Width / 2 - _whyLabel.Width / 2,
+                tipLabel.Location.Y + tipLabel.Height);
+            ToolTip whyTip = new ToolTip();
+            whyTip.SetToolTip(_whyLabel,
+                "绑定以后，非绑定者将无法设置软件");
+
             _refreshButton = new TextButton();
             _refreshButton.Text = "刷新二维码";
             _refreshButton.Font = new System.Drawing.Font("微软雅黑", 12, GraphicsUnit.Pixel);
             _refreshButton.ForeColor = Color.FromArgb(0x4f, 0xb5, 0x2c);
             Controls.Add(_refreshButton);
             _refreshButton.Location = new Point(Width / 2 - _refreshButton.Width / 2,
-                tipLabel.Location.Y + tipLabel.Height);
+                _whyLabel.Location.Y + _whyLabel.Height);
             _refreshButton.Click += _refreshButtonOnClick;
 
             _closeBackImage = new Panel();

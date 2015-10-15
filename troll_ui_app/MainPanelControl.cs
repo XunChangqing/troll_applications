@@ -71,6 +71,8 @@ namespace troll_ui_app
             mainFuncBtn.MouseEnter += mainFuncBtnOnMouseEnter;
             mainFuncBtn.MouseLeave += mainFuncBtnOnMouseLeave;
             titleBar.Controls.Add(mainFuncBtn);
+            ToolTip mainFuncTip = new ToolTip();
+            mainFuncTip.SetToolTip(mainFuncBtn, "设置防护功能和查看防护记录");
 
             wechatHeadImage = new PictureBox();
             wechatHeadImage.SizeMode = PictureBoxSizeMode.Zoom;
@@ -80,6 +82,8 @@ namespace troll_ui_app
             //    mainFuncBtn.Location.Y+mainFuncBtn.Height/2-wechatHeadImage.Height/2);
             wechatHeadImage.Location = new Point(788, 214);
             titleBar.Controls.Add(wechatHeadImage);
+            ToolTip wechatHeadImageTip = new ToolTip();
+            wechatHeadImageTip.SetToolTip(wechatHeadImage, "绑定者微信头像");
 
             wechatNickname = new Label();
             wechatNickname.BackColor = Color.Transparent;
@@ -91,6 +95,8 @@ namespace troll_ui_app
             wechatNickname.MaximumSize = new System.Drawing.Size(80,0);
             wechatNickname.AutoEllipsis = true;
             titleBar.Controls.Add(wechatNickname);
+            ToolTip wechatNicknameTip = new ToolTip();
+            wechatNicknameTip.SetToolTip(wechatNickname, "绑定者微信昵称");
 
             guradNormalPanel = new Panel();
             guradNormalPanel.BackColor = Color.Transparent;

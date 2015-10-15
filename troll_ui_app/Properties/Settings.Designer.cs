@@ -514,5 +514,17 @@ namespace troll_ui_app.Properties {
                 this["errorReportUrl"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsStrongNetworkImageFilter {
+            get {
+                return ((bool)(this["IsStrongNetworkImageFilter"]));
+            }
+            set {
+                this["IsStrongNetworkImageFilter"] = value;
+            }
+        }
     }
 }

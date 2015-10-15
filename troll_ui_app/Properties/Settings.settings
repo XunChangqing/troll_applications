@@ -125,5 +125,8 @@
     <Setting Name="errorReportUrl" Type="System.String" Scope="User">
       <Value Profile="(Default)">http://domain.shanyaows.com/wechat_apis/error_report.json</Value>
     </Setting>
+    <Setting Name="IsStrongNetworkImageFilter" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

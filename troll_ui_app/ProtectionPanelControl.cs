@@ -26,6 +26,7 @@ namespace troll_ui_app
         Label _activeVideoDescLabel;
         ImageSwitchButton _networkImageBtn;
         Label _networkImageDescLabel;
+        CheckBox _strongNetworkImageFilter;
         Panel _returnBackImage;
         Label _returnBtn;
 
@@ -90,6 +91,8 @@ namespace troll_ui_app
             _settingPanel.Controls.Add(_websiteBtn);
             _settingPanel.Controls.Add(_websiteDescLabel);
             _websiteBtn.SwitchChanged += _websiteBtnOnSwitchChanged;
+            ToolTip websiteTip = new ToolTip();
+            websiteTip.SetToolTip(_websiteDescLabel, "自动检测色情网站并屏蔽");
 
             _activeImageBtn = new ImageSwitchButton(Properties.Settings.Default.IsLocalActiveImageTurnOn,
                 Properties.Resources.switch_on,
@@ -108,6 +111,8 @@ namespace troll_ui_app
             _activeImageBtn.SwitchChanged += _activeImageBtnOnSwitchChanged;
             if (Properties.Settings.Default.IsLocalActiveImageTurnOn)
                 MainForm.Instance._activeFileMonitor.EnableImageDetection();
+            ToolTip activImageTip = new ToolTip();
+            activImageTip.SetToolTip(_activeImageDescLabel, "监控本地活跃图片文件，记录本地色情图片文件的创建");
 
             _activeVideoBtn = new ImageSwitchButton(Properties.Settings.Default.IsLocalActiveVideoTurnOn,
                 Properties.Resources.switch_on,
@@ -125,6 +130,8 @@ namespace troll_ui_app
             _settingPanel.Controls.Add(_activeVideoDescLabel);
             _activeVideoBtn.SwitchChanged += _activeVideoBtnOnSwitchChanged;
             _activeVideoBtn.Enabled = false;
+            ToolTip activeVideoTip = new ToolTip();
+            activeVideoTip .SetToolTip(_activeImageDescLabel, "监控本地活跃视频文件，记录本地色情视频文件的创建");
 
             _networkImageBtn = new ImageSwitchButton(Properties.Settings.Default.IsNetworkImageTurnOn,
                 Properties.Resources.switch_on,
@@ -141,6 +148,24 @@ namespace troll_ui_app
             _settingPanel.Controls.Add(_networkImageBtn);
             _settingPanel.Controls.Add(_networkImageDescLabel);
             _networkImageBtn.SwitchChanged += _networkImageBtnOnSwitchChanged;
+            ToolTip networkImageTip = new ToolTip();
+            networkImageTip.SetToolTip(_networkImageDescLabel, "过滤网页中的色情图片，此项功能在开关时，如页面未刷新，请使用Ctrl+F5强制刷新");
+
+            _strongNetworkImageFilter = new CheckBox();
+            _strongNetworkImageFilter.Location = new Point(_networkImageDescLabel.Location.X + _networkImageDescLabel.Width + 2,
+                _networkImageDescLabel.Location.Y);
+            _strongNetworkImageFilter.BackColor = Color.Transparent;
+            _strongNetworkImageFilter.Text = "强力过滤";
+            _strongNetworkImageFilter.ForeColor = Color.FromArgb(0x5e, 0x5e, 0x5e);
+            _strongNetworkImageFilter.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
+            _strongNetworkImageFilter.BackColor = Color.Transparent;
+            _strongNetworkImageFilter.Checked = Properties.Settings.Default.IsStrongNetworkImageFilter;
+            if (!Properties.Settings.Default.IsNetworkImageTurnOn)
+                _strongNetworkImageFilter.Enabled = false;
+            _strongNetworkImageFilter.CheckedChanged += _strongNetworkImageFilterOnCheckedChanged;
+            _settingPanel.Controls.Add(_strongNetworkImageFilter);
+            ToolTip strongNetworkImageFilterTip = new ToolTip();
+            strongNetworkImageFilterTip.SetToolTip(_strongNetworkImageFilter, "包含擦边球色情图片");
 
             _returnBackImage = new Panel();
             _returnBackImage.BackColor = Color.Transparent;
@@ -246,6 +271,7 @@ namespace troll_ui_app
             _returnBtn.Click += _returnBtnOnClick;
         }
 
+
         static readonly string kAutoRunRegisstryKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
         static readonly string kAutoRunKey = "trollwiz";
         void TurnOnAutoStart()
@@ -308,6 +334,15 @@ namespace troll_ui_app
             Properties.Settings.Default.IsNetworkImageTurnOn = e;
             Properties.Settings.Default.Save();
             SetLogoImage();
+            if (e)
+                _strongNetworkImageFilter.Enabled = true;
+            else
+                _strongNetworkImageFilter.Enabled = false;
+        }
+        void _strongNetworkImageFilterOnCheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.IsStrongNetworkImageFilter = _strongNetworkImageFilter.Checked;
+            Properties.Settings.Default.Save();
         }
 
         void _returnBtnOnClick(object sender, EventArgs e)
