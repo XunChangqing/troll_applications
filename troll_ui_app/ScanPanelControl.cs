@@ -366,7 +366,10 @@ namespace troll_ui_app
         void _localScanOnScanProgressChanged(object sender, LocalScan.ScanProgress e)
         {
             _progressLabel.Text = e.Description;
-            _progressBar.Value = e.Percentage;
+            try
+            { _progressBar.Value = e.Percentage; }
+            catch(Exception exp)
+            { log.Error(exp.ToString()); }
             if (e.TargetFilePath != null)
             {
                 _totalTargetNum++;

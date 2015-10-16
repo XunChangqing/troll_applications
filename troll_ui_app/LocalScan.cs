@@ -15,7 +15,24 @@ namespace troll_ui_app
         public class ScanProgress
         {
             public string Description{get; set;}
-            public int Percentage { get; set; }
+            int _percentage;
+            public int Percentage
+            {
+                get
+                {
+                    return _percentage;
+                }
+                set
+                {
+                    //确保进度不会小于0或是大于100，否则会引发progressbar的异常
+                    if (value < 0)
+                        _percentage = 0;
+                    else if (value > 100)
+                        _percentage = 100;
+                    else
+                        _percentage = value;
+                }
+            }
             public string TargetFilePath { get; set; }
             public PornClassifier.ImageType TargetType { get; set; }
         }
@@ -208,13 +225,18 @@ namespace troll_ui_app
                 //var totalfiles = Directory.EnumerateFiles(iecachepath, "*.*", SearchOption.AllDirectories).Where<String>(s => (s.EndsWith(".jpg") || s.EndsWith(".png")));
                 var totalfiles = SafeFileEnumerator.EnumerateFiles(iecachepath, "*.*", SearchOption.AllDirectories).Where<String>(s => (s.EndsWith(".jpg") || s.EndsWith(".png")));
 
+                //此处不能使用directoryfilter，因为该filter是控制对那些dir枚举其下的dir，而不是文件
+                //这会导致在win8下，ie的缓存目录为INetCache，该目录下的文件会被重复枚举并扫描
                 string roamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                var dirs = SafeFileEnumerator.EnumerateDirectories(roamingPath, "*Cache*", SearchOption.AllDirectories);
+                var dirs = SafeFileEnumerator.EnumerateDirectories(roamingPath, "*Cache*", SearchOption.AllDirectories).Where<String>(s=>!s.Contains(iecachepath));
 
                 string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                dirs = dirs.Concat(SafeFileEnumerator.EnumerateDirectories(localAppDataPath, "*Cache*", SearchOption.AllDirectories));
+                dirs = dirs.Concat(SafeFileEnumerator.EnumerateDirectories(localAppDataPath, "*Cache*", SearchOption.AllDirectories).Where<String>(s=>!s.Contains(iecachepath)));
                 foreach (var dir in dirs)
+                {
+                    log.Info("Fast dir: " + dir);
                     totalfiles = totalfiles.Concat(SafeFileEnumerator.EnumerateFiles(dir, "*.*", SearchOption.AllDirectories));
+                }
 
                 var browserDirs = dirs.ToList();
                 browserDirs.Add(iecachepath);

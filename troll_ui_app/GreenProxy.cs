@@ -165,6 +165,7 @@ namespace troll_ui_app
 
                     //if (p != null)
                     //只在图片过滤功能开启时才将色情图片加入数据库，并替换图片
+                    Bitmap nbm = null;
                     if (isImageBad && Properties.Settings.Default.IsNetworkImageTurnOn)
                     {
                         //只有色情图片才加入数据库，防止将性感图片加入以后带来不好的感觉
@@ -175,7 +176,11 @@ namespace troll_ui_app
                             ip.Report(PornDatabase.PornItemType.NetworkImage);
                         }
 
-                        using (Graphics g = Graphics.FromImage(bm))
+                        //此处如果图像为带索引格式，则会引发异常，无法创建graphics对象
+                        //这使得网页上一个图片总是无法加载
+                        nbm = new Bitmap(bm.Width, bm.Height);
+                        //using (Graphics g = Graphics.FromImage(bm))
+                        using (Graphics g = Graphics.FromImage(nbm))
                         {
                             SolidBrush solidBrush = new SolidBrush(Color.Red);
                             g.FillRectangle(solidBrush, 0, 0, bm.Width, bm.Height);
@@ -195,7 +200,13 @@ namespace troll_ui_app
                     //String text = htmlDoc.Save()
                     //htmlDoc.Save(HttpUtility.UrlEncode(RequestLine.URI));
                     MemoryStream mstr = new MemoryStream();
-                    bm.Save(mstr, bm.RawFormat);
+                    if (nbm != null)
+                    {
+                        nbm.Save(mstr, bm.RawFormat);
+                        nbm.Dispose();
+                    }
+                    else
+                        bm.Save(mstr, bm.RawFormat);
                     byte[] output = CompressResponse(mstr.GetBuffer());
                     ResponseHeaders.ContentLength = (uint)output.Length;
 

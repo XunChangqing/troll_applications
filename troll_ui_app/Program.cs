@@ -38,13 +38,13 @@ namespace troll_ui_app
 
         static System.Threading.Timer delete_history_timer;
         static System.Threading.Timer update_domain_list_timer;
+        static System.Threading.Mutex systemMutex;
         /// </summary>
         [STAThread]
         static void Main(String[] args)
         {
-            AllocConsole();
-            ProcessThreadCollection ptc = Process.GetCurrentProcess().Threads;
-            Console.WriteLine("Start Threads Num: " + ptc.Count);
+            //ProcessThreadCollection ptc = Process.GetCurrentProcess().Threads;
+            //Console.WriteLine("Start Threads Num: " + ptc.Count);
             //Thread t = new Thread(() =>
             //{
             //    //try
@@ -100,13 +100,25 @@ namespace troll_ui_app
                 //Init();
                 InitLogAndDirs();
 
-                bool result;
+                string systemMutexName = "masa_troll_guard_mutex";
                 //using named system mutex to ensure single instance of application
-                var mutex = new System.Threading.Mutex(true, "masa_troll_guard_mutex", out result);
-
-                if (!result)
+                //try
+                //{
+                //    //如果当前已经有系统级mutex被打开则退出
+                //    var mutex = System.Threading.Mutex.OpenExisting(systemMutexName);
+                //    log.Error("Exit due to another running instance: "+mutex.ToString());
+                //    return;
+                //}
+                //catch(Exception exp)
+                //{
+                //    bool result;
+                //    var mutex = new System.Threading.Mutex(true, "masa_troll_guard_mutex");
+                //}
+                bool result;
+                systemMutex = new System.Threading.Mutex(true, systemMutexName, out result);
+                if(!result)
                 {
-                    log.Error("Exit due to another running instance!");
+                    log.Error("Exit due to another running instance: " + systemMutex.ToString());
                     return;
                 }
 
@@ -215,6 +227,12 @@ namespace troll_ui_app
                 try { ProxyRoutines.SetProxy(false); }
                 catch (Exception exp) { log.Equals(exp.ToString()); }
 #endif
+                try
+                {
+                    systemMutex.Dispose();
+                }
+                catch(Exception exp)
+                { log.Error(exp.ToString()); }
                 //dispose timer and wait for callback complete
                 WaitHandle[] whs = new WaitHandle[]{
                 new AutoResetEvent(false),
