@@ -53,8 +53,8 @@ namespace troll_ui_app
         static readonly string webToken = "masa417";
         static readonly ILog log = Log.Get();
         //select * from porn_pics where date(created_at)<date('now', '-10 day');
-        //static readonly String kConnectionString = "Data Source={0}porn.db;Password=masa417";
-        static readonly String kConnectionString = "Data Source={0}porn.db;";
+        static readonly String kConnectionString = "Data Source={0}porn.db;Password=masa417";
+        //static readonly String kConnectionString = "Data Source={0}porn.db;";
         static readonly String kGeneralSelect = "select * from {0}";
         static readonly String kDomainListInsert = "insert or ignore into domain_list (domain_name, type) values ('{0}', {1})";
         static readonly String kDomainListGetType = "select type from domain_list where domain_name='{0}'";

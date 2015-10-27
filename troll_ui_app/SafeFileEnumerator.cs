@@ -82,5 +82,25 @@ namespace troll_ui_app
                 return Enumerable.Empty<string>();
             }
         }
+        public static IEnumerable<FileInfo> EnumerateFileInfos(string path, string searchPattern, SearchOption searchOpt, Func<string, bool> directoryFilter=null)
+        {
+            try
+            {
+                var dirFiles = Enumerable.Empty<FileInfo>();
+                if ( directoryFilter!=null && !directoryFilter(path))
+                    return dirFiles;
+                if (searchOpt == SearchOption.AllDirectories)
+                {
+                    dirFiles = Directory.EnumerateDirectories(path)
+                                        .SelectMany(x => EnumerateFileInfos(x, searchPattern, searchOpt, directoryFilter));
+                }
+                DirectoryInfo pathinfo = new DirectoryInfo(path);
+                return dirFiles.Concat(pathinfo.EnumerateFiles(searchPattern));
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Enumerable.Empty<FileInfo>();
+            }
+        }
     }
 }

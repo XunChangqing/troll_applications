@@ -73,6 +73,7 @@ namespace troll_ui_app
             titleBar.Controls.Add(mainFuncBtn);
             ToolTip mainFuncTip = new ToolTip();
             mainFuncTip.SetToolTip(mainFuncBtn, "设置防护功能和查看防护记录");
+            titleBar.ProtectionCenterItem.Click += ProtectionCenterItemOnClick;
 
             wechatHeadImage = new PictureBox();
             wechatHeadImage.SizeMode = PictureBoxSizeMode.Zoom;
@@ -181,6 +182,9 @@ namespace troll_ui_app
             allScanBtn.HoverBack = Properties.Resources.home_scanner_qp_h;
             allScanBtn.PressBack = Properties.Resources.home_scanner_qp_n;
             allScanBtn.Location = new Point(130, scanBtnTopPadding);
+            ToolTip allScanTip = new ToolTip();
+            allScanTip.AutoPopDelay = 32000;
+            allScanTip.SetToolTip(allScanBtn, "扫描所有磁盘上的图片和视频");
 
             fastScanBtn = new ImageButton();
             fastScanBtn .Image = Properties.Resources.home_scanner_ks_n;
@@ -189,6 +193,9 @@ namespace troll_ui_app
             fastScanBtn .HoverBack = Properties.Resources.home_scanner_ks_h;
             fastScanBtn .PressBack = Properties.Resources.home_scanner_ks_n;
             fastScanBtn .Location = new Point(allScanBtn.Location.X+allScanBtn.Width*2, scanBtnTopPadding);
+            ToolTip fastScanTip = new ToolTip();
+            fastScanTip.AutoPopDelay = 32000;
+            fastScanTip.SetToolTip(fastScanBtn, "扫描浏览器缓存中的图片");
 
             customScanBtn = new ImageButton();
             customScanBtn.Image = Properties.Resources.home_scanner_zdy_n;
@@ -197,6 +204,9 @@ namespace troll_ui_app
             customScanBtn.HoverBack = Properties.Resources.home_scanner_zdy_h;
             customScanBtn.PressBack = Properties.Resources.home_scanner_zdy_n;
             customScanBtn.Location = new Point(fastScanBtn.Location.X+fastScanBtn.Width*2, scanBtnTopPadding);
+            ToolTip customScanTip = new ToolTip();
+            customScanTip.AutoPopDelay = 32000;
+            customScanTip.SetToolTip(customScanBtn, "扫描指定文件夹内的图片和视频");
 
             allScanLabel = new Label();
             allScanLabel.AutoSize = true;
@@ -205,7 +215,7 @@ namespace troll_ui_app
 
             fastScanLabel = new Label();
             fastScanLabel.AutoSize = true;
-            fastScanLabel.Text = "快速扫描";
+            fastScanLabel.Text = "浏览器缓存扫描";
             fastScanLabel.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
 
             customScanLabel = new Label();
@@ -266,6 +276,7 @@ namespace troll_ui_app
             wechatStatusLabel.Font = new System.Drawing.Font("微软雅黑", 11, GraphicsUnit.Pixel);
             wechatStatusLabel.ForeColor = Color.FromArgb(0x5e, 0x5e, 0x5e);
             statusPanel.Controls.Add(wechatStatusLabel);
+            wechatStatusLabel.SizeChanged += wechatStatusLabelOnSizeChanged;
 
             Controls.Add(titleBar);
             Controls.Add(statusPanel);
@@ -278,7 +289,10 @@ namespace troll_ui_app
             MainForm.Instance.TargetProcessedProgress.ProgressChanged += TargetProcessedProgressOnProgressChanged;
             //Paint += MainPanelOnPaint;
         }
-
+        void wechatStatusLabelOnSizeChanged(object sender, EventArgs e)
+        {
+            wechatStatusLabel.Location = new Point(wechatStatusIcon.Location.X - wechatStatusLabel.Width, statusPanel.Height / 2 - wechatStatusLabel.Height / 2);
+        }
         void analysisResultDescLabelOnSizeChanged(object sender, EventArgs e)
         {
             analysisResultViewBtn.Location = new Point(analysisResultDescLabel.Width, analysisResultDescLabel.Location.Y);
@@ -307,11 +321,24 @@ namespace troll_ui_app
             analysisResultViewBtn.Visible = false;
         }
 
-        public void AuthWechat(bool st)
+        //public void AuthWechat(bool st)
+        //{
+        //    if (st)
+        //    {
+        //        wechatStatusLabel.Text = "微信已授权";
+        //        wechatStatusIcon.Image = Properties.Resources.wechatauth;
+        //    }
+        //    else
+        //    { 
+        //        wechatStatusLabel.Text = "微信未授权";
+        //        wechatStatusIcon.Image = Properties.Resources.wechatnotauth;
+        //    }
+        //}
+        public void UpdateAuthStatus(TimeSpan authExpiredTimeLeft)
         {
-            if (st)
+            if (authExpiredTimeLeft>TimeSpan.Zero)
             {
-                wechatStatusLabel.Text = "微信已授权";
+                wechatStatusLabel.Text = "微信已授权 "+authExpiredTimeLeft.ToString();
                 wechatStatusIcon.Image = Properties.Resources.wechatauth;
             }
             else
@@ -323,8 +350,11 @@ namespace troll_ui_app
 
         void checkUpdateBtnOnClick(object sender, EventArgs e)
         {
-            UpdateInfoForm.GetInstance().Show();
-            UpdateInfoForm.GetInstance().WindowState = FormWindowState.Normal;
+            UpdateInfoForm updateInfoForm = new UpdateInfoForm();
+            Task t = updateInfoForm.UpdateProduct();
+            updateInfoForm.Show();
+            //UpdateInfoForm.GetInstance().Show();
+            //UpdateInfoForm.GetInstance().WindowState = FormWindowState.Normal;
         }
 
         public void EnterScanStatus()
@@ -422,5 +452,11 @@ namespace troll_ui_app
             if(WechatForm.Auth())
                 MainForm.Instance.SlideWindow(MainForm.Instance._protectionPanelControl);
         }
+        void ProtectionCenterItemOnClick(object sender, EventArgs e)
+        {
+            if(WechatForm.Auth())
+                MainForm.Instance.SlideWindow(MainForm.Instance._protectionPanelControl);
+        }
+
     }
 }

@@ -19,16 +19,17 @@ namespace troll_ui_app
     public partial class UpdateInfoForm : Form
     {
         static readonly ILog log = Log.Get();
-        static UpdateInfoForm Singleton;
+        //static UpdateInfoForm Singleton;
         Version newVersion;
         //string verInfo;
         string verUrl;
-        private UpdateInfoForm()
+        public UpdateInfoForm()
         {
             InitializeComponent();
             Icon = Properties.Resources.icon_main_icon;
+            updateInfoRichTextBox.Text = "正在从服务器获取版本信息！";
         }
-        private async Task UpdateProduct()
+        public async Task UpdateProduct()
         {
             //if (newVersion > curVersion)
             //    MessageBox.Show("Update");
@@ -103,15 +104,15 @@ namespace troll_ui_app
         {
         }
 
-        public static UpdateInfoForm GetInstance()
-        {
-            if (Singleton == null || Singleton.IsDisposed)
-            {
-                Singleton = new UpdateInfoForm();
-                Task t = Singleton.UpdateProduct();
-            }
-            return Singleton;
-        }
+        //public static UpdateInfoForm GetInstance()
+        //{
+        //    if (Singleton == null || Singleton.IsDisposed)
+        //    {
+        //        Singleton = new UpdateInfoForm();
+        //        Task t = Singleton.UpdateProduct();
+        //    }
+        //    return Singleton;
+        //}
 
         private void updateButton_Click(object sender, EventArgs e)
         {

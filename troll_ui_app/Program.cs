@@ -17,6 +17,9 @@ using Titanium.Web.Proxy.Helpers;
 using System.Drawing;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 
 namespace troll_ui_app
 {
@@ -24,6 +27,7 @@ namespace troll_ui_app
     {
         static readonly ILog log = Log.Get();
         public static bool FirstTime = false;
+        public static bool RealBindingSucess = false;
         public static string AppLocalDir;
         /// <summary>
         /// 应用程序的主入口点。
@@ -43,6 +47,22 @@ namespace troll_ui_app
         [STAThread]
         static void Main(String[] args)
         {
+            //AutoCloseMessageBox.ShowMessage(20, "执行此操作需要微信绑定者进行授权！\n请按照公众号提示操作后重试！");
+            //return;
+            //AutoCloseMessageBox acmb = new AutoCloseMessageBox(100, "123");
+            //acmb.ShowDialog();
+            //return;
+            //AllocConsole();
+            //PornClassifier.Init();
+            //FFMPEGWrapper.Init();
+            ////PornClassifier.Instance.ClassifyVideoFile("1.mp4");
+            //PornClassifier.Instance.ClassifyVideoFile("D:\\迅雷下载\\国产真实母子视频做爰[连干4次].rmvb");
+            //return;
+            //FFMPEGWrapper ffmpeg = new FFMPEGWrapper();
+            //ffmpeg.Open("1.mp4");
+            //ffmpeg.ReadFrame(4000);
+            //ffmpeg.Dispose();
+            //return;
             //ProcessThreadCollection ptc = Process.GetCurrentProcess().Threads;
             //Console.WriteLine("Start Threads Num: " + ptc.Count);
             //Thread t = new Thread(() =>
@@ -121,6 +141,8 @@ namespace troll_ui_app
                     log.Error("Exit due to another running instance: " + systemMutex.ToString());
                     return;
                 }
+                //必须在绑定之前，这样才能正常访问web的绑定服务
+                SSLInit();
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
@@ -133,7 +155,9 @@ namespace troll_ui_app
                     //使用以下一行也可以
                     Application.Run(bindingForm);
                     bindingSuccess = bindingForm.BindingSuccess;
+                    RealBindingSucess = bindingForm.BindingSuccess;
                 }
+                //RealBindingSucess = true;
                 if (bindingSuccess)
                 {
                     InitForBusinessLogic();
@@ -204,10 +228,53 @@ namespace troll_ui_app
             //如果数据库文件不存在，则建立数据库文件
             PornDatabase.CreateDatabase();
             PornClassifier.Init();
+            FFMPEGWrapper.Init();
+            WechatForm.Init();
 
             update_domain_list_timer = new System.Threading.Timer(PornDatabase.UpdateDatabase, null, new TimeSpan(0, 0, 5), new TimeSpan(4, 0, 0));
             delete_history_timer = new System.Threading.Timer(PornDatabase.DeleteHistroy, null, new TimeSpan(0, 1, 0), System.Threading.Timeout.InfiniteTimeSpan);
         }
+        static void SSLInit()
+        {
+            // Override automatic validation of SSL server certificates.
+            ServicePointManager.ServerCertificateValidationCallback =
+                   ValidateServerCertficate;
+        }
+        static readonly byte[] apiCertHash = { 224, 179, 82, 226, 79, 100, 202, 56, 92, 237, 148, 186, 170, 31, 83, 148, 21, 150, 103, 52 };
+        static bool ValidateServerCertficate(
+                object sender,
+                X509Certificate cert,
+                X509Chain chain,
+                SslPolicyErrors sslPolicyErrors)
+        {
+            if (sslPolicyErrors == SslPolicyErrors.None)
+            {
+                // Good certificate.
+                return true;
+            }
+
+            log.DebugFormat("SSL certificate error: {0}", sslPolicyErrors);
+
+            bool certMatch = false; // Assume failure
+            byte[] certHash = cert.GetCertHash();
+            if (certHash.Length == apiCertHash.Length)
+            {
+                certMatch = true; // Now assume success.
+                for (int idx = 0; idx < certHash.Length; idx++)
+                {
+                    if (certHash[idx] != apiCertHash[idx])
+                    {
+                        certMatch = false; // No match
+                        break;
+                    }
+                }
+            }
+
+            // Return true => allow unauthenticated server,
+            //        false => disallow unauthenticated server.
+            return certMatch;
+        }
+
         static bool _cleanUp = false;
         public static void CleanUp()
         {

@@ -25,7 +25,7 @@ namespace troll_ui_app
         DataTable _pornItemDataTable;
         bool _viewProtectionLogs;
         //是否总是显示最新的一个目标
-        bool _showLastestItem = true;
+        bool _showLastestItem = false;
         public PornItemTableViewWithPreview(bool viewProtectionLogs)
         {
             _viewProtectionLogs = viewProtectionLogs;
@@ -70,7 +70,7 @@ namespace troll_ui_app
             //_previewPictureBox.ImageLocation = null;
             DisposeCurrentImage();
             _previewPictureBox.Image = null;
-            _showLastestItem = true;
+            _showLastestItem = false;
         }
         void TableChangedProgressOnProgressChanged(object sender, string e)
         {
@@ -149,8 +149,8 @@ namespace troll_ui_app
                 PornDatabase.PornItemType type = (PornDatabase.PornItemType)currentRow.Row.Field<Int64>("item_type");
                 string info = currentRow.Row.Field<string>("info");
                 string fname;
-                if (type == PornDatabase.PornItemType.LocalImage ||
-                    type == PornDatabase.PornItemType.LocalVideo)
+                if (type == PornDatabase.PornItemType.LocalImage)
+                    //|| type == PornDatabase.PornItemType.LocalVideo)
                 {
                     //_previewPictureBox.ImageLocation = info;
                     fname = info;
@@ -173,12 +173,15 @@ namespace troll_ui_app
                 {
                     //必须释放旧图像
                     DisposeImage(_previewPictureBox.Image);
-                    using (Image x = Image.FromFile(fname))
+                    if (fname != null)
                     {
-                        //通过拷贝构造函数生成新的bitmap，可以解除对文件的锁定
-                        //这样正在打开的文件也可以被删除了
-                        _previewPictureBox.Image = new Bitmap(x);
-                        x.Dispose();
+                        using (Image x = Image.FromFile(fname))
+                        {
+                            //通过拷贝构造函数生成新的bitmap，可以解除对文件的锁定
+                            //这样正在打开的文件也可以被删除了
+                            _previewPictureBox.Image = new Bitmap(x);
+                            x.Dispose();
+                        }
                     }
                 }
                 catch (Exception ex)

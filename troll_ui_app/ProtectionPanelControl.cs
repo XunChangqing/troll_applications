@@ -9,11 +9,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Titanium.Web.Proxy.Helpers;
+using log4net;
 
 namespace troll_ui_app
 {
     public class ProtectionPanelControl : UserControl
     {
+        static readonly ILog log = Log.Get();
         TitleBarControl _titleBar;
 
         Panel _settingPanel;
@@ -26,6 +28,8 @@ namespace troll_ui_app
         Label _activeVideoDescLabel;
         ImageSwitchButton _networkImageBtn;
         Label _networkImageDescLabel;
+        CheckBox _autoStartCheckbox;
+        CheckBox _fastLocalScanIncrementalCheckbox;
         CheckBox _strongNetworkImageFilter;
         Panel _returnBackImage;
         Label _returnBtn;
@@ -45,6 +49,7 @@ namespace troll_ui_app
 
         Panel _processPanel;
         ImageButton _clearAllBtn;
+        static readonly int CheckBoxLocationX = 336 + 138 + 200;
         public ProtectionPanelControl()
         {
             //InitializeComponent();
@@ -92,6 +97,7 @@ namespace troll_ui_app
             _settingPanel.Controls.Add(_websiteDescLabel);
             _websiteBtn.SwitchChanged += _websiteBtnOnSwitchChanged;
             ToolTip websiteTip = new ToolTip();
+            websiteTip.AutoPopDelay = 32000;
             websiteTip.SetToolTip(_websiteDescLabel, "自动检测色情网站并屏蔽");
 
             _activeImageBtn = new ImageSwitchButton(Properties.Settings.Default.IsLocalActiveImageTurnOn,
@@ -112,6 +118,7 @@ namespace troll_ui_app
             if (Properties.Settings.Default.IsLocalActiveImageTurnOn)
                 MainForm.Instance._activeFileMonitor.EnableImageDetection();
             ToolTip activImageTip = new ToolTip();
+            activImageTip.AutoPopDelay = 32000;
             activImageTip.SetToolTip(_activeImageDescLabel, "监控本地活跃图片文件，记录本地色情图片文件的创建");
 
             _activeVideoBtn = new ImageSwitchButton(Properties.Settings.Default.IsLocalActiveVideoTurnOn,
@@ -129,9 +136,12 @@ namespace troll_ui_app
             _settingPanel.Controls.Add(_activeVideoBtn);
             _settingPanel.Controls.Add(_activeVideoDescLabel);
             _activeVideoBtn.SwitchChanged += _activeVideoBtnOnSwitchChanged;
-            _activeVideoBtn.Enabled = false;
+            //_activeVideoBtn.Enabled = false;
             ToolTip activeVideoTip = new ToolTip();
-            activeVideoTip .SetToolTip(_activeImageDescLabel, "监控本地活跃视频文件，记录本地色情视频文件的创建");
+            activeVideoTip.AutoPopDelay = 32000;
+            activeVideoTip .SetToolTip(_activeVideoDescLabel, "监控本地活跃视频文件，记录本地色情视频文件的创建");
+            if (Properties.Settings.Default.IsLocalActiveVideoTurnOn)
+                MainForm.Instance._activeFileMonitor.EnableVideoDetection();
 
             _networkImageBtn = new ImageSwitchButton(Properties.Settings.Default.IsNetworkImageTurnOn,
                 Properties.Resources.switch_on,
@@ -149,10 +159,11 @@ namespace troll_ui_app
             _settingPanel.Controls.Add(_networkImageDescLabel);
             _networkImageBtn.SwitchChanged += _networkImageBtnOnSwitchChanged;
             ToolTip networkImageTip = new ToolTip();
+            networkImageTip.AutoPopDelay = 32000;
             networkImageTip.SetToolTip(_networkImageDescLabel, "过滤网页中的色情图片，此项功能在开关时，如页面未刷新，请使用Ctrl+F5强制刷新");
 
             _strongNetworkImageFilter = new CheckBox();
-            _strongNetworkImageFilter.Location = new Point(_networkImageDescLabel.Location.X + _networkImageDescLabel.Width + 2,
+            _strongNetworkImageFilter.Location = new Point(CheckBoxLocationX,
                 _networkImageDescLabel.Location.Y);
             _strongNetworkImageFilter.BackColor = Color.Transparent;
             _strongNetworkImageFilter.Text = "强力过滤";
@@ -165,7 +176,35 @@ namespace troll_ui_app
             _strongNetworkImageFilter.CheckedChanged += _strongNetworkImageFilterOnCheckedChanged;
             _settingPanel.Controls.Add(_strongNetworkImageFilter);
             ToolTip strongNetworkImageFilterTip = new ToolTip();
+            strongNetworkImageFilterTip.AutoPopDelay = 32000;
             strongNetworkImageFilterTip.SetToolTip(_strongNetworkImageFilter, "包含擦边球色情图片");
+
+            //自启动checkbox
+            _autoStartCheckbox = new CheckBox();
+            _autoStartCheckbox.Location = new Point(CheckBoxLocationX, _websiteDescLabel.Location.Y);
+            _autoStartCheckbox.BackColor = Color.Transparent;
+            _autoStartCheckbox.Text = "开机启动";
+            _autoStartCheckbox.ForeColor = Color.FromArgb(0x5e, 0x5e, 0x5e);
+            _autoStartCheckbox.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
+            _autoStartCheckbox.BackColor = Color.Transparent;
+            _autoStartCheckbox.Checked = GetAutoStart();
+            _autoStartCheckbox.CheckedChanged += _autoStartCheckboxOnCheckedChanged;
+            _settingPanel.Controls.Add(_autoStartCheckbox);
+            //ToolTip strongNetworkImageFilterTip = new ToolTip();
+            //strongNetworkImageFilterTip.SetToolTip(_strongNetworkImageFilter, "包含擦边球色情图片");
+
+            //增量快速扫描
+            _fastLocalScanIncrementalCheckbox = new CheckBox();
+            _fastLocalScanIncrementalCheckbox.Location = new Point(CheckBoxLocationX, _activeImageDescLabel.Location.Y);
+            _fastLocalScanIncrementalCheckbox.BackColor = Color.Transparent;
+            _fastLocalScanIncrementalCheckbox.Text = "增量快速扫描";
+            _fastLocalScanIncrementalCheckbox.AutoSize = true;
+            _fastLocalScanIncrementalCheckbox.ForeColor = Color.FromArgb(0x5e, 0x5e, 0x5e);
+            _fastLocalScanIncrementalCheckbox.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
+            _fastLocalScanIncrementalCheckbox.BackColor = Color.Transparent;
+            _fastLocalScanIncrementalCheckbox.Checked = Properties.Settings.Default.isFastLocalScanIncremental;
+            _fastLocalScanIncrementalCheckbox.CheckedChanged += _fastLocalScanIncrementalCheckboxOnCheckedChanged;
+            _settingPanel.Controls.Add(_fastLocalScanIncrementalCheckbox);
 
             _returnBackImage = new Panel();
             _returnBackImage.BackColor = Color.Transparent;
@@ -192,59 +231,6 @@ namespace troll_ui_app
             _tabHeaderPanel.Location = new Point(0, _settingPanel.Location.Y + _settingPanel.Height);
             Controls.Add(_tabHeaderPanel);
 
-            //_pornWebsiteTabBtn = new ImageButton();
-            //_pornWebsiteTabBtn.Size = Properties.Resources.btn_blwz_n.Size;
-            //_pornWebsiteTabBtn.Image = _pornWebsiteTabBtn.NormalBack = Properties.Resources.btn_blwz_h;
-            //_pornWebsiteTabBtn.HoverBack = Properties.Resources.btn_blwz_h;
-            //_pornWebsiteTabBtn.PressBack = Properties.Resources.btn_blwz_p;
-            //_pornWebsiteTabBtn.Location = new Point(32, 0);
-            //_tabHeaderPanel.Controls.Add(_pornWebsiteTabBtn);
-            //_activeTabBtn = _pornWebsiteTabBtn;
-
-            //_pornFileTabBtn = new ImageButton();
-            //_pornFileTabBtn.Size = Properties.Resources.btn_blwj_n.Size;
-            //_pornFileTabBtn.Image = _pornFileTabBtn.NormalBack = Properties.Resources.btn_blwj_n;
-            //_pornFileTabBtn.HoverBack = Properties.Resources.btn_blwj_h;
-            //_pornFileTabBtn.PressBack = Properties.Resources.btn_blwj_p;
-            //_pornFileTabBtn.Location = new Point(32+_pornWebsiteTabBtn.Width, 0);
-            //_tabHeaderPanel.Controls.Add(_pornFileTabBtn);
-            //_pornWebsiteTabBtn.Click += _pornWebsiteTabBtnOnClick;
-            //_pornFileTabBtn.Click += _pornFileTabBtnOnClick;
-
-            //_tabPornWebsiteContentPanel = new Panel();
-            //_tabPornWebsiteContentPanel.Height = 264 + 30;
-            //_tabPornWebsiteContentPanel.Width = MainForm.MainFormWidth;
-            //_tabPornWebsiteContentPanel.Location = new Point(0, _tabHeaderPanel.Location.Y + _tabHeaderPanel.Height);
-            //_tabPornWebsiteContentPanel.BackColor = Color.White;
-            ////_tabPornWebsiteContentPanel.BackColor = Color.Red;
-            //Controls.Add(_tabPornWebsiteContentPanel);
-            //_tabPornWebsiteContentPanel.Visible = true;
-
-            //_pornWebsiteTableView = new PornDataGridView();
-            //_pornWebsiteTableView.Location = new Point(12, 0);
-            //_pornWebsiteTableView.Width = _tabPornWebsiteContentPanel.Width-24;
-            //_pornWebsiteTableView.Height = _tabPornWebsiteContentPanel.Height;
-            //_pornWebsiteTableView.SelectionEnable = false;
-
-            //_pornWebsiteTableView.Rows.Add(true, 1, "www.ifeng.com");
-            //_pornWebsiteTableView.Rows.Add(true, "20150102 19", "www.ifeng.com");
-
-            ////_pornWebsiteTableView.Rows.Add("20150102 19", "www.ifeng.com");
-            ////_pornWebsiteTableView.Rows.Add("20150102 19", "www.ifeng.com");
-
-            //_tabPornWebsiteContentPanel.Controls.Add(_pornWebsiteTableView);
-    
-            //_tabPornFileContentPanel = new Panel();
-            //_tabPornFileContentPanel.Height = _tabPornWebsiteContentPanel.Height;
-            //_tabPornFileContentPanel.Width = _tabPornWebsiteContentPanel.Width;
-            //_tabPornFileContentPanel.Location = _tabPornWebsiteContentPanel.Location;
-            ////_tabPornFileContentPanel.BackColor = Color.Brown;
-            //Controls.Add(_tabPornFileContentPanel);
-            //_tabPornFileContentPanel.Visible = false;
-
-            //_networkPornPicView = new PornItemTableViewWithPreview();
-            //_pornFileTableView.Width = ;
-            //_pornFileTableView.Height = ;
             _pornItemTableView = new PornItemTableViewWithPreview(true);
             _pornItemTableView.Height = 264 + 30;
             _pornItemTableView.Width = MainForm.MainFormWidth;
@@ -271,40 +257,89 @@ namespace troll_ui_app
             _returnBtn.Click += _returnBtnOnClick;
         }
 
+        void _fastLocalScanIncrementalCheckboxOnCheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.isFastLocalScanIncremental = _fastLocalScanIncrementalCheckbox.Checked;
+            Properties.Settings.Default.Save();
+        }
 
         static readonly string kAutoRunRegisstryKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
         static readonly string kAutoRunKey = "trollwiz";
-        void TurnOnAutoStart()
+        bool GetAutoStart()
+        {
+            RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
+            var autostart = autorun_registry_key.GetValue(kAutoRunKey);
+            if (autostart == null)
+                return false;
+            else
+                return true;
+        }
+        void TurnOnAutoStartReg()
         {
             RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
             autorun_registry_key.SetValue(kAutoRunKey, Application.ExecutablePath + " -notvisible");
+            //暂时断开消息处理函数，防止反复处理
+            //_autoStartCheckbox.CheckedChanged -= _autoStartCheckboxOnCheckedChanged;
+            //_autoStartCheckbox.Checked = true;
+            //_autoStartCheckbox.CheckedChanged += _autoStartCheckboxOnCheckedChanged;
+        }
+        void TurnOffAutoStartReg()
+        {
+            RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
+            autorun_registry_key.DeleteValue(kAutoRunKey);
+            //autorun_registry_key.SetValue(kAutoRunKey, "");
+            //暂时断开消息处理函数，防止反复处理
+            //_autoStartCheckbox.CheckedChanged -= _autoStartCheckboxOnCheckedChanged;
+            //_autoStartCheckbox.Checked = false; ;
+            //_autoStartCheckbox.CheckedChanged += _autoStartCheckboxOnCheckedChanged;
+        }
+        void TurnOnAutoStart()
+        {
+            _autoStartCheckbox.Checked = true;
         }
         void TurnOffAutoStart()
         {
-            RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
-            autorun_registry_key.SetValue(kAutoRunKey, "");
+            _autoStartCheckbox.Checked = false;
         }
-        void SetLogoImage()
+        void _autoStartCheckboxOnCheckedChanged(object sender, EventArgs e)
+        {
+            log.Info("auto start checkbox checked changed!");
+            if (_autoStartCheckbox.Checked)
+                TurnOnAutoStartReg();
+            else
+                TurnOffAutoStartReg();
+        }
+        bool HasOneFuncWork()
         {
             if (Properties.Settings.Default.IsNetworkImageTurnOn ||
                 Properties.Settings.Default.IsLocalActiveImageTurnOn ||
                 Properties.Settings.Default.IsPornWebsiteProtectionTurnOn ||
                 Properties.Settings.Default.IsLocalActiveVideoTurnOn)
-            {
-                _logoLabel.Image = Properties.Resources.fh_icon_animation_n;
-                TurnOnAutoStart();
-            }
+                return true;
             else
-            {
+                return false;
+        }
+        void SetLogoImage()
+        {
+            if(HasOneFuncWork())
+                _logoLabel.Image = Properties.Resources.fh_icon_animation_n;
+            else
                 _logoLabel.Image = Properties.Resources.fh_icon_animation_d;
+        }
+        //当有功能设置变化时重新设置开机自启动
+        void SetAutoStart()
+        {
+            if(HasOneFuncWork())
+                TurnOnAutoStart();
+            else
                 TurnOffAutoStart();
-            }
         }
         void _websiteBtnOnSwitchChanged(object sender, bool e)
         {
             Properties.Settings.Default.IsPornWebsiteProtectionTurnOn = e;
             Properties.Settings.Default.Save();
             SetLogoImage();
+            SetAutoStart();
 //#if !DEBUG
             //if (e)
             //{
@@ -322,12 +357,18 @@ namespace troll_ui_app
                 MainForm.Instance._activeFileMonitor.EnableImageDetection();
             else
                 MainForm.Instance._activeFileMonitor.DisableImageDetection();
+            SetAutoStart();
         }
         void _activeVideoBtnOnSwitchChanged(object sender, bool e)
         {
             Properties.Settings.Default.IsLocalActiveVideoTurnOn = e;
             Properties.Settings.Default.Save();
             SetLogoImage();
+            if (e)
+                MainForm.Instance._activeFileMonitor.EnableVideoDetection();
+            else
+                MainForm.Instance._activeFileMonitor.DisableVideoDetection();
+            SetAutoStart();
         }
         void _networkImageBtnOnSwitchChanged(object sender, bool e)
         {
@@ -338,11 +379,13 @@ namespace troll_ui_app
                 _strongNetworkImageFilter.Enabled = true;
             else
                 _strongNetworkImageFilter.Enabled = false;
+            SetAutoStart();
         }
         void _strongNetworkImageFilterOnCheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.IsStrongNetworkImageFilter = _strongNetworkImageFilter.Checked;
             Properties.Settings.Default.Save();
+            SetAutoStart();
         }
 
         void _returnBtnOnClick(object sender, EventArgs e)

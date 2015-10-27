@@ -28,8 +28,22 @@ namespace troll_ui_app
         CancellationTokenSource _cts = new CancellationTokenSource();
         Progress<PornActiveFile> _progress = new Progress<PornActiveFile>();
         //FileSystemWatcher _fileSystemWatcher;
-        List<FileSystemWatcher> _jpgFileSystemWatchers;
-        List<FileSystemWatcher> _pngFileSystemWatchers;
+        public static string []ImageExts = {".jpg", ".png"};
+        public static string []VideoExts = { ".mkv", ".flv", ".vob", ".ogg", ".ogv", ".avi", ".mov", ".qt", ".wmv", ".rm", ".rmvb", ".asf", ".mp4", ".m4p", ".m4v", ".mpg", ".mpeg", ".m4v", ".3gp", ".3g2", ".mxf" };
+        public static bool IsFileExtWith(string fname, string[] exts)
+        {
+            foreach(string ext in exts)
+            {
+                if (fname.EndsWith(ext))
+                    return true;
+            }
+            return false;
+        }
+        //图像
+        List<FileSystemWatcher> _imageFileSystemWatchers;
+        //视频
+        List<FileSystemWatcher> _videoFileSystemWatchers;
+
         List<string> _dirFilters;
         MD5 _md5hash;
 
@@ -43,7 +57,7 @@ namespace troll_ui_app
             return false;
         }
 
-        private void InitWatchers(string filter, out List<FileSystemWatcher> ofsWatchers)
+        private void InitWatchers(string[] filters, out List<FileSystemWatcher> ofsWatchers)
         {
             DriveInfo[] allDrive = DriveInfo.GetDrives();
             ofsWatchers = new List<FileSystemWatcher>();
@@ -53,18 +67,21 @@ namespace troll_ui_app
                 {
                     try
                     {
-                        FileSystemWatcher fsWatcher = new FileSystemWatcher(dinfo.RootDirectory.ToString());
-                        //fsWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
-                        //_fileSystemWatcher.NotifyFilter = | NotifyFilters.Size;
-                        //NotifyFilters.
-                        fsWatcher.Filter = filter;
-                        fsWatcher.IncludeSubdirectories = true;
-                        fsWatcher.Created += _fileSystemWatcherOnChanged;
-                        fsWatcher.Changed += _fileSystemWatcherOnChanged;
-                        //fsWatcher.Deleted += _fileSystemWatcherOnDeleted;
-                        //fsWatcher.Renamed += _fileSystemWatcherOnRenamed;
+                        foreach (string filter in filters)
+                        {
+                            FileSystemWatcher fsWatcher = new FileSystemWatcher(dinfo.RootDirectory.ToString());
+                            //fsWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
+                            //_fileSystemWatcher.NotifyFilter = | NotifyFilters.Size;
+                            //NotifyFilters.
+                            fsWatcher.Filter = "*" + filter;
+                            fsWatcher.IncludeSubdirectories = true;
+                            fsWatcher.Created += _fileSystemWatcherOnChanged;
+                            fsWatcher.Changed += _fileSystemWatcherOnChanged;
+                            //fsWatcher.Deleted += _fileSystemWatcherOnDeleted;
+                            //fsWatcher.Renamed += _fileSystemWatcherOnRenamed;
 
-                        ofsWatchers.Add(fsWatcher);
+                            ofsWatchers.Add(fsWatcher);
+                        }
                     }
                     catch(Exception exp)
                     {
@@ -73,6 +90,36 @@ namespace troll_ui_app
                 }
             }
         }
+        //private void InitWatchers(string filter, out List<FileSystemWatcher> ofsWatchers)
+        //{
+        //    DriveInfo[] allDrive = DriveInfo.GetDrives();
+        //    ofsWatchers = new List<FileSystemWatcher>();
+        //    foreach (DriveInfo dinfo in allDrive)
+        //    {
+        //        if (dinfo.DriveType == DriveType.Fixed)
+        //        {
+        //            try
+        //            {
+        //                FileSystemWatcher fsWatcher = new FileSystemWatcher(dinfo.RootDirectory.ToString());
+        //                //fsWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
+        //                //_fileSystemWatcher.NotifyFilter = | NotifyFilters.Size;
+        //                //NotifyFilters.
+        //                fsWatcher.Filter = filter;
+        //                fsWatcher.IncludeSubdirectories = true;
+        //                fsWatcher.Created += _fileSystemWatcherOnChanged;
+        //                fsWatcher.Changed += _fileSystemWatcherOnChanged;
+        //                //fsWatcher.Deleted += _fileSystemWatcherOnDeleted;
+        //                //fsWatcher.Renamed += _fileSystemWatcherOnRenamed;
+
+        //                ofsWatchers.Add(fsWatcher);
+        //            }
+        //            catch(Exception exp)
+        //            {
+        //                log.Error(exp.ToString());
+        //            }
+        //        }
+        //    }
+        //}
         private void EnableWatchers(List<FileSystemWatcher> watchers)
         {
             foreach (FileSystemWatcher w in watchers)
@@ -118,8 +165,10 @@ namespace troll_ui_app
             _dirFilters.Add("$");
 
             DriveInfo[] allDrive = DriveInfo.GetDrives();
-            InitWatchers("*.jpg", out _jpgFileSystemWatchers);
-            InitWatchers("*.png", out _pngFileSystemWatchers);
+            //InitWatchers("*.jpg", out _jpgFileSystemWatchers);
+            //InitWatchers("*.png", out _pngFileSystemWatchers);
+            InitWatchers(ImageExts, out _imageFileSystemWatchers);
+            InitWatchers(VideoExts, out _videoFileSystemWatchers);
             _md5hash = MD5.Create();
 
             //start back worker
@@ -151,13 +200,19 @@ namespace troll_ui_app
         //}
         public void EnableImageDetection()
         {
-            EnableWatchers(_jpgFileSystemWatchers);
-            EnableWatchers(_pngFileSystemWatchers);
+            EnableWatchers(_imageFileSystemWatchers);
         }
         public void DisableImageDetection()
         {
-            DisableWatchers(_jpgFileSystemWatchers);
-            DisableWatchers(_pngFileSystemWatchers);
+            DisableWatchers(_imageFileSystemWatchers);
+        }
+        public void EnableVideoDetection()
+        {
+            EnableWatchers(_videoFileSystemWatchers);
+        }
+        public void DisableVideoDetection()
+        {
+            DisableWatchers(_videoFileSystemWatchers);
         }
         void _fileSystemWatcherOnChanged(object sender, FileSystemEventArgs e)
         {
@@ -210,7 +265,7 @@ namespace troll_ui_app
         }
         void BackgroundWorker(CancellationToken ct, IProgress<PornActiveFile> progress)
         {
-            Dictionary<string, int> md5Set = new Dictionary<string, int>();
+            Dictionary<string, PornDatabase.PornItemType> md5Set = new Dictionary<string, PornDatabase.PornItemType>();
             //Dictionary<byte[], int> md5Set = new Dictionary<byte[], int>();
             Dictionary<string, int> fileSet = new Dictionary<string,int>();
             while (true)
@@ -237,21 +292,38 @@ namespace troll_ui_app
                             {
                                 string shash = GetMd5Hash(_md5hash, File.ReadAllBytes(key));
                                 log.Info("\tHash: " + shash + " Time: " + fileSet[key]);
-                                PornClassifier.ImageType itype;
-                                if(md5Set.ContainsKey(shash))
-                                    itype = (PornClassifier.ImageType)md5Set[shash];
+                                //PornClassifier.ImageType itype;
+                                PornDatabase.PornItemType itype = PornDatabase.PornItemType.Undefined;
+                                if (md5Set.ContainsKey(shash))
+                                {
+                                    itype = md5Set[shash];
+                                }
                                 else
                                 {
-                                    itype = PornClassifier.Instance.Classify(key);
-                                    md5Set[shash] = (int)itype;
+                                    if (IsFileExtWith(key, ImageExts))
+                                    {
+                                        if (PornClassifier.Instance.Classify(key) == PornClassifier.ImageType.Porn)
+                                        {
+                                            itype = PornDatabase.PornItemType.LocalImage;
+                                            md5Set[shash] = PornDatabase.PornItemType.LocalImage;
+                                        }
+                                    }
+                                    else if(IsFileExtWith(key, VideoExts))
+                                    {
+                                        if(PornClassifier.Instance.ClassifyVideoFile(key))
+                                        {
+                                            itype = PornDatabase.PornItemType.LocalVideo;
+                                            md5Set[shash] = PornDatabase.PornItemType.LocalVideo;
+                                        }
+                                    }
                                 }
                                 IProgress<PornDatabase.PornItemType> ip = MainForm.Instance.TargetProcessedProgress as IProgress<PornDatabase.PornItemType>;
-                                if(itype == PornClassifier.ImageType.Porn)
+                                if(itype != PornDatabase.PornItemType.Undefined)
                                 {
-                                    log.Info("Detect Active Porn Image: " + key);
+                                    log.Info("Detect Active File: " + key);
                                     PornDatabase pdb = new PornDatabase();
-                                    pdb.InsertPornFile(key, PornDatabase.PornItemType.LocalImage);
-                                    ip.Report(PornDatabase.PornItemType.LocalImage);
+                                    pdb.InsertPornFile(key, itype);
+                                    ip.Report(itype);
                                 }
                                 else
                                     ip.Report(PornDatabase.PornItemType.Undefined);

@@ -37,6 +37,7 @@
             // 
             // qrCodePictureBox
             // 
+            this.qrCodePictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.qrCodePictureBox.Location = new System.Drawing.Point(30, 60);
             this.qrCodePictureBox.Name = "qrCodePictureBox";
             this.qrCodePictureBox.Size = new System.Drawing.Size(168, 168);

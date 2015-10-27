@@ -102,8 +102,6 @@ namespace troll_ui_app
                         }
                     }
                 }
-
-
             }
         }
         #endregion

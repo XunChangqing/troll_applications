@@ -47,7 +47,6 @@ namespace troll_ui_app
         int _totalHandledNum;
         public enum ScanStatus {Idle, AllScan, FastScan, CustomScan};
         public ScanStatus Status { get; set; }
-
         public ScanPanelControl()
         {
             //InitializeComponent();
@@ -65,7 +64,8 @@ namespace troll_ui_app
             Controls.Add(_scanningStatusPanel);
 
             _scanningLogo = new Label();
-            _scanningLogo.Image = Properties.Resources.scanning;
+            //_scanningLogo.Image = Properties.Resources.scanning;
+            _scanningLogo.Image = Properties.Resources.scanning_work;
             _scanningLogo.Size = _scanningLogo.Image.Size;
             _scanningLogo.BackColor = Color.Transparent;
             _scanningLogo.Location = new Point(32, 20);
@@ -333,11 +333,13 @@ namespace troll_ui_app
         {
             if (_pause)
             {
+                _scanningLogo.Image = Properties.Resources.scanning_work;
                 _localScan.Resume();
                 _pauseBtn.Text = "暂停";
             }
             else
             {
+                _scanningLogo.Image = Properties.Resources.scanning;
                 _localScan.Pause();
                 _pauseBtn.Text = "继续";
             }
@@ -373,10 +375,11 @@ namespace troll_ui_app
             if (e.TargetFilePath != null)
             {
                 _totalTargetNum++;
-                if (e.TargetType == PornClassifier.ImageType.Porn)
+                //if (e.TargetType == PornClassifier.ImageType.Porn)
+                if (e.ItemType != PornDatabase.PornItemType.Undefined)
                 {
                     _totalPornNum++;
-                    _pornItemResultView.AddRow(e.TargetFilePath, PornDatabase.PornItemType.LocalImage,
+                    _pornItemResultView.AddRow(e.TargetFilePath, e.ItemType,
                         PornDatabase.PornItemStatus.Normal);
                 }
             }

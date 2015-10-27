@@ -210,7 +210,12 @@ namespace troll_ui_app
             log.Info("MainForm Load!");
             scanPanelControl.Visible = false;
             _protectionPanelControl.Visible = false;
-            UpdateInfoForm.GetInstance();
+            //等主窗口初始化完成再手动打开授权，因为授权会定时操作主窗口，防止发生错误
+            if (Program.RealBindingSucess)
+            {
+                log.Info("Real Binding Success, Enable Auth!");
+                WechatForm.TurnOnAuth();
+            }
         }
         //void scanPanelOnReturnEvent(object sender, troll_ui_app.ScanPanelControl.ReturnEventArgs e)
         //{

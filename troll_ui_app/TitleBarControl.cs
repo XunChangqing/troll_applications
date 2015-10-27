@@ -41,6 +41,8 @@ namespace troll_ui_app
         //static readonly int 
         Control logo;
         OutlineLabel title;
+        ToolStripItem _protectionCenterItem;
+        public ToolStripItem ProtectionCenterItem { get { return _protectionCenterItem; } }
 
         public string TitleText
         {
@@ -127,6 +129,7 @@ namespace troll_ui_app
             //menuBtn.Dock = DockStyle.Right;
 
             contextMenu = new ContextMenuStrip();
+            _protectionCenterItem = contextMenu.Items.Add("防护中心");
             ToolStripItem helpItem = contextMenu.Items.Add("在线帮助");
             helpItem.Click += TitleBarMenuHelpClick;
             ToolStripItem aboutItem = contextMenu.Items.Add("关于");
@@ -166,9 +169,31 @@ namespace troll_ui_app
             Controls.Add(closeBtn);
         }
 
+        bool _withLogo = true;
+        public bool WithLogo { get
+            {
+                return _withLogo;
+            }
+            set
+            {
+                _withLogo = value;
+                if(_withLogo)
+                {
+                    logo.Visible = true;
+                }
+                else
+                {
+                    logo.Visible = false;
+                }
+            }
+        }
+
         void TitleBarControlOnLoad(object sender, EventArgs e)
         {
-            title.Location = new Point(logo.Location.X + logo.Width, titleBarHeight/2-title.Height/2);
+            if(_withLogo)
+                title.Location = new Point(logo.Location.X + logo.Width, titleBarHeight / 2 - title.Height / 2);
+            else
+                title.Location = new Point(leftPadding, titleBarHeight / 2 - title.Height / 2);
             //if(WithReturnButton)
             //{
             //    returnBtn = new ImageButton();

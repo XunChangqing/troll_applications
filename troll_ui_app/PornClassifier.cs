@@ -5,13 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Drawing;
+using log4net;
 
 namespace troll_ui_app
 {
     public class PornClassifier
     {
+        static readonly ILog log = Log.Get();
         [DllImport("trollwiz-masatek.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public extern static void InitLib();
+        extern static void InitLib();
         [DllImport("trollwiz-masatek.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         extern static IntPtr CreatePornClassifier(string model_file);
         [DllImport("trollwiz-masatek.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
@@ -63,10 +65,6 @@ namespace troll_ui_app
         }
         public ImageType Classify(Bitmap bmp)
         {
-            if (bmp.Width < Properties.Settings.Default.minWidth ||
-                bmp.Height < Properties.Settings.Default.minHeight)
-                return ImageType.Normal;
-
             lock (syncRoot)
             {
                 // Lock the bitmap's bits.
@@ -80,10 +78,24 @@ namespace troll_ui_app
                 // Get the address of the first line.
                 IntPtr ptr = bmpData.Scan0;
                 float[] ratio = new float[8];
-                int ret = ClassifyImage(classifier_handle_, ptr, bmp.Width, bmp.Height, bmpData.Stride, 3,
-                    ratio.Length, ratio);
+                ImageType ret = Classify(ptr, bmp.Width, bmp.Height, bmpData.Stride);
                 // Unlock the bits.
                 bmp.UnlockBits(bmpData);
+                return ret;
+            }
+        }
+        public ImageType Classify(IntPtr pimg, int width, int height, int linesize)
+        {
+            if (width < Properties.Settings.Default.minWidth ||
+                height < Properties.Settings.Default.minHeight)
+                return ImageType.Normal;
+
+            lock (syncRoot)
+            {
+                float[] ratio = new float[8];
+                int ret = ClassifyImage(classifier_handle_, pimg, width, height, linesize, 3,
+                    ratio.Length, ratio);
+                // Unlock the bits.
                 float pornRatio = ratio[(int)InternalImageType.Porn];
                 float sexyRatio = ratio[(int)InternalImageType.Sexy];
                 int[] indices = new int[ratio.Length];
@@ -102,6 +114,48 @@ namespace troll_ui_app
                 else
                     return ImageType.Normal;
             }
+        }
+
+        //一个视频分成多少段提取帧
+        static readonly int VideoSegments = 11;
+        static readonly int PornNumThd = 3;
+        //视频允许的最少长度，通常即为帧数
+        static readonly int MinFrames = 4000;
+        public bool ClassifyVideoFile(string filename)
+        {
+            FFMPEGWrapper ffmpeg = new FFMPEGWrapper();
+            if (!ffmpeg.Open(filename))
+            {
+                log.Info("Video File Cannot Open: " + filename);   
+                ffmpeg.Dispose();
+                return false;
+            }
+            if(ffmpeg.FileInfo.nb_frames<MinFrames)
+            {
+                log.Info("Video File Short of Frames: " + filename + " frames: " + ffmpeg.FileInfo.nb_frames); ;   
+                ffmpeg.Dispose();
+                return false;
+            }
+            Int64 step = ffmpeg.FileInfo.duration/VideoSegments;
+            PornClassifier.ImageType []types = new PornClassifier.ImageType[VideoSegments-1];
+            int pornNum = 0;
+            for(Int64 ts=step;ts<ffmpeg.FileInfo.duration-step/2;ts+=step)
+            {
+                if (ffmpeg.ReadFrame(ts))
+                {
+                    if (Instance.Classify(ffmpeg.FileInfo.pdata, ffmpeg.FileInfo.width, ffmpeg.FileInfo.height, ffmpeg.FileInfo.linesize)
+                        == ImageType.Porn)
+                        pornNum++;
+                }
+            }
+            ffmpeg.Dispose();
+            if (pornNum >= PornNumThd)
+            {
+                log.Info("Porn Video File: " + filename);
+                return true;
+            }
+            else
+                return false;
         }
     }
 }

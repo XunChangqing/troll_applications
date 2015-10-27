@@ -127,6 +127,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActiveFileMonitor.cs" />
+    <Compile Include="AutoCloseMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FFMPEGWrapper.cs" />
     <Compile Include="FormAbout.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -272,6 +276,7 @@
     <None Include="Resources\troll.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\scanning_work.gif" />
     <None Include="Resources\advancedsettings.png" />
     <None Include="Resources\search-button.png" />
     <None Include="Resources\btn_max_h.png" />

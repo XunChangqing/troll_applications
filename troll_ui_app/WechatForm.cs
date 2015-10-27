@@ -27,7 +27,10 @@ namespace troll_ui_app
     {
         static readonly string webToken = "masa417";
         static readonly ILog log = Log.Get();
-        static bool hasBeenAuth = false;
+        //static bool hasBeenAuth = false;
+        public static DateTime LastAuthDateTime = DateTime.MinValue;
+        public static TimeSpan AuthExpiredTimeLeft = TimeSpan.Zero;
+        static System.Timers.Timer AuthExpiredTimer = new System.Timers.Timer();
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HTCAPTION = 0x2;
         [DllImport("User32.dll")]
@@ -44,10 +47,41 @@ namespace troll_ui_app
             }
         }
         public bool BindingSuccess { get; set; }
+        static public void Init()
+        {
+            AuthExpiredTimer = new System.Timers.Timer(1000);
+            AuthExpiredTimer.AutoReset = true;
+            AuthExpiredTimer.Enabled = false;
+            AuthExpiredTimer.Elapsed += AuthExpiredTimerOnElapsed;
+            UpdateMainFormAuthStatus = new UpdateMainFormAuthStatusDelegate(UpdateMainFormAuthStatusMethod);
+        }
+
+        static void AuthExpiredTimerOnElapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            AuthExpiredTimeLeft = AuthExpiredTimeLeft.Subtract(TimeSpan.FromSeconds(1));
+            MainForm.Instance.mainPanelControl.Invoke(UpdateMainFormAuthStatus);
+            if (AuthExpiredTimeLeft <= TimeSpan.Zero)
+                AuthExpiredTimer.Stop();
+        }
+        delegate void UpdateMainFormAuthStatusDelegate();
+        static UpdateMainFormAuthStatusDelegate UpdateMainFormAuthStatus;
+
+        static void UpdateMainFormAuthStatusMethod()
+        {
+            MainForm.Instance.mainPanelControl.UpdateAuthStatus(AuthExpiredTimeLeft);
+        }
+        static public void TurnOnAuth()
+        {
+            //AuthExpiredTimeLeft = TimeSpan.FromSeconds(40);
+            AuthExpiredTimeLeft = TimeSpan.FromHours(2);
+            MainForm.Instance.mainPanelControl.UpdateAuthStatus(AuthExpiredTimeLeft);
+            AuthExpiredTimer.Start();
+        }
         static public bool Auth()
         {
-            //return true;
-            if (hasBeenAuth)
+            return true;
+            //if (hasBeenAuth)
+            if (AuthExpiredTimeLeft>TimeSpan.Zero)
                 return true;
             else
             {
@@ -56,20 +90,22 @@ namespace troll_ui_app
                 DateTime n = UpdateAuth(cts.Token, out networkException);
                 if(networkException)
                 {
-                    MessageBox.Show("获取授权失败，请检查网络是否连接！",
-                            "获取授权失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    //MessageBox.Show("获取授权失败，请检查网络是否连接！",
+                    //        "获取授权失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    AutoCloseMessageBox.ShowMessage(20, "获取授权失败，请检查网络是否连接！");
                     return false;
                 }
                 else if (n.AddMinutes(20) > DateTime.Now)
                 {
-                    hasBeenAuth = true;
-                    MainForm.Instance.mainPanelControl.AuthWechat(true);
+                    TurnOnAuth();
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show("执行此操作需要微信绑定者点击公众号授权按钮进行授权！\n请在公众号菜单中点击授权按钮后重试！",
-                        "操作未授权", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Task t = SendAuthRequestNotificationAsync();
+                    AutoCloseMessageBox.ShowMessage(20, "执行此操作需要微信绑定者进行授权！\n请按照公众号提示操作后重试！");
+                    //MessageBox.Show("执行此操作需要微信绑定者点击公众号授权按钮进行授权！\n请在公众号菜单中点击授权按钮后重试！",
+                    //    "操作未授权", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
             }
@@ -114,7 +150,8 @@ namespace troll_ui_app
         //binding mode if false;
         private Task getQrCodeTask;
         CancellationTokenSource cancellationTokenSource;
-        Label _whyLabel;
+        //Label _whyLabel;
+        TextButton _whyLabel;
         TextButton _refreshButton;
         Panel _closeBackImage;
         Label _closeBtn;
@@ -128,7 +165,7 @@ namespace troll_ui_app
             tipLabel.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
             tipLabel.ForeColor = Color.FromArgb(0x4f, 0xb5, 0x2c);
 
-            _whyLabel = new Label();
+            _whyLabel = new TextButton();
             _whyLabel.Text = "为什么要绑定？";
             _whyLabel.AutoSize = true;
             _whyLabel.Font = new System.Drawing.Font("微软雅黑", 12, GraphicsUnit.Pixel);
@@ -136,9 +173,10 @@ namespace troll_ui_app
             Controls.Add(_whyLabel);
             _whyLabel.Location = new Point(Width / 2 - _whyLabel.Width / 2,
                 tipLabel.Location.Y + tipLabel.Height);
-            ToolTip whyTip = new ToolTip();
-            whyTip.SetToolTip(_whyLabel,
-                "绑定以后，非绑定者将无法设置软件");
+            _whyLabel.Click += _whyLabelOnClick;
+            //ToolTip whyTip = new ToolTip();
+            //whyTip.SetToolTip(_whyLabel,
+            //    "绑定以后，非绑定者将无法设置软件");
 
             _refreshButton = new TextButton();
             _refreshButton.Text = "刷新二维码";
@@ -167,6 +205,11 @@ namespace troll_ui_app
             _closeBtn.MouseUp += _closeBtnOnMouseUp;
             _closeBtn.Click += _closeBtnOnClick;
             tipLabel.SizeChanged += tipLabelOnSizeChanged;
+        }
+
+        void _whyLabelOnClick(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(Properties.Settings.Default.whyWechatBindingUrl);
         }
 
         void tipLabelOnSizeChanged(object sender, EventArgs e)
@@ -248,6 +291,7 @@ namespace troll_ui_app
         {
             try
             {
+                qrCodePictureBox.Cursor = Cursors.WaitCursor;
                 HttpClientHandler handler = new HttpClientHandler() { UseProxy = false };
                 HttpClient client = new HttpClient(handler);
 
@@ -288,6 +332,7 @@ namespace troll_ui_app
                 QRCodeGenerator qrGenerator = new QRCodeGenerator();
                 QRCodeGenerator.QRCode qrCode = qrGenerator.CreateQrCode(qrcodeUrl, QRCodeGenerator.ECCLevel.Q);
                 qrCodePictureBox.Image = qrCode.GetGraphic(20);
+                qrCodePictureBox.Cursor = Cursors.Default;
                 //qrCodePictureBox.Image = bmp;
 
                 //qrCodePictureBox.ImageLocation = string.Format(Properties.Settings.Default.wechatGetQrcodeUrl, HttpUtility.UrlEncode(ticket));
@@ -299,8 +344,8 @@ namespace troll_ui_app
                 while(true)
                 {
                     //防止由于某次连接异常，导致无法继续的问题
-                    try
-                    {
+                    //try
+                    //{
                         msg = await client.PostAsync(Properties.Settings.Default.getSceneUrl,
                             new StringContent(sceneRequestObj.ToString(), Encoding.UTF8, "application/json"),
                             cancellationToken);
@@ -316,17 +361,17 @@ namespace troll_ui_app
                             Properties.Settings.Default.Save();
                             break;
                         }
-                    }
-                    catch(Exception exp)
-                    { log.Error("error of getting scene: " + exp.ToString()); }
+                    //}
+                    //catch(Exception exp)
+                    //{ log.Error("error of getting scene: " + exp.ToString()); }
                     //await Task.Delay(2000);
                     log.Info("one time again for getting scene!");
                 }
                 while (true)
                 {
                     //防止由于某次连接异常，导致无法继续的问题
-                    try
-                    {
+                    //try
+                    //{
                         JObject userInfoRequestObj = new JObject();
                         userInfoRequestObj["token"] = webToken;
                         userInfoRequestObj["openid"] = Properties.Settings.Default.openid;
@@ -363,14 +408,19 @@ namespace troll_ui_app
                         }
                         else
                             tipLabel.Text = "请点击公众号绑定按钮完成绑定！";
-                    }
-                    catch(Exception exp)
-                    { log.Error("Error of getting user info: " + exp.ToString()); }
+                    //}
+                    //catch(Exception exp)
+                    //{ log.Error("Error of getting user info: " + exp.ToString()); }
                     log.Info("one time again for getting user info!");
                 }
                 //await Task.Delay(2000);
                 log.Info("Binding Success!");
                 Close();
+            }
+            catch (System.Net.Http.HttpRequestException reqErr)
+            {
+                AutoCloseMessageBox.ShowMessage(-1, "网络无法连接，请检查网络后点击刷新二维码重新绑定！");
+                log.Error(reqErr.ToString());
             }
             catch(Exception err)
             {
@@ -456,6 +506,35 @@ namespace troll_ui_app
             dataObj["keyword2"]["color"] = "#173177";
             dataObj["remark"] = new JObject();
             dataObj["remark"]["value"] = "该计算机频繁访问上述不良网站，现已暂时禁止对该域名的访问。";
+            dataObj["remark"]["color"] = "#173177";
+
+            await SendTemplateMessageAsync(msgObj);
+        }
+        public static async Task SendAuthRequestNotificationAsync()
+        {
+            //{{first.DATA}}
+            //计算机名称：{{keyword1.DATA}}
+            //请求时间：{{keyword2.DATA}}
+            //{{remark.DATA}}
+            JObject msgObj = new JObject();
+            msgObj["touser"] = Properties.Settings.Default.openid;
+            msgObj["template_id"] = Properties.Settings.Default.wechatTemplateAuthRequest;
+            msgObj["url"] = Properties.Settings.Default.wechatAuthUrl;
+            //msgObj["url"] = "http://www.shanyaows.com";
+            msgObj["topcolor"] = "#FF0000";
+            JObject dataObj = new JObject();
+            msgObj["data"] = dataObj;
+            dataObj["first"] = new JObject();
+            dataObj["first"]["value"] = "您好，有特权操作需要授权。";
+            dataObj["first"]["color"] = "#173177";
+            dataObj["keyword1"] = new JObject();
+            dataObj["keyword1"]["value"] = Environment.MachineName;
+            dataObj["keyword1"]["color"] = "#173177";
+            dataObj["keyword2"] = new JObject();
+            dataObj["keyword2"]["value"] = DateTime.Now.ToString();
+            dataObj["keyword2"]["color"] = "#173177";
+            dataObj["remark"] = new JObject();
+            dataObj["remark"]["value"] = "请点击本消息进行授权，然后在电脑上重新操作。";
             dataObj["remark"]["color"] = "#173177";
 
             await SendTemplateMessageAsync(msgObj);

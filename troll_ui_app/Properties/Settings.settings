@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="domainUpdateLogsUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://domain.shanyaows.com/domain_names/update_logs.json</Value>
+      <Value Profile="(Default)">https://domain.shanyaows.com/domain_names/update_logs.json</Value>
     </Setting>
     <Setting Name="modelFile" Type="System.String" Scope="User">
       <Value Profile="(Default)">data/porn.model</Value>
@@ -18,7 +18,7 @@
       <Value Profile="(Default)">60</Value>
     </Setting>
     <Setting Name="submitTmpDomainUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://domain.shanyaows.com/domain_names/submit_tmp_domain_name.json</Value>
+      <Value Profile="(Default)">https://domain.shanyaows.com/domain_names/submit_tmp_domain_name.json</Value>
     </Setting>
     <Setting Name="thdPornPicsOfDomain" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">30</Value>
@@ -54,13 +54,13 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="createSceneUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://domain.shanyaows.com/wechat_apis/create_scene.json</Value>
+      <Value Profile="(Default)">https://domain.shanyaows.com/wechat_apis/create_scene.json</Value>
     </Setting>
     <Setting Name="getSceneUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://domain.shanyaows.com/wechat_apis/scene_info.json</Value>
+      <Value Profile="(Default)">https://domain.shanyaows.com/wechat_apis/scene_info.json</Value>
     </Setting>
     <Setting Name="getAccessTokenUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://domain.shanyaows.com/wechat_apis/access_token.json</Value>
+      <Value Profile="(Default)">https://domain.shanyaows.com/wechat_apis/access_token.json</Value>
     </Setting>
     <Setting Name="wechatCreateQrcodeUrl" Type="System.String" Scope="User">
       <Value Profile="(Default)">https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token={0}</Value>
@@ -87,13 +87,13 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="registerTrollwizUserUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://domain.shanyaows.com/trollwiz_users/register.json</Value>
+      <Value Profile="(Default)">https://domain.shanyaows.com/trollwiz_users/register.json</Value>
     </Setting>
     <Setting Name="skipVersion" Type="System.String" Scope="User">
       <Value Profile="(Default)">0.0.0.0</Value>
     </Setting>
     <Setting Name="helpUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://www.shanyaows.com</Value>
+      <Value Profile="(Default)">http://www.shanyaows.com/faq.html</Value>
     </Setting>
     <Setting Name="isProtected" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -111,10 +111,10 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="getUserInfoUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://domain.shanyaows.com/wechat_apis/get_user_info.json</Value>
+      <Value Profile="(Default)">https://domain.shanyaows.com/wechat_apis/get_user_info.json</Value>
     </Setting>
     <Setting Name="getAuthInfoUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://domain.shanyaows.com/wechat_apis/get_auth_info.json</Value>
+      <Value Profile="(Default)">https://domain.shanyaows.com/wechat_apis/get_auth_info.json</Value>
     </Setting>
     <Setting Name="userNickname" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -123,9 +123,27 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="errorReportUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://domain.shanyaows.com/wechat_apis/error_report.json</Value>
+      <Value Profile="(Default)">https://domain.shanyaows.com/wechat_apis/error_report.json</Value>
     </Setting>
     <Setting Name="IsStrongNetworkImageFilter" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="wechatTemplateAuthRequest" Type="System.String" Scope="User">
+      <Value Profile="(Default)">oE6T4TWYxeI85_rlUuF4-sZww2vNiPLrRaL7k_b5lWE</Value>
+    </Setting>
+    <Setting Name="wechatAuthUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe9c247fd9d468fa6&amp;redirect_uri=http%3A%2F%2Fdomain.shanyaows.com%2Fwechat_apis%2Fauth&amp;response_type=code&amp;scope=snsapi_userinfo&amp;state=weixin#wechat_redirect</Value>
+    </Setting>
+    <Setting Name="whyWechatBindingUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://www.shanyaows.com/faq.html#whywechatbinding</Value>
+    </Setting>
+    <Setting Name="forbiddenRedirectUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://www.shanyaows.com/forbidden.html</Value>
+    </Setting>
+    <Setting Name="lastFastLocalScanDateTime" Type="System.DateTime" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="isFastLocalScanIncremental" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
