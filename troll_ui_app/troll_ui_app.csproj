@@ -276,6 +276,7 @@
     <None Include="Resources\troll.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\icon-small-png.png" />
     <None Include="Resources\scanning_work.gif" />
     <None Include="Resources\advancedsettings.png" />
     <None Include="Resources\search-button.png" />

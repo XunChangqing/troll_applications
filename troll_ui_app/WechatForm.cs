@@ -79,7 +79,7 @@ namespace troll_ui_app
         }
         static public bool Auth()
         {
-            return true;
+            //return true;
             //if (hasBeenAuth)
             if (AuthExpiredTimeLeft>TimeSpan.Zero)
                 return true;

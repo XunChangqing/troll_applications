@@ -39,7 +39,8 @@ namespace troll_ui_app
 
         ContextMenuStrip contextMenu;
         //static readonly int 
-        Control logo;
+        //Control logo;
+        Label logo;
         OutlineLabel title;
         ToolStripItem _protectionCenterItem;
         public ToolStripItem ProtectionCenterItem { get { return _protectionCenterItem; } }
@@ -135,11 +136,14 @@ namespace troll_ui_app
             ToolStripItem aboutItem = contextMenu.Items.Add("关于");
             aboutItem.Click += TitleBarMenuAboutClick;
 
-            logo = new Control();
-            logo.BackgroundImage = Properties.Resources.icon_big_png;
-            logo.BackgroundImageLayout = ImageLayout.Zoom;
+            //logo = new Control();
+            logo = new Label();
+            //logo.BackgroundImage = Properties.Resources.icon_big_png;
+            //logo.BackgroundImageLayout = ImageLayout.Zoom;
+            logo.Image = Properties.Resources.icon_small_png;
+            logo.BackColor = Color.Transparent;
             //logo.MaximumSize = logo.MinimumSize = logo.BackgroundImage.Size;
-            logo.MaximumSize = logo.MinimumSize = new System.Drawing.Size(24, 24);
+            logo.MaximumSize = logo.MinimumSize = new System.Drawing.Size(28, 28);
             logo.MouseDown += MouseDownMove;
             logo.Location = new Point(leftPadding, (titleBarHeight - logo.Height) / 2);
             //logo.Dock = DockStyle.Left;

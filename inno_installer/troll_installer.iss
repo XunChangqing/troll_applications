@@ -28,7 +28,11 @@ WizardImageFile=left.bmp
 WizardSmallImageFile=small.bmp
 OutputBaseFilename=trollwiz-{#ApplicationVersion}
 OutputManifestFile=trollwiz-{#ApplicationVersion}.manifest
-
+DisableReadyPage=yes
+DisableReadyMemo=yes
+DisableWelcomePage=yes
+DisableDirPage=auto
+DisableProgramGroupPage=auto
 
 [languages]
 ;Name: "en"; MessagesFile: "compiler:Default.isl"
@@ -70,6 +74,7 @@ Source: "{#DistFolder}\data\porn.model"; DestDir: "{app}\data\"
 Source: "{#DistFolder}\porn.db"; DestDir: "{app}"
 Source: "{#DistFolder}\avdevice-56.dll"; DestDir: "{app}"
 Source: "{#DistFolder}\avfilter-5.dll"; DestDir: "{app}"
+Source: "{#DistFolder}\avcodec-56.dll"; DestDir: "{app}"
 Source: "{#DistFolder}\avformat-56.dll"; DestDir: "{app}"
 Source: "{#DistFolder}\avutil-54.dll"; DestDir: "{app}"
 Source: "{#DistFolder}\postproc-53.dll"; DestDir: "{app}"
@@ -81,15 +86,15 @@ Source: "{#DistFolder}\ffmpegwrapper.dll"; DestDir: "{app}"
 ;Source: "Readme.txt"; DestDir: "{app}"; Flags: isreadme
 
 ;require .net framework 4.5
-[Files]
-Source: "{#DistFolder}\dotnetfx45_full_x86_x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall; Check: not IsRequiredDotNetDetected
-[Run]
-Filename: {tmp}\dotnetfx45_full_x86_x64.exe; Parameters: "/q:a /c:""install /l /q"""; Check: not IsRequiredDotNetDetected; StatusMsg: Microsoft Framework 4.5 is beïng installed. Please wait...
-
 ;[Files]
-;Source: "{#DistFolder}\dotNetFx45_Full_setup.exe"; DestDir: {tmp}; Flags: deleteafterinstall; Check: not IsRequiredDotNetDetected
+;Source: "{#DistFolder}\dotnetfx45_full_x86_x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall; Check: not IsRequiredDotNetDetected
 ;[Run]
-;Filename: {tmp}\dotNetFx45_Full_setup.exe; Parameters: "/q:a /c:""install /l /q"""; Check: not IsRequiredDotNetDetected; StatusMsg: Microsoft Framework 4.5 is beïng installed. Please wait...
+;Filename: {tmp}\dotnetfx45_full_x86_x64.exe; Parameters: "/q:a /c:""install /l /q"""; Check: not IsRequiredDotNetDetected; StatusMsg: Microsoft Framework 4.5 is beïng installed. Please wait...
+
+[Files]
+Source: "{#DistFolder}\dotNetFx45_Full_setup.exe"; DestDir: {tmp}; Flags: deleteafterinstall; Check: not IsRequiredDotNetDetected
+[Run]
+Filename: {tmp}\dotNetFx45_Full_setup.exe; Parameters: "/q:a /c:""install /l /q"""; Check: not IsRequiredDotNetDetected; StatusMsg: Microsoft Framework 4.5 is beïng installed. Please wait...
 
 [Icons]
 Name: "{group}\山妖卫士"; Filename: "{app}\troll_ui_app.exe"; WorkingDir: "{app}"; Tasks: startupicon
