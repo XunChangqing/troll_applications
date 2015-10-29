@@ -301,6 +301,7 @@ namespace troll_ui_app
             Status = ScanStatus.Idle;
             MainForm.Instance.mainPanelControl.ExitScanStatus();
             MainForm.Instance.SlideWindow(this);
+            MainForm.Instance.mainPanelControl.Refresh();
         }
 
         void AskForConfirmation()
@@ -389,6 +390,7 @@ namespace troll_ui_app
 
         void InitForNewScan()
         {
+            _pauseBtn.Text = "暂停";
             _totalTargetNum = 0;
             _totalPornNum = 0;
             _totalHandledNum = 0;
@@ -410,16 +412,17 @@ namespace troll_ui_app
             if(Status == ScanStatus.Idle)
             {
                 Status = ScanStatus.FastScan;
-                SetTitle("山妖卫士-快速扫描");
+                SetTitle("山妖卫士-浏览器缓存扫描");
                 InitForNewScan();
                 MainForm.Instance.mainPanelControl.EnterScanStatus();
                 MainForm.Instance.SlideWindow(this);
+                MainForm.Instance.mainPanelControl.Refresh();
                 _localScan.StartFastScan();
             }
             else if(Status == ScanStatus.FastScan)
             {
                 MainForm.Instance.SlideWindow(this);
-                //MainForm.Instance.mainPanelControl.Refresh();
+                MainForm.Instance.mainPanelControl.Refresh();
             }
             else
             {
@@ -456,6 +459,7 @@ namespace troll_ui_app
                 InitForNewScan();
                 MainForm.Instance.mainPanelControl.EnterScanStatus();
                 MainForm.Instance.SlideWindow(this);
+                MainForm.Instance.mainPanelControl.Refresh();
                 _localScan.StartCustomScan(dir);
             }
             else if(Status == ScanStatus.CustomScan)
@@ -475,6 +479,12 @@ namespace troll_ui_app
 
         void ScanPanelControlOnLoad(object sender, EventArgs e)
         {
+            //确保加载时像素尺寸不发生变
+            Size = new System.Drawing.Size(MainForm.MainFormWidth, MainForm.MainFormHeight);
+
+            _pornItemResultView.Height = MainForm.MainFormHeight - _pornItemResultView.Location.Y - 30;
+            _pornItemResultView.Width = MainForm.MainFormWidth;
+
             _progressLabel.Location = new Point(_scanningLogo.Location.X + _scanningLogo.Width + 5,
                 20 + _scanningLogo.Height / 2 - _progressLabel.Height / 2);
         }

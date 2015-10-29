@@ -155,12 +155,22 @@ namespace troll_ui_app
         TextButton _refreshButton;
         Panel _closeBackImage;
         Label _closeBtn;
+        Label _testLabel;
         public WechatForm()
         {
             InitializeComponent();
             Icon = Properties.Resources.icon_main_icon;
             MouseDown += MouseDownMove;
             titleLabel.MouseDown += MouseDownMove;
+
+
+            //AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            //Width = 230;
+            //Height = 320;
+            _testLabel = new Label();
+            _testLabel.Location = new Point(230, 0);
+            _testLabel.Text = "测试";
+            Controls.Add(_testLabel);
 
             tipLabel.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
             tipLabel.ForeColor = Color.FromArgb(0x4f, 0xb5, 0x2c);
@@ -205,6 +215,16 @@ namespace troll_ui_app
             _closeBtn.MouseUp += _closeBtnOnMouseUp;
             _closeBtn.Click += _closeBtnOnClick;
             tipLabel.SizeChanged += tipLabelOnSizeChanged;
+
+            Font = new System.Drawing.Font("微软雅黑", 12, GraphicsUnit.Pixel);
+        }
+        private void WechatForm_Load(object sender, EventArgs e)
+        {
+            //防止由于系统放大，这里自动缩放
+            Width = 230;
+            Height = 320;
+            cancellationTokenSource = new CancellationTokenSource();
+            getQrCodeTask = SetQrcodeAsync(cancellationTokenSource.Token);
         }
 
         void _whyLabelOnClick(object sender, EventArgs e)
@@ -428,11 +448,6 @@ namespace troll_ui_app
             }
         }
 
-        private void WechatForm_Load(object sender, EventArgs e)
-        {
-            cancellationTokenSource = new CancellationTokenSource();
-            getQrCodeTask = SetQrcodeAsync(cancellationTokenSource.Token);
-        }
         private void WechatForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             //stop task, otherwise it will get the openid forever

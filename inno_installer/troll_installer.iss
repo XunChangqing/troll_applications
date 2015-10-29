@@ -12,7 +12,7 @@ AppPublisher=马沙科技
 AppVersion={#ApplicationVersion}
 
 PrivilegesRequired=admin
-DefaultDirName={pf}\masatek\trollwiz
+DefaultDirName={pf}\Masatek\Trollwiz
 DefaultGroupName=山妖卫士
 UninstallDisplayIcon={app}\troll_ui_app.exe
 Compression=lzma2

@@ -88,6 +88,7 @@ namespace troll_ui_app
             }
             catch (Exception e)
             {
+                updateInfoRichTextBox.Text = "网络故障，无法连接服务器，请检查网络后重试！";
                 log.Error(e.ToString());
             }
             //XmlNode newNode = xmlDoc.CreateNode("element", "NewBook", "");

@@ -46,7 +46,6 @@ namespace troll_ui_app
         static Func<string, bool> FilesCanProcessed = s => (ActiveFileMonitor.IsFileExtWith(s, ActiveFileMonitor.ImageExts) ||
             ActiveFileMonitor.IsFileExtWith(s, ActiveFileMonitor.VideoExts));
         static Func<string, bool> ImageFilesCanProcessed = s => (ActiveFileMonitor.IsFileExtWith(s, ActiveFileMonitor.ImageExts));
-        static Func<FileInfo, bool> ImageFileInfosCanProcessed = s => (ActiveFileMonitor.IsFileExtWith(s.Name, ActiveFileMonitor.ImageExts));
         
         Progress<ScanProgress> _scanProgress;
         IProgress<ScanProgress> _scanProgressReport;
@@ -90,7 +89,7 @@ namespace troll_ui_app
                     ScanProgress npro = new ScanProgress();
                     npro.Percentage = 0;
                     npro.TargetFilePath = null;
-                    npro.Description = "正在准备快速扫描";
+                    npro.Description = "正在准备浏览器缓存扫描";
                     _scanProgressReport.Report(npro);
                 }
                 PercentageOffset = 0;
@@ -131,6 +130,14 @@ namespace troll_ui_app
             });
             _scanTask.ContinueWith(atask =>
             {
+                //如果正常结束，则记录时间
+                if(_scanCancellationTokenSource!=null && !_scanCancellationTokenSource.IsCancellationRequested)
+                {
+                    //浏览器缓存和全盘文件都记录当前时间
+                    Properties.Settings.Default.lastFastLocalScanDateTime = DateTime.Now;
+                    Properties.Settings.Default.lastAllLocalScanDateTime = DateTime.Now;
+                    Properties.Settings.Default.Save();
+                }
                 if (ScanComplete != null)
                     ScanComplete(this, EventArgs.Empty);
             }, TaskScheduler.FromCurrentSynchronizationContext());
@@ -159,6 +166,16 @@ namespace troll_ui_app
                     ScanComplete(this, EventArgs.Empty);
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
+        static List<string> sBrowserDirList;
+        static bool removeBrowserDirs(string d)
+        {
+            foreach(string dir in sBrowserDirList)
+            {
+                if (d.Contains(dir))
+                    return false;
+            }
+            return true;
+        }
         //所有本地文件扫描，排除了浏览器缓存文件以防重复扫描
         void AllLocalFileScan(CancellationToken ct, ManualResetEvent pauseEvent, IProgress<ScanProgress> progress)
         {
@@ -166,18 +183,23 @@ namespace troll_ui_app
             {
                 DriveInfo[] allDrives = DriveInfo.GetDrives();
                 //List<string> allTopDirs = new List<string>();
+                //先扫描所有磁盘根目录下的文件
                 IEnumerable<string> allTopDirs = Enumerable.Empty<string>();
                 foreach(var drive in allDrives)
                 {
                     if(drive.DriveType == DriveType.Fixed)
                     {
                         allTopDirs = allTopDirs.Concat(SafeFileEnumerator.EnumerateDirectories(
-                            drive.RootDirectory.FullName, null, SearchOption.TopDirectoryOnly, null
+                            drive.RootDirectory.FullName, "*", SearchOption.TopDirectoryOnly, null
                             ));
-                        var files = SafeFileEnumerator.EnumerateFiles(drive.RootDirectory.FullName, "*.*", SearchOption.TopDirectoryOnly, null).Where<String>(FilesCanProcessed);
-                        foreach(string file in files)
+                        //var files = SafeFileEnumerator.EnumerateFiles(drive.RootDirectory.FullName, "*.*", SearchOption.TopDirectoryOnly, null).Where<String>(FilesCanProcessed);
+                        var fileinfos = SafeFileEnumerator.EnumerateFileInfos(drive.RootDirectory.FullName, "*.*", SearchOption.TopDirectoryOnly, null).Where<FileInfo>(finfo => FilesCanProcessed(finfo.Name));
+                        if (Properties.Settings.Default.isAllLocalScanIncremental)
+                            fileinfos = fileinfos.Where<FileInfo>(finfo => finfo.CreationTime > Properties.Settings.Default.lastAllLocalScanDateTime);
+
+                        foreach(FileInfo finfo in fileinfos)
                         {
-                            AnalysisFile(file, ct, pauseEvent, progress, 0, 1, false);
+                            AnalysisFile(finfo.FullName, ct, pauseEvent, progress, 0, 1, false);
                         }
                     }
                 }
@@ -187,15 +209,27 @@ namespace troll_ui_app
                 List<string> allTopDirsList = allTopDirs.ToList();
                 int tcount = allTopDirsList.Count;
                 int num = 0;
+                //再分别扫描所有磁盘下根文件夹下所有文件
                 foreach(var topdir in allTopDirsList)
                 {
-                    var allfiles = SafeFileEnumerator.EnumerateFiles(topdir, "*.*", SearchOption.AllDirectories,
-                        d => !(d.Contains(iecachepath) || d.Contains(localAppDataPath))
-                        ).Where<String>(FilesCanProcessed);
+                    //var allfiles = SafeFileEnumerator.EnumerateFiles(topdir, "*.*", SearchOption.AllDirectories,
+                    //    d => !(d.Contains(iecachepath) || d.Contains(localAppDataPath))
+                    //    ).Where<String>(FilesCanProcessed);
+                    //排除浏览器缓存搜索的范围
+                    string homePath = Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
+                    //var allFileInfos = SafeFileEnumerator.EnumerateFileInfos(topdir, "*.*", SearchOption.AllDirectories,
+                    //    d => !(d.Contains(iecachepath) || d.Contains(homePath))
+                    //    ).Where<FileInfo>(finfo => FilesCanProcessed(finfo.Name));
+                    var allFileInfos = SafeFileEnumerator.EnumerateFileInfos(topdir, "*.*", SearchOption.AllDirectories,
+                        removeBrowserDirs
+                        ).Where<FileInfo>(finfo => FilesCanProcessed(finfo.Name));
 
-                    foreach(string file in allfiles)
+                    if (Properties.Settings.Default.isAllLocalScanIncremental)
+                        allFileInfos = allFileInfos.Where<FileInfo>(finfo => finfo.CreationTime > Properties.Settings.Default.lastAllLocalScanDateTime);
+
+                    foreach(FileInfo finfo in allFileInfos)
                     {
-                        AnalysisFile(file, ct, pauseEvent, progress, num, tcount, false);
+                        AnalysisFile(finfo.FullName, ct, pauseEvent, progress, num, tcount, false);
                     }
                     num++;
                 }
@@ -239,8 +273,8 @@ namespace troll_ui_app
                     totalfiles = totalfiles.Concat(SafeFileEnumerator.EnumerateFileInfos(dir, "*.*", SearchOption.AllDirectories));
                 }
 
-                var browserDirs = dirs.ToList();
-                browserDirs.Add(iecachepath);
+                sBrowserDirList= dirs.ToList();
+                sBrowserDirList.Add(iecachepath);
 
                 //var files = GetFiles("C:\\SearchDirectory", d => !d.Contains("AvoidMe", StringComparison.OrdinalIgnoreCase), "*.*");
                 if(Properties.Settings.Default.isFastLocalScanIncremental)

@@ -92,9 +92,11 @@ namespace troll_ui_app
         NotifyIcon _mainNotifyIcon;
         ContextMenuStrip _mainContextMenuTrip;
         bool bindingSuccess = true;
+        bool _needToBeHide = false;
         public MainForm(String []args)
         {
             Instance = this;
+            Text = "山妖卫士";
             //ForceToQuit = false;
             Icon = Properties.Resources.icon_main_icon;
 
@@ -119,7 +121,7 @@ namespace troll_ui_app
             m_aeroEnabled = false;
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             //InitializeComponent();
-            Size = new System.Drawing.Size(900, 600);
+            Size = new System.Drawing.Size(MainFormWidth, MainFormHeight);
             mainPanelControl = new MainPanelControl();
             scanPanelControl = new ScanPanelControl();
             _protectionPanelControl = new ProtectionPanelControl();
@@ -148,10 +150,16 @@ namespace troll_ui_app
             FormClosing += MainFormOnFormClosing;
             Disposed += MainFormOnDisposed;
 
+            //最小化的方法会导致防护窗口中日志目录的表格尺寸有问题
             if (args.Contains("-notvisible"))
             {
-                WindowState = FormWindowState.Minimized;
                 ShowInTaskbar = false;
+                _needToBeHide = true;
+                Shown += MainFormOnShown;
+                StartPosition = FormStartPosition.Manual;
+                Location = new Point(-10000, -10000);
+                ////Hide();
+                ////WindowState = FormWindowState.Minimized;
             }
             //set hotkey as ctrl+alt+backspace
             //Boolean success = FormMain.RegisterHotKey(this.Handle, this.GetType().GetHashCode(), MOD_CTRL | MOD_ALT, 0x08);//Set hotkey as 'b'
@@ -160,6 +168,18 @@ namespace troll_ui_app
             //form1.FormBorderStyle = FormBorderStyle.FixedToolWindow;
             //form1.ShowInTaskbar = false;
             //Owner = form1;
+        }
+
+        void MainFormOnShown(object sender, EventArgs e)
+        {
+            if (_needToBeHide)
+            {
+                Hide();
+                ShowInTaskbar = true;
+                _needToBeHide = false;
+                StartPosition = FormStartPosition.CenterScreen;
+                CenterToScreen();
+            }
         }
 
         void MainFormOnDisposed(object sender, EventArgs e)
@@ -197,17 +217,34 @@ namespace troll_ui_app
             //确保触发application.exit事件，系统关机时不会自动触发Application.Exit事件
         }
 
-        void _mainNotifyIconOnDoubleClick(object sender, EventArgs e)
+        bool _locationModified = false;
+        void ShowMainForm()
         {
-            WindowState = FormWindowState.Normal;
-            ShowInTaskbar = true;
+            //if(StartPosition == FormStartPosition.Manual && !_locationModified)
+            //{
+            //    Location = new Point(0, 0);
+            //    _locationModified = true;
+            //    ShowInTaskbar = true;
+            //}
             Show();
         }
-
+        void _mainNotifyIconOnDoubleClick(object sender, EventArgs e)
+        {
+            ShowMainForm();
+        }
+        void openMainPanelOnClick(object sender, EventArgs e)
+        {
+            ShowMainForm();
+        }
 
         void MainFormOnLoad(object sender, EventArgs e)
         {
-            log.Info("MainForm Load!");
+            Size = new System.Drawing.Size(MainFormWidth, MainFormHeight);
+            log.Info("MainForm Load: " + Size);
+            //if(Size != new System.Drawing.Size(MainFormWidth, MainFormHeight))
+            //{
+            //    AutoCloseMessageBox.ShowMessage(10, "由于屏幕分辨率太小，主窗口有部分内容无法显示\n请降低系统放大比例");
+            //}
             scanPanelControl.Visible = false;
             _protectionPanelControl.Visible = false;
             //等主窗口初始化完成再手动打开授权，因为授权会定时操作主窗口，防止发生错误
@@ -216,6 +253,8 @@ namespace troll_ui_app
                 log.Info("Real Binding Success, Enable Auth!");
                 WechatForm.TurnOnAuth();
             }
+            if (_needToBeHide)
+                Hide();
         }
         //void scanPanelOnReturnEvent(object sender, troll_ui_app.ScanPanelControl.ReturnEventArgs e)
         //{
@@ -327,11 +366,19 @@ namespace troll_ui_app
                 Application.Exit();
             }
         }
-        void openMainPanelOnClick(object sender, EventArgs e)
+
+        private void InitializeComponent()
         {
-            WindowState = FormWindowState.Normal;
-            ShowInTaskbar = true;
-            Show();
+            this.SuspendLayout();
+            // 
+            // MainForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(284, 262);
+            this.Name = "MainForm";
+            this.ResumeLayout(false);
+
         }
     }
 }

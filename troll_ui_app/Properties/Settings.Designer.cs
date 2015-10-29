@@ -599,5 +599,28 @@ namespace troll_ui_app.Properties {
                 this["isFastLocalScanIncremental"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool isAllLocalScanIncremental {
+            get {
+                return ((bool)(this["isAllLocalScanIncremental"]));
+            }
+            set {
+                this["isAllLocalScanIncremental"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.DateTime lastAllLocalScanDateTime {
+            get {
+                return ((global::System.DateTime)(this["lastAllLocalScanDateTime"]));
+            }
+            set {
+                this["lastAllLocalScanDateTime"] = value;
+            }
+        }
     }
 }

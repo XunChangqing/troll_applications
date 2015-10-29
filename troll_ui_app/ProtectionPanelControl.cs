@@ -30,6 +30,7 @@ namespace troll_ui_app
         Label _networkImageDescLabel;
         CheckBox _autoStartCheckbox;
         CheckBox _fastLocalScanIncrementalCheckbox;
+        CheckBox _allLocalScanIncrementalCheckbox;
         CheckBox _strongNetworkImageFilter;
         Panel _returnBackImage;
         Label _returnBtn;
@@ -197,7 +198,7 @@ namespace troll_ui_app
             _fastLocalScanIncrementalCheckbox = new CheckBox();
             _fastLocalScanIncrementalCheckbox.Location = new Point(CheckBoxLocationX, _activeImageDescLabel.Location.Y);
             _fastLocalScanIncrementalCheckbox.BackColor = Color.Transparent;
-            _fastLocalScanIncrementalCheckbox.Text = "增量快速扫描";
+            _fastLocalScanIncrementalCheckbox.Text = "增量浏览器缓存扫描";
             _fastLocalScanIncrementalCheckbox.AutoSize = true;
             _fastLocalScanIncrementalCheckbox.ForeColor = Color.FromArgb(0x5e, 0x5e, 0x5e);
             _fastLocalScanIncrementalCheckbox.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
@@ -205,6 +206,19 @@ namespace troll_ui_app
             _fastLocalScanIncrementalCheckbox.Checked = Properties.Settings.Default.isFastLocalScanIncremental;
             _fastLocalScanIncrementalCheckbox.CheckedChanged += _fastLocalScanIncrementalCheckboxOnCheckedChanged;
             _settingPanel.Controls.Add(_fastLocalScanIncrementalCheckbox);
+
+            //增量全盘扫描
+            _allLocalScanIncrementalCheckbox = new CheckBox();
+            _allLocalScanIncrementalCheckbox.Location = new Point(CheckBoxLocationX, _activeVideoDescLabel.Location.Y);
+            _allLocalScanIncrementalCheckbox.BackColor = Color.Transparent;
+            _allLocalScanIncrementalCheckbox.Text = "增量全盘扫描";
+            _allLocalScanIncrementalCheckbox.AutoSize = true;
+            _allLocalScanIncrementalCheckbox.ForeColor = Color.FromArgb(0x5e, 0x5e, 0x5e);
+            _allLocalScanIncrementalCheckbox.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
+            _allLocalScanIncrementalCheckbox.BackColor = Color.Transparent;
+            _allLocalScanIncrementalCheckbox.Checked = Properties.Settings.Default.isAllLocalScanIncremental;
+            _allLocalScanIncrementalCheckbox.CheckedChanged += _allLocalScanIncrementalCheckboxOnCheckedChanged;
+            _settingPanel.Controls.Add(_allLocalScanIncrementalCheckbox );
 
             _returnBackImage = new Panel();
             _returnBackImage.BackColor = Color.Transparent;
@@ -255,6 +269,21 @@ namespace troll_ui_app
 
             _clearAllBtn.Click += _clearAllBtnOnClick;
             _returnBtn.Click += _returnBtnOnClick;
+
+            Load += ProtectionPanelControlOnLoad;
+        }
+
+        void ProtectionPanelControlOnLoad(object sender, EventArgs e)
+        {
+            //确保加载时像素尺寸不发生变
+            Size = new System.Drawing.Size(MainForm.MainFormWidth, MainForm.MainFormHeight);
+            _pornItemTableView.Height = 264 + 30;
+            _pornItemTableView.Width = MainForm.MainFormWidth;
+        }
+        void _allLocalScanIncrementalCheckboxOnCheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.isAllLocalScanIncremental = _allLocalScanIncrementalCheckbox.Checked;
+            Properties.Settings.Default.Save();
         }
 
         void _fastLocalScanIncrementalCheckboxOnCheckedChanged(object sender, EventArgs e)

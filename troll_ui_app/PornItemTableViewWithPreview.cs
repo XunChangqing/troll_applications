@@ -171,8 +171,7 @@ namespace troll_ui_app
                 //这里没有直接设置ImageLocation，因为发现如果文件名为httpurl编码形式，在文件拷贝以后无法显示
                 try
                 {
-                    //必须释放旧图像
-                    DisposeImage(_previewPictureBox.Image);
+                    DisposeCurrentImage();
                     if (fname != null)
                     {
                         using (Image x = Image.FromFile(fname))
@@ -183,6 +182,8 @@ namespace troll_ui_app
                             x.Dispose();
                         }
                     }
+                    else
+                        _previewPictureBox.Image = null;
                 }
                 catch (Exception ex)
                 {
@@ -212,8 +213,10 @@ namespace troll_ui_app
         }
         void DisposeCurrentImage()
         {
-            DisposeImage(_previewPictureBox.Image);
+            //必须释放旧图像，要先将picturebox的image设为null，否则会导致picturebox出现异常
+            //picturebox访问已经被dispose的image出现异常
             _previewPictureBox.Image = null;
+            DisposeImage(_previewPictureBox.Image);
         }
 
         void PornItemTabelViewWithPreviewOnLoad(object sender, EventArgs e)

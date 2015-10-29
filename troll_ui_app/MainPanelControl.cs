@@ -378,6 +378,9 @@ namespace troll_ui_app
 
         void MainPanelControlOnLoad(object sender, EventArgs e)
         {
+            //确保加载时像素尺寸不发生变
+            Size = new System.Drawing.Size(MainForm.MainFormWidth, MainForm.MainFormHeight);
+
             wechatNickname.Location = new Point(wechatHeadImage.Location.X+wechatHeadImage.Width+2,
                 wechatHeadImage.Location.Y+wechatHeadImage.Height/2-wechatNickname.Height/2);
 
