@@ -384,7 +384,7 @@ namespace troll_ui_app
                         PornDatabase.PornItemStatus.Normal);
                 }
             }
-            string summary = "共扫描对象：{0} 共检出项：{1}";
+            string summary = "共扫描对象：{0}    共检出项：{1}";
             _scanStatusSummary.Text = string.Format(summary, _totalTargetNum, _totalPornNum);
         }
 
@@ -403,7 +403,7 @@ namespace troll_ui_app
             _confirmBtn.Visible = false;
             _pornItemResultView.Clear();
             _scanningResultTitleWarning.Text = string.Format("本次扫描发现{0}个待处理文件！", _totalPornNum);
-            string summary = "共扫描对象：{0} 共检出项：{1}";
+            string summary = "共扫描对象：{0}    共检出项：{1}";
             _scanStatusSummary.Text = string.Format(summary, _totalTargetNum, _totalPornNum);
         }
 
@@ -412,9 +412,9 @@ namespace troll_ui_app
             if(Status == ScanStatus.Idle)
             {
                 Status = ScanStatus.FastScan;
-                SetTitle("山妖卫士-浏览器缓存扫描");
+                SetTitle("山妖卫士-上网记录扫描");
                 InitForNewScan();
-                MainForm.Instance.mainPanelControl.EnterScanStatus();
+                MainForm.Instance.mainPanelControl.EnterScanStatus("正在进行上网记录扫描...");
                 MainForm.Instance.SlideWindow(this);
                 MainForm.Instance.mainPanelControl.Refresh();
                 _localScan.StartFastScan();
@@ -436,7 +436,7 @@ namespace troll_ui_app
                 Status = ScanStatus.AllScan;
                 SetTitle("山妖卫士-全盘扫描");
                 InitForNewScan();
-                MainForm.Instance.mainPanelControl.EnterScanStatus();
+                MainForm.Instance.mainPanelControl.EnterScanStatus("正在进行全盘扫描...");
                 MainForm.Instance.SlideWindow(this);
                 _localScan.StartAllScan();
             }
@@ -450,17 +450,28 @@ namespace troll_ui_app
             }
         }
 
-        public void StartCustomScan(string dir)
+        public void StartCustomScan()
         {
             if(Status == ScanStatus.Idle)
             {
-                Status = ScanStatus.CustomScan;
-                SetTitle("山妖卫士-自定义扫描");
-                InitForNewScan();
-                MainForm.Instance.mainPanelControl.EnterScanStatus();
-                MainForm.Instance.SlideWindow(this);
-                MainForm.Instance.mainPanelControl.Refresh();
-                _localScan.StartCustomScan(dir);
+                using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
+                {
+                    folderDialog.ShowNewFolderButton = false;
+                    DialogResult dr = folderDialog.ShowDialog();
+                    if (dr == DialogResult.OK)
+                    {
+                        log.Info("Custom Scan: " + folderDialog.SelectedPath);
+                        //MainForm.Instance.scanPanelControl.StartCustomScan(folderDialog.SelectedPath);
+
+                        Status = ScanStatus.CustomScan;
+                        SetTitle("山妖卫士-自定义扫描");
+                        InitForNewScan();
+                        MainForm.Instance.mainPanelControl.EnterScanStatus("正在进行自定义扫描...");
+                        MainForm.Instance.SlideWindow(this);
+                        MainForm.Instance.mainPanelControl.Refresh();
+                        _localScan.StartCustomScan(folderDialog.SelectedPath);
+                    }
+                }
             }
             else if(Status == ScanStatus.CustomScan)
             {

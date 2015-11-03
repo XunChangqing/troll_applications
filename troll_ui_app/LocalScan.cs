@@ -89,7 +89,7 @@ namespace troll_ui_app
                     ScanProgress npro = new ScanProgress();
                     npro.Percentage = 0;
                     npro.TargetFilePath = null;
-                    npro.Description = "正在准备浏览器缓存扫描";
+                    npro.Description = "正在准备上网记录扫描";
                     _scanProgressReport.Report(npro);
                 }
                 PercentageOffset = 0;
@@ -319,15 +319,16 @@ namespace troll_ui_app
         void AnalysisFile(string file, CancellationToken ct, ManualResetEvent pauseEvent, IProgress<ScanProgress> progress, int num, int tcount, bool onlyImage)
         {
             log.Info("Scan: " + file);
+            Exception classifyException;
             PornDatabase.PornItemType itype = PornDatabase.PornItemType.Undefined;
             if (onlyImage || ActiveFileMonitor.IsFileExtWith(file, ActiveFileMonitor.ImageExts))
             {
-                if (PornClassifier.Instance.Classify(file) == PornClassifier.ImageType.Porn)
+                if (PornClassifier.Instance.Classify(file, out classifyException) == PornClassifier.ImageType.Porn)
                     itype = PornDatabase.PornItemType.LocalImage;
             }
             else if (ActiveFileMonitor.IsFileExtWith(file, ActiveFileMonitor.VideoExts))
             {
-                if (PornClassifier.Instance.ClassifyVideoFile(file))
+                if (PornClassifier.Instance.ClassifyVideoFile(file, out classifyException))
                     itype = PornDatabase.PornItemType.LocalVideo;
             }
             if (progress != null)

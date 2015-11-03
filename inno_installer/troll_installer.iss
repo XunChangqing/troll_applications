@@ -38,8 +38,8 @@ DisableProgramGroupPage=auto
 ;Name: "en"; MessagesFile: "compiler:Default.isl"
 Name: "cs"; MessagesFile: "compiler:Languages\ChineseSimp.isl"
 
-[Registry]
-Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "trollwiz"; ValueData: """{app}\troll_ui_app.exe -notvisible"""; Flags: uninsdeletevalue; Tasks: autostart
+;[Registry]
+;Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "trollwiz"; ValueData: """{app}\troll_ui_app.exe"" -notvisible"; Flags: uninsdeletevalue; Tasks: autostart
 
 [Dirs]
 Name: "{localappdata}\masatek\trollwiz"
@@ -112,7 +112,7 @@ Type: filesandordirs; Name: "{localappdata}\masatek\troll_ui_app*"
 [Tasks]
 Name: desktopicon; Description: "创建桌面快捷方式"; GroupDescription: "附加图标：";
 Name: startupicon; Description: "创建开始菜单快捷方式"; GroupDescription: "附加图标："
-Name: autostart; Description: "开机启动"; GroupDescription: "启动项"
+;Name: autostart; Description: "开机启动"; GroupDescription: "启动项"
 ;Name: desktopicon\common; Description: "For all users"; GroupDescription: "Additional icons:";
 ;Name: desktopicon\user; Description: "For the current user only"; GroupDescription: "Additional icons:";
 ;Name: quicklaunchicon; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:";

@@ -169,7 +169,7 @@ namespace troll_ui_app
             //InitWatchers("*.png", out _pngFileSystemWatchers);
             InitWatchers(ImageExts, out _imageFileSystemWatchers);
             InitWatchers(VideoExts, out _videoFileSystemWatchers);
-            _md5hash = MD5.Create();
+            //_md5hash = MD5.Create();
 
             //start back worker
             _backWorker = Task.Factory.StartNew(() =>
@@ -290,30 +290,37 @@ namespace troll_ui_app
                             FileInfo finfo = new FileInfo(key);
                             if (!_fileProcessed.ContainsKey(key) || _fileProcessed[key] != finfo.Length)
                             {
-                                string shash = GetMd5Hash(_md5hash, File.ReadAllBytes(key));
-                                log.Info("\tHash: " + shash + " Time: " + fileSet[key]);
+                                //string shash = GetMd5Hash(_md5hash, File.ReadAllBytes(key));
+                                //log.Info("\tHash: " + shash + " Time: " + fileSet[key]);
                                 //PornClassifier.ImageType itype;
                                 PornDatabase.PornItemType itype = PornDatabase.PornItemType.Undefined;
-                                if (md5Set.ContainsKey(shash))
+                                //if (md5Set.ContainsKey(shash))
+                                //{
+                                //    itype = md5Set[shash];
+                                //}
+                                //else
                                 {
-                                    itype = md5Set[shash];
-                                }
-                                else
-                                {
+                                    Exception classifyException;
                                     if (IsFileExtWith(key, ImageExts))
                                     {
-                                        if (PornClassifier.Instance.Classify(key) == PornClassifier.ImageType.Porn)
+                                        var t = PornClassifier.Instance.Classify(key, out classifyException);
+                                        if (classifyException != null)
+                                            throw classifyException;
+                                        else if (t == PornClassifier.ImageType.Porn)
                                         {
                                             itype = PornDatabase.PornItemType.LocalImage;
-                                            md5Set[shash] = PornDatabase.PornItemType.LocalImage;
+                                            //md5Set[shash] = PornDatabase.PornItemType.LocalImage;
                                         }
                                     }
                                     else if(IsFileExtWith(key, VideoExts))
                                     {
-                                        if(PornClassifier.Instance.ClassifyVideoFile(key))
+                                        var t = PornClassifier.Instance.ClassifyVideoFile(key, out classifyException);
+                                        if (classifyException != null)
+                                            throw classifyException;
+                                        else if (t) 
                                         {
                                             itype = PornDatabase.PornItemType.LocalVideo;
-                                            md5Set[shash] = PornDatabase.PornItemType.LocalVideo;
+                                            //md5Set[shash] = PornDatabase.PornItemType.LocalVideo;
                                         }
                                     }
                                 }
@@ -337,22 +344,22 @@ namespace troll_ui_app
                         }
                         tobeDeleted.Add(key);
                     }
-                    catch (System.IO.IOException ioex)
+                    //catch (System.IO.IOException ioex)
+                    catch (Exception ex)
                     {
                         int value = fileSet[key];
-                        if (value + 1 > 5)
+                        if (value + 1 > 10)
                         {
                             tobeDeleted.Add(key);
                             log.Info("Delete: " + key);
                         }
                         else
                             fileSet[key] = value + 1;
-                        log.Info(ioex.ToString());
+                        log.Info(ex.ToString());
                     }
-                    catch (Exception ex)
-                    {
-                        log.Error(ex.ToString());
-                    }
+                    //{
+                    //    log.Error(ex.ToString());
+                    //}
                 }
                 foreach(string del in tobeDeleted)
                     fileSet.Remove(del);

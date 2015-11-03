@@ -44,6 +44,10 @@ namespace troll_ui_app
             {
                 return Enumerable.Empty<string>();
             }
+            catch (Exception e)
+            {
+                return Enumerable.Empty<string>();
+            }
         }
 
         //public static IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption searchOpt)
@@ -81,6 +85,10 @@ namespace troll_ui_app
             {
                 return Enumerable.Empty<string>();
             }
+            catch(Exception e)
+            {
+                return Enumerable.Empty<string>();
+            }
         }
         public static IEnumerable<FileInfo> EnumerateFileInfos(string path, string searchPattern, SearchOption searchOpt, Func<string, bool> directoryFilter=null)
         {
@@ -98,6 +106,10 @@ namespace troll_ui_app
                 return dirFiles.Concat(pathinfo.EnumerateFiles(searchPattern));
             }
             catch (UnauthorizedAccessException ex)
+            {
+                return Enumerable.Empty<FileInfo>();
+            }
+            catch(Exception e)
             {
                 return Enumerable.Empty<FileInfo>();
             }

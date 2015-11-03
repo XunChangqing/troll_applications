@@ -111,10 +111,6 @@ namespace troll_ui_app
             Server.InitListenFinished.WaitOne();
             if (Server.InitListenException != null)
                 throw Server.InitListenException;
-#if !DEBUG
-            SystemProxyHelper.EnableProxyHTTP("127.0.0.1", 8090);
-            FireFoxHelper.AddFirefox();
-#endif
 
             _activeFileMonitor = new ActiveFileMonitor();
 
@@ -202,8 +198,8 @@ namespace troll_ui_app
                     e.Cancel = true;
                 }
             }
-            //else if (e.CloseReason == CloseReason.WindowsShutDown)
-            //    Application.Exit();
+            else if (e.CloseReason == CloseReason.WindowsShutDown)
+                Program.kCloseReason = e.CloseReason;
         }
 
         void MainFormOnFormClosed(object sender, FormClosedEventArgs e)

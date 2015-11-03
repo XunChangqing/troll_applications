@@ -20,6 +20,7 @@ using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
+using Microsoft.Win32;
 
 namespace troll_ui_app
 {
@@ -141,6 +142,11 @@ namespace troll_ui_app
                     log.Error("Exit due to another running instance: " + systemMutex.ToString());
                     return;
                 }
+                //如果是开机启动，则延时两分钟，减少对开机启动时间的影响
+                if (args.Contains("-notvisible"))
+                {
+                    System.Threading.Thread.Sleep(120000);
+                }
                 //必须在绑定之前，这样才能正常访问web的绑定服务
                 SSLInit();
 
@@ -178,6 +184,7 @@ namespace troll_ui_app
                         "程序崩溃", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         static private void InitLogAndDirs()
         {
             //change workdir to the path of executable
@@ -276,6 +283,7 @@ namespace troll_ui_app
         }
 
         static bool _cleanUp = false;
+        public static CloseReason kCloseReason = CloseReason.None;
         public static void CleanUp()
         {
             try
@@ -286,13 +294,21 @@ namespace troll_ui_app
 #if !DEBUG
                 try
                 {
-                    log.Info("Disable proxy!");
-                    SystemProxyHelper.DisableAllProxyWithourRestore();
+                    log.Info("Disable proxy by regs!");
+                    //在关机时，不能refresh，否则会导致无法修改成功，其他时候则要刷新，否则会导致无法刷新
+                    if (kCloseReason == CloseReason.WindowsShutDown)
+                    {
+                        log.Info("Disable proxy without Refresh!");
+                        SystemProxyHelper.DisableAllProxyWithourRestoreAndRefresh();
+                    }
+                    else
+                    { 
+                        log.Info("Disable proxy with Refresh!");
+                        SystemProxyHelper.DisableAllProxyWithourRestore();
+                    }
                     FireFoxHelper.RemoveFirefox();
                 }
                 catch (Exception exp) { log.Error(exp.ToString()); }
-                try { ProxyRoutines.SetProxy(false); }
-                catch (Exception exp) { log.Equals(exp.ToString()); }
 #endif
                 try
                 {

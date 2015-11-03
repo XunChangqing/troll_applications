@@ -161,7 +161,7 @@ namespace troll_ui_app
             _networkImageBtn.SwitchChanged += _networkImageBtnOnSwitchChanged;
             ToolTip networkImageTip = new ToolTip();
             networkImageTip.AutoPopDelay = 32000;
-            networkImageTip.SetToolTip(_networkImageDescLabel, "过滤网页中的色情图片，此项功能在开关时，如页面未刷新，请使用Ctrl+F5强制刷新");
+            networkImageTip.SetToolTip(_networkImageDescLabel, "过滤网页中的色情图片，此项功能在开启或关闭后，如页面未刷新，请使用Ctrl+F5强制刷新");
 
             _strongNetworkImageFilter = new CheckBox();
             _strongNetworkImageFilter.Location = new Point(CheckBoxLocationX,
@@ -178,7 +178,7 @@ namespace troll_ui_app
             _settingPanel.Controls.Add(_strongNetworkImageFilter);
             ToolTip strongNetworkImageFilterTip = new ToolTip();
             strongNetworkImageFilterTip.AutoPopDelay = 32000;
-            strongNetworkImageFilterTip.SetToolTip(_strongNetworkImageFilter, "包含擦边球色情图片");
+            strongNetworkImageFilterTip.SetToolTip(_strongNetworkImageFilter, "包含擦边球色情图片，此项功能在开启或关闭后，如页面未刷新，请使用Ctrl+F5强制刷新");
 
             //自启动checkbox
             _autoStartCheckbox = new CheckBox();
@@ -198,7 +198,7 @@ namespace troll_ui_app
             _fastLocalScanIncrementalCheckbox = new CheckBox();
             _fastLocalScanIncrementalCheckbox.Location = new Point(CheckBoxLocationX, _activeImageDescLabel.Location.Y);
             _fastLocalScanIncrementalCheckbox.BackColor = Color.Transparent;
-            _fastLocalScanIncrementalCheckbox.Text = "增量浏览器缓存扫描";
+            _fastLocalScanIncrementalCheckbox.Text = "增量上网记录扫描";
             _fastLocalScanIncrementalCheckbox.AutoSize = true;
             _fastLocalScanIncrementalCheckbox.ForeColor = Color.FromArgb(0x5e, 0x5e, 0x5e);
             _fastLocalScanIncrementalCheckbox.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
@@ -271,6 +271,38 @@ namespace troll_ui_app
             _returnBtn.Click += _returnBtnOnClick;
 
             Load += ProtectionPanelControlOnLoad;
+            SetSystemProxy();
+        }
+        void SetSystemProxy()
+        {
+            if (Properties.Settings.Default.IsNetworkImageTurnOn || Properties.Settings.Default.IsPornWebsiteProtectionTurnOn)
+            {
+#if !DEBUG
+                try
+                {
+                    SystemProxyHelper.EnableProxyHTTP("127.0.0.1", 8090);
+                    FireFoxHelper.AddFirefox();
+                }
+                catch(Exception e)
+                {
+                    log.Error(e.ToString());
+                }
+#endif
+            }
+            else
+            {
+#if !DEBUG
+                try
+                {
+                    log.Info("Disable proxy!");
+                    SystemProxyHelper.DisableAllProxyWithourRestore();
+                    FireFoxHelper.RemoveFirefox();
+                }
+                catch (Exception exp) { log.Error(exp.ToString()); }
+                try { ProxyRoutines.SetProxy(false); }
+                catch (Exception exp) { log.Equals(exp.ToString()); }
+#endif
+            }
         }
 
         void ProtectionPanelControlOnLoad(object sender, EventArgs e)
@@ -305,8 +337,15 @@ namespace troll_ui_app
         }
         void TurnOnAutoStartReg()
         {
-            RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
-            autorun_registry_key.SetValue(kAutoRunKey, Application.ExecutablePath + " -notvisible");
+            try
+            {
+                RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
+                autorun_registry_key.SetValue(kAutoRunKey, "\"" + Application.ExecutablePath + " \"" + " -notvisible");
+            }
+            catch(Exception e)
+            {
+                log.Error(e.ToString());
+            }
             //暂时断开消息处理函数，防止反复处理
             //_autoStartCheckbox.CheckedChanged -= _autoStartCheckboxOnCheckedChanged;
             //_autoStartCheckbox.Checked = true;
@@ -322,14 +361,14 @@ namespace troll_ui_app
             //_autoStartCheckbox.Checked = false; ;
             //_autoStartCheckbox.CheckedChanged += _autoStartCheckboxOnCheckedChanged;
         }
-        void TurnOnAutoStart()
-        {
-            _autoStartCheckbox.Checked = true;
-        }
-        void TurnOffAutoStart()
-        {
-            _autoStartCheckbox.Checked = false;
-        }
+        //void TurnOnAutoStart()
+        //{
+        //    _autoStartCheckbox.Checked = true;
+        //}
+        //void TurnOffAutoStart()
+        //{
+        //    _autoStartCheckbox.Checked = false;
+        //}
         void _autoStartCheckboxOnCheckedChanged(object sender, EventArgs e)
         {
             log.Info("auto start checkbox checked changed!");
@@ -356,26 +395,20 @@ namespace troll_ui_app
                 _logoLabel.Image = Properties.Resources.fh_icon_animation_d;
         }
         //当有功能设置变化时重新设置开机自启动
-        void SetAutoStart()
-        {
-            if(HasOneFuncWork())
-                TurnOnAutoStart();
-            else
-                TurnOffAutoStart();
-        }
+        //void SetAutoStart()
+        //{
+        //    if(HasOneFuncWork())
+        //        TurnOnAutoStart();
+        //    else
+        //        TurnOffAutoStart();
+        //}
         void _websiteBtnOnSwitchChanged(object sender, bool e)
         {
             Properties.Settings.Default.IsPornWebsiteProtectionTurnOn = e;
             Properties.Settings.Default.Save();
+            SetSystemProxy();
             SetLogoImage();
-            SetAutoStart();
-//#if !DEBUG
-            //if (e)
-            //{
-            //    SystemProxyHelper.EnableProxyHTTP("127.0.0.1", 8090);
-            //    FireFoxHelper.AddFirefox();
-            //}
-//#endif
+            //SetAutoStart();
         }
         void _activeImageBtnOnSwitchChanged(object sender, bool e)
         {
@@ -386,7 +419,7 @@ namespace troll_ui_app
                 MainForm.Instance._activeFileMonitor.EnableImageDetection();
             else
                 MainForm.Instance._activeFileMonitor.DisableImageDetection();
-            SetAutoStart();
+            //SetAutoStart();
         }
         void _activeVideoBtnOnSwitchChanged(object sender, bool e)
         {
@@ -397,24 +430,25 @@ namespace troll_ui_app
                 MainForm.Instance._activeFileMonitor.EnableVideoDetection();
             else
                 MainForm.Instance._activeFileMonitor.DisableVideoDetection();
-            SetAutoStart();
+            //SetAutoStart();
         }
         void _networkImageBtnOnSwitchChanged(object sender, bool e)
         {
             Properties.Settings.Default.IsNetworkImageTurnOn = e;
             Properties.Settings.Default.Save();
+            SetSystemProxy();
             SetLogoImage();
             if (e)
                 _strongNetworkImageFilter.Enabled = true;
             else
                 _strongNetworkImageFilter.Enabled = false;
-            SetAutoStart();
+            //SetAutoStart();
         }
         void _strongNetworkImageFilterOnCheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.IsStrongNetworkImageFilter = _strongNetworkImageFilter.Checked;
             Properties.Settings.Default.Save();
-            SetAutoStart();
+            //SetAutoStart();
         }
 
         void _returnBtnOnClick(object sender, EventArgs e)

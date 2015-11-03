@@ -79,7 +79,7 @@ namespace troll_ui_app
         }
         static public bool Auth()
         {
-            //return true;
+            return true;
             //if (hasBeenAuth)
             if (AuthExpiredTimeLeft>TimeSpan.Zero)
                 return true;
@@ -160,9 +160,9 @@ namespace troll_ui_app
         {
             InitializeComponent();
             Icon = Properties.Resources.icon_main_icon;
+            Text = "山妖卫士";
             MouseDown += MouseDownMove;
             titleLabel.MouseDown += MouseDownMove;
-
 
             //AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             //Width = 230;

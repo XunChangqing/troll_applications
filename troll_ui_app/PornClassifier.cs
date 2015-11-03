@@ -45,7 +45,7 @@ namespace troll_ui_app
             classifier_handle_ = CreatePornClassifier(model_file);
         }
 
-        public ImageType Classify(String fname)
+        public ImageType Classify(String fname, out Exception excep)
         {
             try
             {
@@ -55,11 +55,13 @@ namespace troll_ui_app
                 //否则图像文件会被锁住，这是由于bitmap可能会再次使用图像文件本身
                 using (Bitmap bmp = new Bitmap(fname))
                 {
+                    excep = null;
                     return Classify(bmp);
                 }
             }
             catch(Exception e)
             {
+                excep = e;
                 return ImageType.Normal;
             }
         }
@@ -121,12 +123,13 @@ namespace troll_ui_app
         static readonly int PornNumThd = 3;
         //视频允许的最少长度，通常即为帧数
         static readonly int MinFrames = 4000;
-        public bool ClassifyVideoFile(string filename)
+        public bool ClassifyVideoFile(string filename, out Exception excep)
         {
             FFMPEGWrapper ffmpeg = new FFMPEGWrapper();
             if (!ffmpeg.Open(filename))
             {
-                log.Info("Video File Cannot Open: " + filename);   
+                log.Info("Video File Cannot Open: " + filename);
+                excep = new Exception("Cannot Open File!");
                 ffmpeg.Dispose();
                 return false;
             }
@@ -134,6 +137,7 @@ namespace troll_ui_app
             {
                 log.Info("Video File Short of Frames: " + filename + " frames: " + ffmpeg.FileInfo.nb_frames); ;   
                 ffmpeg.Dispose();
+                excep = new Exception("Video File Too Short");
                 return false;
             }
             Int64 step = ffmpeg.FileInfo.duration/VideoSegments;
@@ -149,6 +153,7 @@ namespace troll_ui_app
                 }
             }
             ffmpeg.Dispose();
+            excep = null;
             if (pornNum >= PornNumThd)
             {
                 log.Info("Porn Video File: " + filename);

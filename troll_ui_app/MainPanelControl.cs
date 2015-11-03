@@ -195,7 +195,7 @@ namespace troll_ui_app
             fastScanBtn .Location = new Point(allScanBtn.Location.X+allScanBtn.Width*2, scanBtnTopPadding);
             ToolTip fastScanTip = new ToolTip();
             fastScanTip.AutoPopDelay = 32000;
-            fastScanTip.SetToolTip(fastScanBtn, "扫描浏览器缓存中的图片");
+            fastScanTip.SetToolTip(fastScanBtn, "扫描上网记录中的图片");
 
             customScanBtn = new ImageButton();
             customScanBtn.Image = Properties.Resources.home_scanner_zdy_n;
@@ -215,7 +215,7 @@ namespace troll_ui_app
 
             fastScanLabel = new Label();
             fastScanLabel.AutoSize = true;
-            fastScanLabel.Text = "浏览器缓存扫描";
+            fastScanLabel.Text = "上网记录扫描";
             fastScanLabel.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
 
             customScanLabel = new Label();
@@ -357,9 +357,10 @@ namespace troll_ui_app
             //UpdateInfoForm.GetInstance().WindowState = FormWindowState.Normal;
         }
 
-        public void EnterScanStatus()
+        public void EnterScanStatus(string desc)
         {
             guradNormalPanel.Visible = false;
+            scanningLabel.Text = desc;
             scanningPanel.Visible = true;
             mainFuncBtn.Image = Properties.Resources.home_fh_icon_animation_n;
         }
@@ -438,16 +439,7 @@ namespace troll_ui_app
         {
             if (WechatForm.Auth())
             {
-                using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
-                {
-                    folderDialog.ShowNewFolderButton = false;
-                    DialogResult dr = folderDialog.ShowDialog();
-                    if (dr == DialogResult.OK)
-                    {
-                        log.Info("Custom Scan: " + folderDialog.SelectedPath);
-                        MainForm.Instance.scanPanelControl.StartCustomScan(folderDialog.SelectedPath);
-                    }
-                }
+                MainForm.Instance.scanPanelControl.StartCustomScan();
             }
         }
         void mainFuncBtnOnClick(object sender, EventArgs e)
