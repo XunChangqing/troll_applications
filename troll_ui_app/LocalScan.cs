@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace troll_ui_app
 {
@@ -79,8 +80,13 @@ namespace troll_ui_app
             _scanTask.Wait();
             log.Info("Stop Current Scan Task!");
         }
-        public void StartFastScan()
+        public void StartFastScan(bool incremental)
         {
+            DateTime lastDateTime;
+            if (incremental)
+                lastDateTime = Properties.Settings.Default.lastFastLocalScanDateTime;
+            else
+                lastDateTime = DateTime.MinValue;
             _scanPauseEvent.Set();
             _scanCancellationTokenSource = new CancellationTokenSource();
             _scanTask = Task.Factory.StartNew(()=> {
@@ -94,7 +100,7 @@ namespace troll_ui_app
                 }
                 PercentageOffset = 0;
                 PercentageRatio = 100;
-                FastLocalScan(_scanCancellationTokenSource.Token, _scanPauseEvent, _scanProgressReport);
+                FastLocalScan(_scanCancellationTokenSource.Token, _scanPauseEvent, _scanProgressReport, lastDateTime);
             });
             _scanTask.ContinueWith(atask =>
             {
@@ -108,8 +114,14 @@ namespace troll_ui_app
                     ScanComplete(this, EventArgs.Empty);
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
-        public void StartAllScan()
+        public void StartAllScan(bool incremental)
         {
+            DateTime lastDateTime;
+            if (incremental)
+                lastDateTime = Properties.Settings.Default.lastAllLocalScanDateTime;
+            else
+                lastDateTime = DateTime.MinValue;
+
             _scanPauseEvent.Set();
             _scanCancellationTokenSource = new CancellationTokenSource();
             _scanTask = Task.Factory.StartNew(()=> {
@@ -123,10 +135,10 @@ namespace troll_ui_app
                 }
                 PercentageOffset = 0;
                 PercentageRatio = 30;
-                FastLocalScan(_scanCancellationTokenSource.Token, _scanPauseEvent, _scanProgressReport);
+                FastLocalScan(_scanCancellationTokenSource.Token, _scanPauseEvent, _scanProgressReport, lastDateTime);
                 PercentageOffset = 30;
                 PercentageRatio = 70;
-                AllLocalFileScan(_scanCancellationTokenSource.Token, _scanPauseEvent, _scanProgressReport);
+                AllLocalFileScan(_scanCancellationTokenSource.Token, _scanPauseEvent, _scanProgressReport, lastDateTime);
             });
             _scanTask.ContinueWith(atask =>
             {
@@ -134,7 +146,6 @@ namespace troll_ui_app
                 if(_scanCancellationTokenSource!=null && !_scanCancellationTokenSource.IsCancellationRequested)
                 {
                     //浏览器缓存和全盘文件都记录当前时间
-                    Properties.Settings.Default.lastFastLocalScanDateTime = DateTime.Now;
                     Properties.Settings.Default.lastAllLocalScanDateTime = DateTime.Now;
                     Properties.Settings.Default.Save();
                 }
@@ -177,7 +188,7 @@ namespace troll_ui_app
             return true;
         }
         //所有本地文件扫描，排除了浏览器缓存文件以防重复扫描
-        void AllLocalFileScan(CancellationToken ct, ManualResetEvent pauseEvent, IProgress<ScanProgress> progress)
+        void AllLocalFileScan(CancellationToken ct, ManualResetEvent pauseEvent, IProgress<ScanProgress> progress, DateTime lastDateTime)
         {
             try
             {
@@ -194,8 +205,10 @@ namespace troll_ui_app
                             ));
                         //var files = SafeFileEnumerator.EnumerateFiles(drive.RootDirectory.FullName, "*.*", SearchOption.TopDirectoryOnly, null).Where<String>(FilesCanProcessed);
                         var fileinfos = SafeFileEnumerator.EnumerateFileInfos(drive.RootDirectory.FullName, "*.*", SearchOption.TopDirectoryOnly, null).Where<FileInfo>(finfo => FilesCanProcessed(finfo.Name));
-                        if (Properties.Settings.Default.isAllLocalScanIncremental)
-                            fileinfos = fileinfos.Where<FileInfo>(finfo => finfo.CreationTime > Properties.Settings.Default.lastAllLocalScanDateTime);
+                        if(lastDateTime != DateTime.MinValue)
+                            fileinfos = fileinfos.Where<FileInfo>(finfo => finfo.CreationTime > lastDateTime);
+                        //if (Properties.Settings.Default.isAllLocalScanIncremental)
+                        //    fileinfos = fileinfos.Where<FileInfo>(finfo => finfo.CreationTime > Properties.Settings.Default.lastAllLocalScanDateTime);
 
                         foreach(FileInfo finfo in fileinfos)
                         {
@@ -224,8 +237,10 @@ namespace troll_ui_app
                         removeBrowserDirs
                         ).Where<FileInfo>(finfo => FilesCanProcessed(finfo.Name));
 
-                    if (Properties.Settings.Default.isAllLocalScanIncremental)
-                        allFileInfos = allFileInfos.Where<FileInfo>(finfo => finfo.CreationTime > Properties.Settings.Default.lastAllLocalScanDateTime);
+                    if (lastDateTime != DateTime.MinValue)
+                        allFileInfos = allFileInfos.Where<FileInfo>(finfo => finfo.CreationTime > lastDateTime);
+                    //if (Properties.Settings.Default.isAllLocalScanIncremental)
+                    //    allFileInfos = allFileInfos.Where<FileInfo>(finfo => finfo.CreationTime > Properties.Settings.Default.lastAllLocalScanDateTime);
 
                     foreach(FileInfo finfo in allFileInfos)
                     {
@@ -240,7 +255,7 @@ namespace troll_ui_app
             }
         }
         //扫描本地浏览器缓存图片文件
-        void FastLocalScan(CancellationToken ct, ManualResetEvent pauseEvent, IProgress<ScanProgress> progress)
+        void FastLocalScan(CancellationToken ct, ManualResetEvent pauseEvent, IProgress<ScanProgress> progress, DateTime lastDateTime)
         {
             try
             {
@@ -277,8 +292,10 @@ namespace troll_ui_app
                 sBrowserDirList.Add(iecachepath);
 
                 //var files = GetFiles("C:\\SearchDirectory", d => !d.Contains("AvoidMe", StringComparison.OrdinalIgnoreCase), "*.*");
-                if(Properties.Settings.Default.isFastLocalScanIncremental)
-                    totalfiles = totalfiles.Where<FileInfo>(finfo => finfo.CreationTime > Properties.Settings.Default.lastFastLocalScanDateTime);
+                //if(Properties.Settings.Default.isFastLocalScanIncremental)
+                //    totalfiles = totalfiles.Where<FileInfo>(finfo => finfo.CreationTime > Properties.Settings.Default.lastFastLocalScanDateTime);
+                if(lastDateTime != DateTime.MinValue)
+                    totalfiles = totalfiles.Where<FileInfo>(finfo => finfo.CreationTime > lastDateTime);
 
                 int tcount = totalfiles.Count();
                 int num = 0;

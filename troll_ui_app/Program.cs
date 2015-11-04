@@ -281,7 +281,68 @@ namespace troll_ui_app
             //        false => disallow unauthenticated server.
             return certMatch;
         }
+        public static void EnableProxy()
+        {
+#if !DEBUG
+            //if(System.Environment.OSVersion.Version <=  
+            if (System.Environment.OSVersion.Version.Major <= 6 && System.Environment.OSVersion.Version.Minor <= 1)
+            {
+                log.Info("Enabel Proxy Win7!");
+                try { ProxyRoutines.SetProxy("http=127.0.0.1:8090"); }
+                catch (Exception exp) { log.Error(exp.ToString()); }
+            }
+            else
+            {
+                log.Info("Enabel Proxy Win8 and Win10!");
+                try
+                {
+                    SystemProxyHelper.EnableProxyHTTP("127.0.0.1", 8090);
+                    FireFoxHelper.AddFirefox();
+                }
+                catch (Exception e)
+                {
+                    log.Error(e.ToString());
+                }
+            }
+#endif
+        }
+        public static void DisableProxy()
+        {
+            //unset proxy again to make sure
+#if !DEBUG
+            if (System.Environment.OSVersion.Version.Major<=6 && System.Environment.OSVersion.Version.Minor<=1)
+            {
+                log.Info("Disable Proxy Win7!");
+                try
+                {
+                    ProxyRoutines.SetProxy(false);
+                }
+                catch (Exception exp)
+                { log.Error(exp.ToString()); }
+            }
+            else
+            {
+                try
+                {
+                    log.Info("Disable Proxy Win8 and Win10!");
+                    //在关机时，不能refresh，否则会导致无法修改成功，其他时候则要刷新，否则会导致无法刷新
+                    if (kCloseReason == CloseReason.WindowsShutDown)
+                    {
+                        log.Info("Disable proxy without Refresh!");
+                        SystemProxyHelper.DisableAllProxyWithourRestoreAndRefresh();
+                    }
+                    else
+                    {
+                        log.Info("Disable proxy with Refresh!");
+                        SystemProxyHelper.DisableAllProxyWithourRestore();
+                    }
+                    FireFoxHelper.RemoveFirefox();
+                }
+                catch (Exception exp) { log.Error(exp.ToString()); }
+            }
+#endif
 
+        }
         static bool _cleanUp = false;
         public static CloseReason kCloseReason = CloseReason.None;
         public static void CleanUp()
@@ -290,31 +351,12 @@ namespace troll_ui_app
             {
                 if (_cleanUp)
                     return;
-                //unset proxy again to make sure
-#if !DEBUG
-                try
-                {
-                    log.Info("Disable proxy by regs!");
-                    //在关机时，不能refresh，否则会导致无法修改成功，其他时候则要刷新，否则会导致无法刷新
-                    if (kCloseReason == CloseReason.WindowsShutDown)
-                    {
-                        log.Info("Disable proxy without Refresh!");
-                        SystemProxyHelper.DisableAllProxyWithourRestoreAndRefresh();
-                    }
-                    else
-                    { 
-                        log.Info("Disable proxy with Refresh!");
-                        SystemProxyHelper.DisableAllProxyWithourRestore();
-                    }
-                    FireFoxHelper.RemoveFirefox();
-                }
-                catch (Exception exp) { log.Error(exp.ToString()); }
-#endif
+                DisableProxy();
                 try
                 {
                     systemMutex.Dispose();
                 }
-                catch(Exception exp)
+                catch (Exception exp)
                 { log.Error(exp.ToString()); }
                 //dispose timer and wait for callback complete
                 WaitHandle[] whs = new WaitHandle[]{
@@ -361,9 +403,9 @@ namespace troll_ui_app
                 msg.EnsureSuccessStatusCode();
                 string retStr = msg.Content.ReadAsStringAsync().Result;
             }
-            catch(Exception err)
+            catch (Exception err)
             {
-                log.Error("提交崩溃错误失败: "+err.ToString());
+                log.Error("提交崩溃错误失败: " + err.ToString());
             }
         }
     }

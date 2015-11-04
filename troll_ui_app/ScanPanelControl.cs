@@ -347,6 +347,8 @@ namespace troll_ui_app
             _pause = !_pause;
         }
 
+        static readonly int kTotalItemsThd = 5000;
+        static readonly float kPornItemsRatioThd = 0.001f;
         void _localScanOnScanComplete(object sender, EventArgs e)
         {
             if (_totalPornNum > 0)
@@ -355,7 +357,12 @@ namespace troll_ui_app
                 _scanningResultPanel.Visible = true;
                 string summary = "共扫描对象：{0} 共检出项：{1}";
                 _scanResultSummary.Text = string.Format(summary, _totalTargetNum, _totalPornNum);
-                _scanningResultTitleWarning.Text = string.Format("本次扫描发现{0}个待处理文件！", _totalPornNum);
+
+                if((float)_totalPornNum/(float)_totalTargetNum<kPornItemsRatioThd)
+                    _scanningResultTitleWarning.Text = string.Format("您的电脑很干净，本次扫描仅发现{0}个疑似文件！", _totalPornNum);
+                else
+                    _scanningResultTitleWarning.Text = string.Format("本次扫描发现{0}个待处理文件！", _totalPornNum);
+
                 _scanningResultPanel.Visible = true;
             }
             else
@@ -411,13 +418,22 @@ namespace troll_ui_app
         {
             if(Status == ScanStatus.Idle)
             {
+                bool ignore = false;
+                if (Properties.Settings.Default.lastFastLocalScanDateTime != DateTime.MinValue)
+                {
+                    DialogResult dr = MessageBox.Show(
+                        "上一次成功上网记录扫描时间： " + Properties.Settings.Default.lastFastLocalScanDateTime.ToString()+"\n是否忽略该时间之前记录？",
+                        "上网记录扫描模式选择",
+                         MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                    ignore = dr == DialogResult.Yes;
+                }
                 Status = ScanStatus.FastScan;
                 SetTitle("山妖卫士-上网记录扫描");
                 InitForNewScan();
                 MainForm.Instance.mainPanelControl.EnterScanStatus("正在进行上网记录扫描...");
                 MainForm.Instance.SlideWindow(this);
                 MainForm.Instance.mainPanelControl.Refresh();
-                _localScan.StartFastScan();
+                _localScan.StartFastScan(ignore);
             }
             else if(Status == ScanStatus.FastScan)
             {
@@ -433,12 +449,21 @@ namespace troll_ui_app
         {
             if(Status == ScanStatus.Idle)
             {
+                bool ignore = false;
+                if (Properties.Settings.Default.lastAllLocalScanDateTime != DateTime.MinValue)
+                {
+                    DialogResult dr = MessageBox.Show(
+                        "全盘扫描模式选择",
+                        "上一次成功全盘扫描时间： " + Properties.Settings.Default.lastAllLocalScanDateTime.ToString()+ "\n是否忽略该时间之前创建的文件？",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                    ignore = dr == DialogResult.Yes;
+                }
                 Status = ScanStatus.AllScan;
                 SetTitle("山妖卫士-全盘扫描");
                 InitForNewScan();
                 MainForm.Instance.mainPanelControl.EnterScanStatus("正在进行全盘扫描...");
                 MainForm.Instance.SlideWindow(this);
-                _localScan.StartAllScan();
+                _localScan.StartAllScan(ignore);
             }
             else if(Status == ScanStatus.AllScan)
             {

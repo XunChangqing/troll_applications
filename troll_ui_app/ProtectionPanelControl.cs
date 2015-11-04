@@ -195,30 +195,30 @@ namespace troll_ui_app
             //strongNetworkImageFilterTip.SetToolTip(_strongNetworkImageFilter, "包含擦边球色情图片");
 
             //增量快速扫描
-            _fastLocalScanIncrementalCheckbox = new CheckBox();
-            _fastLocalScanIncrementalCheckbox.Location = new Point(CheckBoxLocationX, _activeImageDescLabel.Location.Y);
-            _fastLocalScanIncrementalCheckbox.BackColor = Color.Transparent;
-            _fastLocalScanIncrementalCheckbox.Text = "增量上网记录扫描";
-            _fastLocalScanIncrementalCheckbox.AutoSize = true;
-            _fastLocalScanIncrementalCheckbox.ForeColor = Color.FromArgb(0x5e, 0x5e, 0x5e);
-            _fastLocalScanIncrementalCheckbox.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
-            _fastLocalScanIncrementalCheckbox.BackColor = Color.Transparent;
-            _fastLocalScanIncrementalCheckbox.Checked = Properties.Settings.Default.isFastLocalScanIncremental;
-            _fastLocalScanIncrementalCheckbox.CheckedChanged += _fastLocalScanIncrementalCheckboxOnCheckedChanged;
-            _settingPanel.Controls.Add(_fastLocalScanIncrementalCheckbox);
+            //_fastLocalScanIncrementalCheckbox = new CheckBox();
+            //_fastLocalScanIncrementalCheckbox.Location = new Point(CheckBoxLocationX, _activeImageDescLabel.Location.Y);
+            //_fastLocalScanIncrementalCheckbox.BackColor = Color.Transparent;
+            //_fastLocalScanIncrementalCheckbox.Text = "增量上网记录扫描";
+            //_fastLocalScanIncrementalCheckbox.AutoSize = true;
+            //_fastLocalScanIncrementalCheckbox.ForeColor = Color.FromArgb(0x5e, 0x5e, 0x5e);
+            //_fastLocalScanIncrementalCheckbox.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
+            //_fastLocalScanIncrementalCheckbox.BackColor = Color.Transparent;
+            //_fastLocalScanIncrementalCheckbox.Checked = Properties.Settings.Default.isFastLocalScanIncremental;
+            //_fastLocalScanIncrementalCheckbox.CheckedChanged += _fastLocalScanIncrementalCheckboxOnCheckedChanged;
+            //_settingPanel.Controls.Add(_fastLocalScanIncrementalCheckbox);
 
             //增量全盘扫描
-            _allLocalScanIncrementalCheckbox = new CheckBox();
-            _allLocalScanIncrementalCheckbox.Location = new Point(CheckBoxLocationX, _activeVideoDescLabel.Location.Y);
-            _allLocalScanIncrementalCheckbox.BackColor = Color.Transparent;
-            _allLocalScanIncrementalCheckbox.Text = "增量全盘扫描";
-            _allLocalScanIncrementalCheckbox.AutoSize = true;
-            _allLocalScanIncrementalCheckbox.ForeColor = Color.FromArgb(0x5e, 0x5e, 0x5e);
-            _allLocalScanIncrementalCheckbox.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
-            _allLocalScanIncrementalCheckbox.BackColor = Color.Transparent;
-            _allLocalScanIncrementalCheckbox.Checked = Properties.Settings.Default.isAllLocalScanIncremental;
-            _allLocalScanIncrementalCheckbox.CheckedChanged += _allLocalScanIncrementalCheckboxOnCheckedChanged;
-            _settingPanel.Controls.Add(_allLocalScanIncrementalCheckbox );
+            //_allLocalScanIncrementalCheckbox = new CheckBox();
+            //_allLocalScanIncrementalCheckbox.Location = new Point(CheckBoxLocationX, _activeVideoDescLabel.Location.Y);
+            //_allLocalScanIncrementalCheckbox.BackColor = Color.Transparent;
+            //_allLocalScanIncrementalCheckbox.Text = "增量全盘扫描";
+            //_allLocalScanIncrementalCheckbox.AutoSize = true;
+            //_allLocalScanIncrementalCheckbox.ForeColor = Color.FromArgb(0x5e, 0x5e, 0x5e);
+            //_allLocalScanIncrementalCheckbox.Font = new System.Drawing.Font("微软雅黑", 16, GraphicsUnit.Pixel);
+            //_allLocalScanIncrementalCheckbox.BackColor = Color.Transparent;
+            //_allLocalScanIncrementalCheckbox.Checked = Properties.Settings.Default.isAllLocalScanIncremental;
+            //_allLocalScanIncrementalCheckbox.CheckedChanged += _allLocalScanIncrementalCheckboxOnCheckedChanged;
+            //_settingPanel.Controls.Add(_allLocalScanIncrementalCheckbox );
 
             _returnBackImage = new Panel();
             _returnBackImage.BackColor = Color.Transparent;
@@ -271,37 +271,20 @@ namespace troll_ui_app
             _returnBtn.Click += _returnBtnOnClick;
 
             Load += ProtectionPanelControlOnLoad;
-            SetSystemProxy();
+
+            //只有有功能打开时才操作，否则会导致默认关闭时，总是操作，导致杀毒软件报警
+            if (Properties.Settings.Default.IsNetworkImageTurnOn || Properties.Settings.Default.IsPornWebsiteProtectionTurnOn)
+                SetSystemProxy();
         }
         void SetSystemProxy()
         {
             if (Properties.Settings.Default.IsNetworkImageTurnOn || Properties.Settings.Default.IsPornWebsiteProtectionTurnOn)
             {
-#if !DEBUG
-                try
-                {
-                    SystemProxyHelper.EnableProxyHTTP("127.0.0.1", 8090);
-                    FireFoxHelper.AddFirefox();
-                }
-                catch(Exception e)
-                {
-                    log.Error(e.ToString());
-                }
-#endif
+                Program.EnableProxy();
             }
             else
             {
-#if !DEBUG
-                try
-                {
-                    log.Info("Disable proxy!");
-                    SystemProxyHelper.DisableAllProxyWithourRestore();
-                    FireFoxHelper.RemoveFirefox();
-                }
-                catch (Exception exp) { log.Error(exp.ToString()); }
-                try { ProxyRoutines.SetProxy(false); }
-                catch (Exception exp) { log.Equals(exp.ToString()); }
-#endif
+                Program.DisableProxy();
             }
         }
 
@@ -340,7 +323,7 @@ namespace troll_ui_app
             try
             {
                 RegistryKey autorun_registry_key = Registry.CurrentUser.OpenSubKey(kAutoRunRegisstryKey, true);
-                autorun_registry_key.SetValue(kAutoRunKey, "\"" + Application.ExecutablePath + " \"" + " -notvisible");
+                autorun_registry_key.SetValue(kAutoRunKey, "\"" + Application.ExecutablePath + "\"" + " -notvisible");
             }
             catch(Exception e)
             {
