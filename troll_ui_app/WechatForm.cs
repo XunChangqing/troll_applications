@@ -92,7 +92,7 @@ namespace troll_ui_app
                 {
                     //MessageBox.Show("获取授权失败，请检查网络是否连接！",
                     //        "获取授权失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AutoCloseMessageBox.ShowMessage(20, "获取授权失败，请检查网络是否连接！");
+                    AutoCloseMessageBox.ShowMessage(-1, "获取授权失败，请检查网络是否连接！");
                     return false;
                 }
                 else if (n.AddMinutes(20) > DateTime.Now)
@@ -103,7 +103,7 @@ namespace troll_ui_app
                 else
                 {
                     Task t = SendAuthRequestNotificationAsync();
-                    AutoCloseMessageBox.ShowMessage(20, "执行此操作需要微信绑定者进行授权！\n请按照公众号提示操作后重试！");
+                    AutoCloseMessageBox.ShowMessage(-1, "执行此操作需要微信绑定者进行授权！\n请按照公众号提示操作后重试！");
                     //MessageBox.Show("执行此操作需要微信绑定者点击公众号授权按钮进行授权！\n请在公众号菜单中点击授权按钮后重试！",
                     //    "操作未授权", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;

@@ -422,7 +422,7 @@ namespace troll_ui_app
                 if (Properties.Settings.Default.lastFastLocalScanDateTime != DateTime.MinValue)
                 {
                     DialogResult dr = MessageBox.Show(
-                        "上一次成功上网记录扫描时间： " + Properties.Settings.Default.lastFastLocalScanDateTime.ToString()+"\n是否忽略该时间之前记录？",
+                        "上一次成功上网记录扫描时间： " + Properties.Settings.Default.lastFastLocalScanDateTime.ToString()+"\n已扫描过的文件本次是否忽略？",
                         "上网记录扫描模式选择",
                          MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
                     ignore = dr == DialogResult.Yes;
@@ -454,7 +454,7 @@ namespace troll_ui_app
                 {
                     DialogResult dr = MessageBox.Show(
                         "全盘扫描模式选择",
-                        "上一次成功全盘扫描时间： " + Properties.Settings.Default.lastAllLocalScanDateTime.ToString()+ "\n是否忽略该时间之前创建的文件？",
+                        "上一次成功全盘扫描时间： " + Properties.Settings.Default.lastAllLocalScanDateTime.ToString()+ "\n已扫描过的文件本次是否忽略？",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
                     ignore = dr == DialogResult.Yes;
                 }
