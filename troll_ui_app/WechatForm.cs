@@ -81,7 +81,10 @@ namespace troll_ui_app
         {
             //return true;
             //if (hasBeenAuth)
-            if (AuthExpiredTimeLeft>TimeSpan.Zero)
+            if (Properties.Settings.Default.openid == "" ||
+                Properties.Settings.Default.userNickname == "")
+                return true;
+            else if (AuthExpiredTimeLeft>TimeSpan.Zero)
                 return true;
             else
             {

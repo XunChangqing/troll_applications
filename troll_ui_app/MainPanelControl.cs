@@ -28,6 +28,7 @@ namespace troll_ui_app
         Label analysisItemsNumLabel;
         Label analysisResultDescLabel;
         TextButton analysisResultViewBtn;
+        TextButton wechatBindingBtn;
         PictureBox wechatHeadImage;
         Label wechatNickname;
 
@@ -74,6 +75,16 @@ namespace troll_ui_app
             ToolTip mainFuncTip = new ToolTip();
             mainFuncTip.SetToolTip(mainFuncBtn, "设置防护功能和查看防护记录");
             titleBar.ProtectionCenterItem.Click += ProtectionCenterItemOnClick;
+
+            wechatBindingBtn = new TextButton();
+            wechatBindingBtn.BackColor = Color.Transparent;
+            wechatBindingBtn.Text = "绑定微信";
+            wechatBindingBtn.Font = new System.Drawing.Font("微软雅黑", 14, GraphicsUnit.Pixel); ;
+            wechatBindingBtn.ForeColor = Color.FromArgb(0x4f, 0x4f, 0x00);
+            wechatBindingBtn.HoverColor = Color.FromArgb(0xff, 0xa4, 0x05);
+            wechatBindingBtn.Location = new Point(788, 214);
+            titleBar.Controls.Add(wechatBindingBtn);
+            wechatBindingBtn.Click += wechatBindingBtnOnClick;
 
             wechatHeadImage = new PictureBox();
             wechatHeadImage.SizeMode = PictureBoxSizeMode.Zoom;
@@ -289,6 +300,24 @@ namespace troll_ui_app
             MainForm.Instance.TargetProcessedProgress.ProgressChanged += TargetProcessedProgressOnProgressChanged;
             //Paint += MainPanelOnPaint;
         }
+
+        void wechatBindingBtnOnClick(object sender, EventArgs e)
+        {
+            bool bindingSuccess = true;
+            WechatForm bindingForm = new WechatForm();
+            //使用以下一行也可以
+            bindingForm.ShowDialog();
+            bindingSuccess = bindingForm.BindingSuccess;
+            Program.RealBindingSucess = bindingForm.BindingSuccess;
+            if(bindingSuccess)
+            {
+                WechatForm.TurnOnAuth();
+                wechatNickname.Text = Properties.Settings.Default.userNickname;
+                wechatNickname.Visible = true;
+                wechatHeadImage.Visible = true;
+                wechatBindingBtn.Visible = false;
+            }
+        }
         void wechatStatusLabelOnSizeChanged(object sender, EventArgs e)
         {
             wechatStatusLabel.Location = new Point(wechatStatusIcon.Location.X - wechatStatusLabel.Width, statusPanel.Height / 2 - wechatStatusLabel.Height / 2);
@@ -384,6 +413,20 @@ namespace troll_ui_app
 
             wechatNickname.Location = new Point(wechatHeadImage.Location.X+wechatHeadImage.Width+2,
                 wechatHeadImage.Location.Y+wechatHeadImage.Height/2-wechatNickname.Height/2);
+
+            if (Properties.Settings.Default.openid == "" ||
+                Properties.Settings.Default.userNickname == "")
+            {
+                wechatNickname.Visible = false;
+                wechatHeadImage.Visible = false;
+                wechatBindingBtn.Visible = true;
+            }
+            else
+            {
+                wechatNickname.Visible = true;
+                wechatHeadImage.Visible = true;
+                wechatBindingBtn.Visible = false;
+            }
 
             checkUpdateBtn.Location = new Point(statusPanel.Width / 2 - checkUpdateBtn.Width / 2, statusPanel.Height/2 - checkUpdateBtn.Height/2);
             versionLabel.Location = new Point(24, statusPanel.Height / 2 - versionLabel.Height / 2);

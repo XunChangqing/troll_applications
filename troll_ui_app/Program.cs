@@ -152,26 +152,27 @@ namespace troll_ui_app
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                bool bindingSuccess = true;
-                if (Properties.Settings.Default.openid == "" ||
-                    Properties.Settings.Default.userNickname == "")
-                {
-                    WechatForm bindingForm = new WechatForm();
-                    //bindingForm.ShowDialog();
-                    //使用以下一行也可以
-                    Application.Run(bindingForm);
-                    bindingSuccess = bindingForm.BindingSuccess;
-                    RealBindingSucess = bindingForm.BindingSuccess;
-                }
-                //RealBindingSucess = true;
-                if (bindingSuccess)
-                {
+
+                //bool bindingSuccess = true;
+                //if (Properties.Settings.Default.openid == "" ||
+                //    Properties.Settings.Default.userNickname == "")
+                //{
+                //    WechatForm bindingForm = new WechatForm();
+                //    //bindingForm.ShowDialog();
+                //    //使用以下一行也可以
+                //    Application.Run(bindingForm);
+                //    bindingSuccess = bindingForm.BindingSuccess;
+                //    RealBindingSucess = bindingForm.BindingSuccess;
+                //}
+
+                //if (bindingSuccess)
+                //{
                     InitForBusinessLogic();
                     Application.ApplicationExit += OnApplicationExit;
                     MainForm mainform = new MainForm(args);
                     Application.Run(mainform);
                     CleanUp();
-                }
+                //}
                 log.Info("Exit from Main!");
             }
             catch (Exception e)
@@ -351,7 +352,9 @@ namespace troll_ui_app
             {
                 if (_cleanUp)
                     return;
-                DisableProxy();
+                //只有有相关功能打开时，才在退出时关闭代理设置，避免触发杀毒软件
+                if(Properties.Settings.Default.IsNetworkImageTurnOn || Properties.Settings.Default.IsPornWebsiteProtectionTurnOn)
+                    DisableProxy();
                 try
                 {
                     systemMutex.Dispose();
