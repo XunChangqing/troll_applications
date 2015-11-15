@@ -191,6 +191,9 @@ namespace troll_ui_app
             _autoStartCheckbox.Checked = GetAutoStart();
             _autoStartCheckbox.CheckedChanged += _autoStartCheckboxOnCheckedChanged;
             _settingPanel.Controls.Add(_autoStartCheckbox);
+            ToolTip autoStartToolTip = new ToolTip();
+            autoStartToolTip.AutoPopDelay = 32000;
+            autoStartToolTip.SetToolTip(_autoStartCheckbox, "不良网站或是网络图片过滤功能必须与开机启动设置匹配");
             //ToolTip strongNetworkImageFilterTip = new ToolTip();
             //strongNetworkImageFilterTip.SetToolTip(_strongNetworkImageFilter, "包含擦边球色情图片");
 
@@ -274,19 +277,36 @@ namespace troll_ui_app
 
             //只有有功能打开时才操作，否则会导致默认关闭时，总是操作，导致杀毒软件报警
             if (Properties.Settings.Default.IsNetworkImageTurnOn || Properties.Settings.Default.IsPornWebsiteProtectionTurnOn)
-                SetSystemProxy();
+                TurnOnProxy();
+                //SetSystemProxy();
         }
-        void SetSystemProxy()
+        void TurnOnProxy()
         {
-            if (Properties.Settings.Default.IsNetworkImageTurnOn || Properties.Settings.Default.IsPornWebsiteProtectionTurnOn)
+            Program.EnableProxy();
+            if (!GetAutoStart())
             {
-                Program.EnableProxy();
-            }
-            else
-            {
-                Program.DisableProxy();
+                _autoStartCheckbox.Checked = true;
             }
         }
+        void TurnOffProxy()
+        {
+            Program.DisableProxy();
+        }
+        //void SetSystemProxy()
+        //{
+        //    if (Properties.Settings.Default.IsNetworkImageTurnOn || Properties.Settings.Default.IsPornWebsiteProtectionTurnOn)
+        //    {
+        //        Program.EnableProxy();
+        //        if(!GetAutoStart())
+        //        {
+        //            _autoStartCheckbox.Checked = true;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Program.DisableProxy();
+        //    }
+        //}
 
         void ProtectionPanelControlOnLoad(object sender, EventArgs e)
         {
@@ -358,7 +378,12 @@ namespace troll_ui_app
             if (_autoStartCheckbox.Checked)
                 TurnOnAutoStartReg();
             else
+            {
+                //关闭开机启动时，同时关闭不良网站和网页图片过滤功能，并关闭代理，以避免关机重启以后代理无法回复，导致无法上网的情况
                 TurnOffAutoStartReg();
+                _websiteBtn.State = false;
+                _networkImageBtn.State = false;
+            }
         }
         bool HasOneFuncWork()
         {
@@ -389,8 +414,28 @@ namespace troll_ui_app
         {
             Properties.Settings.Default.IsPornWebsiteProtectionTurnOn = e;
             Properties.Settings.Default.Save();
-            SetSystemProxy();
+            //SetSystemProxy();
+            if(e)
+                TurnOnProxy();
+            else if(Properties.Settings.Default.IsNetworkImageTurnOn == false)
+                TurnOffProxy();
             SetLogoImage();
+            //SetAutoStart();
+        }
+        void _networkImageBtnOnSwitchChanged(object sender, bool e)
+        {
+            Properties.Settings.Default.IsNetworkImageTurnOn = e;
+            Properties.Settings.Default.Save();
+            //SetSystemProxy();
+            if (e)
+                TurnOnProxy();
+            else if (Properties.Settings.Default.IsPornWebsiteProtectionTurnOn == false)
+                TurnOffProxy();
+            SetLogoImage();
+            if (e)
+                _strongNetworkImageFilter.Enabled = true;
+            else
+                _strongNetworkImageFilter.Enabled = false;
             //SetAutoStart();
         }
         void _activeImageBtnOnSwitchChanged(object sender, bool e)
@@ -413,18 +458,6 @@ namespace troll_ui_app
                 MainForm.Instance._activeFileMonitor.EnableVideoDetection();
             else
                 MainForm.Instance._activeFileMonitor.DisableVideoDetection();
-            //SetAutoStart();
-        }
-        void _networkImageBtnOnSwitchChanged(object sender, bool e)
-        {
-            Properties.Settings.Default.IsNetworkImageTurnOn = e;
-            Properties.Settings.Default.Save();
-            SetSystemProxy();
-            SetLogoImage();
-            if (e)
-                _strongNetworkImageFilter.Enabled = true;
-            else
-                _strongNetworkImageFilter.Enabled = false;
             //SetAutoStart();
         }
         void _strongNetworkImageFilterOnCheckedChanged(object sender, EventArgs e)

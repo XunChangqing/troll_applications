@@ -53,7 +53,6 @@ namespace troll_ui_app
             //AutoCloseMessageBox acmb = new AutoCloseMessageBox(100, "123");
             //acmb.ShowDialog();
             //return;
-            //AllocConsole();
             //PornClassifier.Init();
             //FFMPEGWrapper.Init();
             ////PornClassifier.Instance.ClassifyVideoFile("1.mp4");
@@ -145,7 +144,7 @@ namespace troll_ui_app
                 //如果是开机启动，则延时两分钟，减少对开机启动时间的影响
                 if (args.Contains("-notvisible"))
                 {
-                    System.Threading.Thread.Sleep(120000);
+                    //System.Threading.Thread.Sleep(120000);
                 }
                 //必须在绑定之前，这样才能正常访问web的绑定服务
                 SSLInit();
@@ -282,23 +281,42 @@ namespace troll_ui_app
             //        false => disallow unauthenticated server.
             return certMatch;
         }
+        public static bool GetProxy()
+        {
+            try
+            {
+                RegistryKey reg = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", true);
+                if ((int)reg.GetValue("ProxyEnable") == 1 && reg.GetValue("ProxyServer").ToString().Contains("http=127.0.0.1:8090"))
+                    return true;
+                else
+                    return false;
+            }
+            catch(Exception e)
+            {
+                log.Error(e.ToString());
+                return false;
+            }
+        }
         public static void EnableProxy()
         {
 #if !DEBUG
             //if(System.Environment.OSVersion.Version <=  
-            if (System.Environment.OSVersion.Version.Major <= 6 && System.Environment.OSVersion.Version.Minor <= 1)
+            //if (System.Environment.OSVersion.Version.Major <= 6 && System.Environment.OSVersion.Version.Minor <= 1)
+            //{
+            //    log.Info("Enabel Proxy Win7!");
+            //    try { ProxyRoutines.SetProxy("http=127.0.0.1:8090"); }
+            //    catch (Exception exp) { log.Error(exp.ToString()); }
+            //}
+            //else
             {
-                log.Info("Enabel Proxy Win7!");
-                try { ProxyRoutines.SetProxy("http=127.0.0.1:8090"); }
-                catch (Exception exp) { log.Error(exp.ToString()); }
-            }
-            else
-            {
-                log.Info("Enabel Proxy Win8 and Win10!");
+                log.Info("Enabel Proxy!");
                 try
                 {
-                    SystemProxyHelper.EnableProxyHTTP("127.0.0.1", 8090);
-                    FireFoxHelper.AddFirefox();
+                    if (!GetProxy())
+                    {
+                        SystemProxyHelper.EnableProxyHTTP("127.0.0.1", 8090);
+                        FireFoxHelper.AddFirefox();
+                    }
                 }
                 catch (Exception e)
                 {
@@ -311,33 +329,50 @@ namespace troll_ui_app
         {
             //unset proxy again to make sure
 #if !DEBUG
-            if (System.Environment.OSVersion.Version.Major<=6 && System.Environment.OSVersion.Version.Minor<=1)
+            //if (System.Environment.OSVersion.Version.Major<=6 && System.Environment.OSVersion.Version.Minor<=1)
+            //{
+            //    log.Info("Disable Proxy Win7!");
+            //    try
+            //    {
+            //        ProxyRoutines.SetProxy(false);
+            //    }
+            //    catch (Exception exp)
+            //    { log.Error(exp.ToString()); }
+            //}
+            //else
             {
-                log.Info("Disable Proxy Win7!");
                 try
                 {
-                    ProxyRoutines.SetProxy(false);
-                }
-                catch (Exception exp)
-                { log.Error(exp.ToString()); }
-            }
-            else
-            {
-                try
-                {
-                    log.Info("Disable Proxy Win8 and Win10!");
-                    //在关机时，不能refresh，否则会导致无法修改成功，其他时候则要刷新，否则会导致无法刷新
-                    if (kCloseReason == CloseReason.WindowsShutDown)
+                    if (GetProxy())
                     {
-                        log.Info("Disable proxy without Refresh!");
-                        SystemProxyHelper.DisableAllProxyWithourRestoreAndRefresh();
+                        log.Info("Disable Proxy!");
+                        //在关机时，不能refresh，否则会导致无法修改成功，其他时候则要刷新，否则会导致无法刷新
+                        if (kCloseReason == CloseReason.WindowsShutDown)
+                        {
+                            log.Info("Disable proxy without Refresh!");
+                            SystemProxyHelper.DisableAllProxyWithourRestoreAndRefresh();
+                            //int tryTimes = 10;
+                            //while (tryTimes-- > 0)
+                            //{
+                            //SystemProxyHelper.DisableAllProxyWithourRestore();
+                            //reg.SetValue("ProxyEnable", 0);
+                            //reg.Flush();
+                            ////read again
+                            //if ((int)reg.GetValue("ProxyEnable") != 0)
+                            //    Thread.Sleep(50);
+                            ////else
+                            //    //break;
+                            RegistryKey reg = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", true);
+                            log.Info("ProxyEnable Value: " + reg.GetValue("ProxyEnable"));
+                            //}
+                        }
+                        else
+                        {
+                            log.Info("Disable proxy with Refresh!");
+                            SystemProxyHelper.DisableAllProxyWithourRestore();
+                        }
+                        FireFoxHelper.RemoveFirefox();
                     }
-                    else
-                    {
-                        log.Info("Disable proxy with Refresh!");
-                        SystemProxyHelper.DisableAllProxyWithourRestore();
-                    }
-                    FireFoxHelper.RemoveFirefox();
                 }
                 catch (Exception exp) { log.Error(exp.ToString()); }
             }
