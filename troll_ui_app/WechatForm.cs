@@ -366,6 +366,9 @@ namespace troll_ui_app
                 //generate qrcode myself to decrease the latency
                 QRCodeGenerator qrGenerator = new QRCodeGenerator();
                 QRCodeGenerator.QRCode qrCode = qrGenerator.CreateQrCode(qrcodeUrl, QRCodeGenerator.ECCLevel.Q);
+
+                //直接从微信获取，防止本地生成发生错误
+                //qrCodePictureBox.ImageLocation = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
                 qrCodePictureBox.Image = qrCode.GetGraphic(20);
                 qrCodePictureBox.Cursor = Cursors.Default;
                 //qrCodePictureBox.Image = bmp;
@@ -399,7 +402,7 @@ namespace troll_ui_app
                     //}
                     //catch(Exception exp)
                     //{ log.Error("error of getting scene: " + exp.ToString()); }
-                    //await Task.Delay(2000);
+                        await Task.Delay(2000);
                     log.Info("one time again for getting scene!");
                 }
                 while (true)
@@ -415,6 +418,8 @@ namespace troll_ui_app
                             cancellationToken);
                         msg.EnsureSuccessStatusCode();
                         retStr = await msg.Content.ReadAsStringAsync();
+                        //如果没有用户信息，这里retStr是null，下面进行解析会出异常
+                        //如果不捕获该异常并反复尝试，这里在界面上会表现为卡住
                         retObj = JObject.Parse(retStr);
                         JToken openidToken = retObj["openid"];
                         JToken nicknameToken = retObj["nickname"];
@@ -449,9 +454,9 @@ namespace troll_ui_app
                     }
                     catch (Exception exp)
                     { log.Error("Error of getting user info: " + exp.ToString()); }
+                    await Task.Delay(2000);
                     log.Info("one time again for getting user info!");
                 }
-                //await Task.Delay(2000);
                 log.Info("Binding Success!");
                 Close();
             }
