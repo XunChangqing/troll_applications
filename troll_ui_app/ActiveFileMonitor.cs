@@ -317,7 +317,7 @@ namespace troll_ui_app
                                         var t = PornClassifier.Instance.ClassifyVideoFile(key, out classifyException);
                                         if (classifyException != null)
                                             throw classifyException;
-                                        else if (t) 
+                                        else if (t)
                                         {
                                             itype = PornDatabase.PornItemType.LocalVideo;
                                             //md5Set[shash] = PornDatabase.PornItemType.LocalVideo;

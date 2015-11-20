@@ -299,19 +299,17 @@ namespace troll_ui_app
             mainFuncBtn.Click += mainFuncBtnOnClick;
             MainForm.Instance.TargetProcessedProgress.ProgressChanged += TargetProcessedProgressOnProgressChanged;
             //Paint += MainPanelOnPaint;
+            //RefreshWechatInfo();
         }
 
         void wechatBindingBtnOnClick(object sender, EventArgs e)
         {
-            bool bindingSuccess = true;
-            WechatForm bindingForm = new WechatForm();
-            //使用以下一行也可以
-            bindingForm.ShowDialog();
-            bindingSuccess = bindingForm.BindingSuccess;
-            Program.RealBindingSucess = bindingForm.BindingSuccess;
-            if(bindingSuccess)
+            WechatForm.GetInstance().Show();
+        }
+        public void RefreshWechatInfo()
+        {
+            if(Program.RealBindingSucess)
             {
-                WechatForm.TurnOnAuth();
                 wechatNickname.Text = Properties.Settings.Default.userNickname;
                 wechatNickname.Visible = true;
                 wechatHeadImage.Visible = true;
@@ -341,7 +339,7 @@ namespace troll_ui_app
                 analysisResultDescLabel.Visible = true;
                 analysisResultViewBtn.Visible = true;
             }
-            log.Info("Target Processed Progress: " + e.ToString()+TargetProcessedNum+PornDetectedNum);
+            log.Info("Target Processed Progress, Item Type: " + e.ToString() + " Total Num: " + TargetProcessedNum + " Porn Num: " + PornDetectedNum);
         }
         public void ClearPornLogs()
         {

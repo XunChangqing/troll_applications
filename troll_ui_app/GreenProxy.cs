@@ -204,16 +204,43 @@ namespace troll_ui_app
                     if (nbm != null)
                     {
                         nbm.Save(mstr, bm.RawFormat);
+
+                        //这里使用toArray就可以得到和实际内容长度相同的数据
+                        byte[] output = CompressResponse(mstr.ToArray());
+                        //这里必须使用mstr.Length，而不能使用output.Length
+                        //因为前者表示真实长度，后者表示总缓存长度，比实际长度要长
+                        //如果前面是使用ToArray，而不是GetBuffer则没问题
+                        ResponseHeaders.ContentLength = (uint)output.Length;
+                        SendResponseStatusAndHeaders();
+                        SocketBP.TunnelDataTo(TunnelBP, output);
+
                         nbm.Dispose();
                     }
                     else
-                        bm.Save(mstr, bm.RawFormat);
-                    byte[] output = CompressResponse(mstr.GetBuffer());
-                    ResponseHeaders.ContentLength = (uint)output.Length;
+                    {
+                        //bm.Save(mstr, bm.RawFormat);
+                        SendResponseStatusAndHeaders();
+                        SocketBP.TunnelDataTo(TunnelBP, response);
+                    }
+
+                    //debug code
+                    //bm.Save(mstr, bm.RawFormat);
+                    //这里使用toArray就可以得到和实际内容长度相同的数据
+                    //byte[] output = CompressResponse(mstr.ToArray());
+                    //byte[] output = CompressResponse(mstr.GetBuffer());
+                    //这里必须使用mstr.Length，而不能使用output.Length
+                    //因为前者表示真实长度，后者表示总缓存长度，比实际长度要长
+                    //如果前面是使用ToArray，而不是GetBuffer则没问题
+                    //ResponseHeaders.ContentLength = (uint)output.Length;
+                    //SendResponseStatusAndHeaders();
+                    //SocketBP.TunnelDataTo(TunnelBP, output);
+
+                    //byte[] output = CompressResponse(mstr.GetBuffer());
+                    //ResponseHeaders.ContentLength = (uint)output.Length;
 
                     // Finally, send the result.
-                    SendResponseStatusAndHeaders();
-                    SocketBP.TunnelDataTo(TunnelBP, output);
+                    //SendResponseStatusAndHeaders();
+                    //SocketBP.TunnelDataTo(TunnelBP, output);
                     // We are done with the request.
                     // Note that State.NextStep has been set to null earlier.
                 }

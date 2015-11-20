@@ -79,7 +79,6 @@ namespace troll_ui_app
 
                 // Get the address of the first line.
                 IntPtr ptr = bmpData.Scan0;
-                float[] ratio = new float[8];
                 ImageType ret = Classify(ptr, bmp.Width, bmp.Height, bmpData.Stride);
                 // Unlock the bits.
                 bmp.UnlockBits(bmpData);
@@ -95,8 +94,10 @@ namespace troll_ui_app
             lock (syncRoot)
             {
                 float[] ratio = new float[8];
+                log.Info("Classify Image: " + pimg + " w: " + width + " h: " + height + " linesize: " + linesize);
                 int ret = ClassifyImage(classifier_handle_, pimg, width, height, linesize, 3,
                     ratio.Length, ratio);
+                log.Info("Classify Image Over!");
                 // Unlock the bits.
                 float pornRatio = ratio[(int)InternalImageType.Porn];
                 float sexyRatio = ratio[(int)InternalImageType.Sexy];

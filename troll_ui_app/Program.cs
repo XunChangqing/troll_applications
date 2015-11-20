@@ -21,6 +21,7 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 using Microsoft.Win32;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace troll_ui_app
 {
@@ -121,26 +122,13 @@ namespace troll_ui_app
                 InitLogAndDirs();
 
                 string systemMutexName = "masa_troll_guard_mutex";
-                //using named system mutex to ensure single instance of application
-                //try
-                //{
-                //    //如果当前已经有系统级mutex被打开则退出
-                //    var mutex = System.Threading.Mutex.OpenExisting(systemMutexName);
-                //    log.Error("Exit due to another running instance: "+mutex.ToString());
-                //    return;
-                //}
-                //catch(Exception exp)
-                //{
-                //    bool result;
-                //    var mutex = new System.Threading.Mutex(true, "masa_troll_guard_mutex");
-                //}
                 bool result;
                 systemMutex = new System.Threading.Mutex(true, systemMutexName, out result);
-                if(!result)
-                {
-                    log.Error("Exit due to another running instance: " + systemMutex.ToString());
-                    return;
-                }
+                //if(!result)
+                //{
+                //    log.Error("Exit due to another running instance: " + systemMutex.ToString());
+                //    return;
+                //}
                 //如果是开机启动，则延时两分钟，减少对开机启动时间的影响
                 if (args.Contains("-notvisible"))
                 {
@@ -152,26 +140,30 @@ namespace troll_ui_app
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
-                //bool bindingSuccess = true;
-                //if (Properties.Settings.Default.openid == "" ||
-                //    Properties.Settings.Default.userNickname == "")
-                //{
-                //    WechatForm bindingForm = new WechatForm();
-                //    //bindingForm.ShowDialog();
-                //    //使用以下一行也可以
-                //    Application.Run(bindingForm);
-                //    bindingSuccess = bindingForm.BindingSuccess;
-                //    RealBindingSucess = bindingForm.BindingSuccess;
-                //}
+                bool bindingSuccess = true;
+                if (Properties.Settings.Default.openid == "" ||
+                    Properties.Settings.Default.userNickname == "")
+                {
+                    WechatForm bindingForm = WechatForm.GetInstance();
+                    //bindingForm.ShowDialog();
+                    //使用以下一行也可以
+                    //WechatSingleInstanceController controller = new WechatSingleInstanceController();
+                    //controller.Run(args);
+                    Application.Run(bindingForm);
+                    bindingSuccess = bindingForm.BindingSuccess;
+                    RealBindingSucess = bindingForm.BindingSuccess;
+                }
 
-                //if (bindingSuccess)
-                //{
+                if (bindingSuccess)
+                {
                     InitForBusinessLogic();
                     Application.ApplicationExit += OnApplicationExit;
-                    MainForm mainform = new MainForm(args);
-                    Application.Run(mainform);
+                    //MainForm mainform = new MainForm(args);
+                    //Application.Run(mainform);
+                    SingleInstanceController controller = new SingleInstanceController();
+                    controller.Run(args);
                     CleanUp();
-                //}
+                }
                 log.Info("Exit from Main!");
             }
             catch (Exception e)
@@ -182,6 +174,47 @@ namespace troll_ui_app
                 ReportErrorOnline(e.ToString());
                 MessageBox.Show("程序由于未知问题崩溃，我们尽快处理，给您带来的不便敬请谅解！",
                         "程序崩溃", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        public class WechatSingleInstanceController : WindowsFormsApplicationBase
+        {
+            public WechatSingleInstanceController()
+            {
+                IsSingleInstance = true;
+                StartupNextInstance += this_StartupNextInstance;
+            }
+
+            void this_StartupNextInstance(object sender, StartupNextInstanceEventArgs e)
+            {
+                WechatForm form = MainForm as WechatForm; //My derived form type
+                form.Show();
+            }
+
+            protected override void OnCreateMainForm()
+            {
+                MainForm = WechatForm.GetInstance();
+            }
+        }
+        public class SingleInstanceController : WindowsFormsApplicationBase
+        {
+            public SingleInstanceController()
+            {
+                IsSingleInstance = true;
+                StartupNextInstance += this_StartupNextInstance;
+            }
+
+            void this_StartupNextInstance(object sender, StartupNextInstanceEventArgs e)
+            {
+                MainForm form = MainForm as MainForm; //My derived form type
+                form.Show();
+            }
+
+            protected override void OnCreateMainForm()
+            {
+                MainForm = new MainForm(Environment.GetCommandLineArgs());
+                //因为要操作主窗口，所以需要在主窗口生成以后
+                if (Program.RealBindingSucess)
+                    WechatForm.TurnOnAuth();
             }
         }
 

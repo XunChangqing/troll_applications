@@ -93,7 +93,7 @@ namespace troll_ui_app
         ContextMenuStrip _mainContextMenuTrip;
         bool bindingSuccess = true;
         bool _needToBeHide = false;
-        public MainForm(String []args)
+        public MainForm(string[] args)
         {
             Instance = this;
             Text = "山妖卫士";
@@ -140,12 +140,6 @@ namespace troll_ui_app
             _mainNotifyIcon.Visible = true;
             _mainNotifyIcon.DoubleClick += _mainNotifyIconOnDoubleClick;
 
-            //mainPanelControl.ScanEvent += mainPanelOnScanEvent;
-            Load += MainFormOnLoad;
-            FormClosed += MainFormOnFormClosed;
-            FormClosing += MainFormOnFormClosing;
-            Disposed += MainFormOnDisposed;
-
             //最小化的方法会导致防护窗口中日志目录的表格尺寸有问题
             if (args.Contains("-notvisible"))
             {
@@ -157,6 +151,12 @@ namespace troll_ui_app
                 ////Hide();
                 ////WindowState = FormWindowState.Minimized;
             }
+            //mainPanelControl.ScanEvent += mainPanelOnScanEvent;
+            Load += MainFormOnLoad;
+            FormClosed += MainFormOnFormClosed;
+            FormClosing += MainFormOnFormClosing;
+            Disposed += MainFormOnDisposed;
+
             //set hotkey as ctrl+alt+backspace
             //Boolean success = FormMain.RegisterHotKey(this.Handle, this.GetType().GetHashCode(), MOD_CTRL | MOD_ALT, 0x08);//Set hotkey as 'b'
             //set the owner to avoid the main form in atl-table window
@@ -164,6 +164,9 @@ namespace troll_ui_app
             //form1.FormBorderStyle = FormBorderStyle.FixedToolWindow;
             //form1.ShowInTaskbar = false;
             //Owner = form1;
+        }
+        public void InitWithCommandLine(string[]args)
+        {
         }
 
         void MainFormOnShown(object sender, EventArgs e)
@@ -244,10 +247,15 @@ namespace troll_ui_app
             scanPanelControl.Visible = false;
             _protectionPanelControl.Visible = false;
             //等主窗口初始化完成再手动打开授权，因为授权会定时操作主窗口，防止发生错误
-            if (Program.RealBindingSucess)
+            //if (Program.RealBindingSucess)
+            //{
+            //    log.Info("Real Binding Success, Enable Auth!");
+            //    WechatForm.TurnOnAuth();
+            //}
+            if (Properties.Settings.Default.openid == "" ||
+                Properties.Settings.Default.userNickname == "")
             {
-                log.Info("Real Binding Success, Enable Auth!");
-                WechatForm.TurnOnAuth();
+                WechatForm.GetInstance().Show();
             }
             if (_needToBeHide)
                 Hide();

@@ -79,7 +79,9 @@ namespace troll_ui_app
         }
         static public bool Auth()
         {
-            //return true;
+#if DEBUG
+            return true;
+#endif
             //if (hasBeenAuth)
             if (Properties.Settings.Default.openid == "" ||
                 Properties.Settings.Default.userNickname == "")
@@ -159,7 +161,17 @@ namespace troll_ui_app
         Panel _closeBackImage;
         Label _closeBtn;
         Label _testLabel;
-        public WechatForm()
+        static WechatForm SingleInstance = null;
+        static public WechatForm GetInstance()
+        {
+            if (SingleInstance == null || SingleInstance.IsDisposed)
+            {
+                SingleInstance = new WechatForm();
+                //SingleInstance.TopMost = true;
+            }
+            return SingleInstance;
+        }
+        private WechatForm()
         {
             InitializeComponent();
             Icon = Properties.Resources.icon_main_icon;
@@ -393,8 +405,8 @@ namespace troll_ui_app
                 while (true)
                 {
                     //防止由于某次连接异常，导致无法继续的问题
-                    //try
-                    //{
+                    try
+                    {
                         JObject userInfoRequestObj = new JObject();
                         userInfoRequestObj["token"] = webToken;
                         userInfoRequestObj["openid"] = Properties.Settings.Default.openid;
@@ -427,13 +439,16 @@ namespace troll_ui_app
                                 log.Error(excep.ToString());
                             }
                             BindingSuccess = true;
+                            Program.RealBindingSucess = true;
+                            //if(MainForm.Instance != null)
+                            //    MainForm.Instance.mainPanelControl.RefreshWechatInfo();
                             break;
                         }
                         else
                             tipLabel.Text = "请点击公众号绑定按钮完成绑定！";
-                    //}
-                    //catch(Exception exp)
-                    //{ log.Error("Error of getting user info: " + exp.ToString()); }
+                    }
+                    catch (Exception exp)
+                    { log.Error("Error of getting user info: " + exp.ToString()); }
                     log.Info("one time again for getting user info!");
                 }
                 //await Task.Delay(2000);
@@ -447,6 +462,7 @@ namespace troll_ui_app
             }
             catch(Exception err)
             {
+                //AutoCloseMessageBox.ShowMessage(-1, "绑定出错，请点击刷新二维码重试！");
                 log.Error(err.ToString());
             }
         }

@@ -5,11 +5,13 @@
 #define DistFolder '..\dist_folder' 
 #define ApplicationName '山妖卫士'
 #define ApplicationVersion GetFileVersion('..\dist_folder\troll_ui_app.exe')
+;#define OFF_LINE
 
 [Setup]
 AppName={#ApplicationName}
 AppPublisher=马沙科技
 AppVersion={#ApplicationVersion}
+SignTool=wosign
 
 PrivilegesRequired=admin
 DefaultDirName={pf}\Masatek\Trollwiz
@@ -26,8 +28,13 @@ SetupIconFile=shanyaows.ico
 ;WizardImageBackColor=#bbggrr #221100
 WizardImageFile=left.bmp
 WizardSmallImageFile=small.bmp
-OutputBaseFilename=trollwiz-{#ApplicationVersion}
-OutputManifestFile=trollwiz-{#ApplicationVersion}.manifest
+#ifdef OFF_LINE
+OutputBaseFilename=trollwiz-{#ApplicationVersion}-offline
+OutputManifestFile=trollwiz-{#ApplicationVersion}-offline.manifest
+#else
+OutputBaseFilename=trollwiz-{#ApplicationVersion}-online
+OutputManifestFile=trollwiz-{#ApplicationVersion}-online.manifest
+#endif
 DisableReadyPage=yes
 DisableReadyMemo=yes
 DisableWelcomePage=yes
@@ -86,15 +93,17 @@ Source: "{#DistFolder}\ffmpegwrapper.dll"; DestDir: "{app}"
 ;Source: "Readme.txt"; DestDir: "{app}"; Flags: isreadme
 
 ;require .net framework 4.5
-;[Files]
-;Source: "{#DistFolder}\dotnetfx45_full_x86_x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall; Check: not IsRequiredDotNetDetected
-;[Run]
-;Filename: {tmp}\dotnetfx45_full_x86_x64.exe; Parameters: "/q:a /c:""install /l /q"""; Check: not IsRequiredDotNetDetected; StatusMsg: Microsoft Framework 4.5 is beïng installed. Please wait...
-
+#ifdef OFF_LINE
+[Files]
+Source: "{#DistFolder}\dotnetfx45_full_x86_x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall; Check: not IsRequiredDotNetDetected
+[Run]
+Filename: {tmp}\dotnetfx45_full_x86_x64.exe; Parameters: "/q:a /c:""install /l /q"""; Check: not IsRequiredDotNetDetected; StatusMsg: Microsoft Framework 4.5 is beïng installed. Please wait...
+#else
 [Files]
 Source: "{#DistFolder}\dotNetFx45_Full_setup.exe"; DestDir: {tmp}; Flags: deleteafterinstall; Check: not IsRequiredDotNetDetected
 [Run]
 Filename: {tmp}\dotNetFx45_Full_setup.exe; Parameters: "/q:a /c:""install /l /q"""; Check: not IsRequiredDotNetDetected; StatusMsg: Microsoft Framework 4.5 is beïng installed. Please wait...
+#endif
 
 [Icons]
 Name: "{group}\山妖卫士"; Filename: "{app}\troll_ui_app.exe"; WorkingDir: "{app}"; Tasks: startupicon
