@@ -282,14 +282,22 @@ namespace troll_ui_app
 
                 //string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
                 //dirs = dirs.Concat(SafeFileEnumerator.EnumerateDirectories(localAppDataPath, "*Cache*", SearchOption.AllDirectories).Where<String>(s=>!s.Contains(iecachepath)));
-                foreach (var dir in dirs)
+                List<string> cachedirs = dirs.ToList();
+                List<string> tmpcachedirs = cachedirs;
+                cachedirs.Add(iecachepath);
+                //剔除路径重叠的目录，留下最高层的目录，防止重复扫描
+                cachedirs.RemoveAll(s => tmpcachedirs.Exists(ss => ss != s && s.Contains(ss)));
+                
+                //枚举每个目录内的文件
+                foreach (var dir in cachedirs)
                 {
                     log.Info("Fast dir: " + dir);
                     totalfiles = totalfiles.Concat(SafeFileEnumerator.EnumerateFileInfos(dir, "*.*", SearchOption.AllDirectories));
                 }
 
-                sBrowserDirList= dirs.ToList();
-                sBrowserDirList.Add(iecachepath);
+                sBrowserDirList = cachedirs;
+                //sBrowserDirList= dirs.ToList();
+                //sBrowserDirList.Add(iecachepath);
 
                 //var files = GetFiles("C:\\SearchDirectory", d => !d.Contains("AvoidMe", StringComparison.OrdinalIgnoreCase), "*.*");
                 //if(Properties.Settings.Default.isFastLocalScanIncremental)
