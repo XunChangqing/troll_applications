@@ -144,10 +144,17 @@ namespace troll_ui_app
                 else
                     return DateTime.MinValue;
             }
+            //只有网络访问的异常时才提示检查网络
+            catch (System.Net.Http.HttpRequestException httpException)
+            {
+                log.Error(httpException.ToString());
+                networkException = true;
+                return DateTime.MinValue;
+            }
             catch(Exception err)
             {
                 log.Error(err.ToString());
-                networkException = true;
+                networkException = false;
                 return DateTime.MinValue;
             }
         }

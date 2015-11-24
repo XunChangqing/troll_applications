@@ -194,12 +194,17 @@ namespace troll_ui_app
         {
             PornDBConnection.Dispose();
         }
-        public DataTable CreatePornItemsDataTable(out SQLiteDataAdapter sqliteDataAdapter)
+        public DataTable CreatePornItemsDataTable()
         {
             DataTable pornItemsTable = new DataTable();
-            sqliteDataAdapter = new SQLiteDataAdapter(String.Format(kGeneralSelect, "porn_items"), PornDBConnection);
+            SQLiteDataAdapter sqliteDataAdapter = new SQLiteDataAdapter(String.Format(kGeneralSelect, "porn_items"), PornDBConnection);
             sqliteDataAdapter.Fill(pornItemsTable);
             return pornItemsTable;
+        }
+        public void FillPornItemsDataTable(ref DataTable dataTable)
+        {
+            SQLiteDataAdapter sqliteDataAdapter = new SQLiteDataAdapter(String.Format(kGeneralSelect, "porn_items"), PornDBConnection);
+            sqliteDataAdapter.Fill(dataTable);
         }
         public void DeleteAllPornItmes()
         {
@@ -266,7 +271,8 @@ namespace troll_ui_app
             {
                 SQLiteCommand cmd = new SQLiteCommand(String.Format(kPornItemInsertOrReplace, url, (Int64)PornItemType.NetworkImage,
                     "网络不良图片", (Int64)PornItemStatus.Normal), PornDBConnection);
-                cmd.ExecuteNonQuery();
+                int rowsInsert = cmd.ExecuteNonQuery();
+                log.Debug("PornPicInserted: " + rowsInsert);
                 _TableChangedProgressInt.Report("porn_items");
                 //lock (PornPicsTable)
                    

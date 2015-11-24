@@ -171,8 +171,10 @@ namespace troll_ui_app
                         //只有色情图片才加入数据库，防止将性感图片加入以后带来不好的感觉
                         if (imgType == PornClassifier.ImageType.Porn)
                         {
-                            PornDB.InsertPornPic(FullRequestUri, PornClassifier.ImageType.Porn);
+                            //先保存图片，在插入数据库，否则第一项会导致没有图片可以显示
                             bm.Save(Program.AppLocalDir + Properties.Settings.Default.imagesDir + "\\" + HttpUtility.UrlEncode(FullRequestUri));
+                            PornDB.InsertPornPic(FullRequestUri, PornClassifier.ImageType.Porn);
+                            log.Debug("After PornPicInserted");
                             ip.Report(PornDatabase.PornItemType.NetworkImage);
                         }
 
@@ -218,7 +220,11 @@ namespace troll_ui_app
                     }
                     else
                     {
+                        //用于测试，即使图片不替换，也重新保存
                         //bm.Save(mstr, bm.RawFormat);
+                        //byte[] output = CompressResponse(mstr.ToArray());
+                        //ResponseHeaders.ContentLength = (uint)output.Length;
+
                         SendResponseStatusAndHeaders();
                         SocketBP.TunnelDataTo(TunnelBP, response);
                     }

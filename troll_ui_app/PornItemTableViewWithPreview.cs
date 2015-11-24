@@ -19,7 +19,7 @@ namespace troll_ui_app
         static readonly ILog log = Log.Get();
         BindingSource _pornItemBindingSource = new BindingSource();
         PornDatabase _pornDB;
-        SQLiteDataAdapter _sqliteDataAdapter;
+        //SQLiteDataAdapter _sqliteDataAdapter;
         PornDataGridView _dataGridView;
         PictureBox _previewPictureBox;
         DataTable _pornItemDataTable;
@@ -44,13 +44,15 @@ namespace troll_ui_app
             _dataGridView.SelectionChanged += _dataGridViewOnSelectionChanged;
             SizeChanged += PornItemTableViewWithPreviewOnSizeChanged;
 
-            DataTable dta = _pornDB.CreatePornItemsDataTable(out _sqliteDataAdapter);
+            //DataTable dta = _pornDB.CreatePornItemsDataTable();
+            _pornItemDataTable = _pornDB.CreatePornItemsDataTable();
 
-            if (_viewProtectionLogs)
-                _pornItemDataTable = dta;
-            else
+            //if (_viewProtectionLogs)
+            //    _pornItemDataTable = dta;
+            //else
+            if (!_viewProtectionLogs)
             {
-                _pornItemDataTable = dta.Clone();
+                _pornItemDataTable = _pornItemDataTable.Clone();
                 DataColumn dc = new DataColumn("checked");
                 dc.DataType = typeof(bool);
                 dc.DefaultValue = true;
@@ -75,10 +77,26 @@ namespace troll_ui_app
         void TableChangedProgressOnProgressChanged(object sender, string e)
         {
             //refresh data
+            log.Debug("PornItemTableViewWithPreview TableChangedProgressOnProgressChanged: " + e);
             if (e == "porn_items")
             {
+                log.Debug("Refresh table");
+                int oldCount = _pornItemDataTable.Rows.Count;
                 _pornItemDataTable.Clear();
-                _sqliteDataAdapter.Fill(_pornItemDataTable);
+                _pornDB.FillPornItemsDataTable(ref _pornItemDataTable);
+                int newCount = _pornItemDataTable.Rows.Count;
+                //如果有变化，但是前后的行数相同，则表示可能没有读取到最新的数据
+                //所以使用新的连接再次读取
+                //该修改用于修正原来代码中，网页里面过滤了图片，主界面也提示过滤了若干图片
+                //但是防护记录中却为空的错误
+                if (oldCount == newCount)
+                {
+                    log.Info("Old count is equal to new count of porn items, fill the porn itmes with new connection!");
+                    PornDatabase pd = new PornDatabase();
+                    pd.FillPornItemsDataTable(ref _pornItemDataTable);
+                }
+                //_sqliteDataAdapter.Fill(_pornItemDataTable);
+                log.Debug("Count of porn items: " + _pornItemDataTable.Rows.Count);
             }
         }
 
@@ -130,9 +148,9 @@ namespace troll_ui_app
         public void ClearAllPornItems()
         {
             _pornDB.DeleteAllPornItmes();
-            _pornItemDataTable.Clear();
-            _previewPictureBox.ImageLocation = null;
-            _previewPictureBox.Image = null;
+            //_pornItemDataTable.Clear();
+            //_previewPictureBox.ImageLocation = null;
+            //_previewPictureBox.Image = null;
         }
 
         void PornItemTableViewWithPreviewOnSizeChanged(object sender, EventArgs e)
@@ -166,7 +184,7 @@ namespace troll_ui_app
                     //_previewPictureBox.ImageLocation = null;
                     fname = null;
                 }
-                log.Info("PornPreview image location: " + _previewPictureBox.ImageLocation);
+                log.Info("PornPreview image location: " + fname);
                 //_previewPictureBox.ImageLocation = fname;
                 //这里没有直接设置ImageLocation，因为发现如果文件名为httpurl编码形式，在文件拷贝以后无法显示
                 try
@@ -190,6 +208,12 @@ namespace troll_ui_app
                     log.Info(ex.ToString());
                     _previewPictureBox.Image = null;
                 }
+            }
+            //如果为空，要将picturebox置空
+            else
+            {
+                _previewPictureBox.ImageLocation = null;
+                _previewPictureBox.Image = null;
             }
             //if (data_grid_view_porn_pics.SelectedRows.Count > 0)
             //{
