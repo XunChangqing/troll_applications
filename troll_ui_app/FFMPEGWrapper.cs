@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Web;
+using log4net;
 
 namespace troll_ui_app
 {
     class FFMPEGWrapper : IDisposable
     {
+        static readonly ILog log = Log.Get();
         public struct FFMPEGFrameExtractorInfo
         {
             public IntPtr pdata;
@@ -40,7 +42,9 @@ namespace troll_ui_app
         public bool Open(string file)
         {
             _filename = file;
+            log.Debug("Before Open Video File: " + file);
             _extractor = CreateFFMPEGFrameExtractorExt(file);
+            log.Debug("After Open Video File: " + file);
             if (_extractor != IntPtr.Zero)
             {
                 FileInfo = FFMPEGGetInfoExt(_extractor);

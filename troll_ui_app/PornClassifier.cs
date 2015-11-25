@@ -136,6 +136,7 @@ namespace troll_ui_app
                 ffmpeg.Dispose();
                 return false;
             }
+            log.Debug("Video File Opened: " + filename);
             if(ffmpeg.FileInfo.nb_frames<MinFrames)
             {
                 log.Info("Video File Short of Frames: " + filename + " frames: " + ffmpeg.FileInfo.nb_frames); ;   
