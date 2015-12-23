@@ -76,28 +76,37 @@ namespace troll_ui_app
         }
         void TableChangedProgressOnProgressChanged(object sender, string e)
         {
-            //refresh data
-            log.Debug("PornItemTableViewWithPreview TableChangedProgressOnProgressChanged: " + e);
-            if (e == "porn_items")
+            //防止发生关于sqlite null connection or database handle的未捕获异常
+            try
             {
-                log.Debug("Refresh table");
-                int oldCount = _pornItemDataTable.Rows.Count;
-                _pornItemDataTable.Clear();
-                _pornDB.FillPornItemsDataTable(ref _pornItemDataTable);
-                int newCount = _pornItemDataTable.Rows.Count;
-                //如果有变化，但是前后的行数相同，则表示可能没有读取到最新的数据
-                //所以使用新的连接再次读取
-                //该修改用于修正原来代码中，网页里面过滤了图片，主界面也提示过滤了若干图片
-                //但是防护记录中却为空的错误
-                if (oldCount == newCount)
+                //refresh data
+                log.Debug("PornItemTableViewWithPreview TableChangedProgressOnProgressChanged: " + e);
+                if (e == "porn_items")
                 {
-                    log.Info("Old count is equal to new count of porn items, fill the porn itmes with new connection!");
-                    PornDatabase pd = new PornDatabase();
-                    pd.FillPornItemsDataTable(ref _pornItemDataTable);
+                    log.Debug("Refresh table");
+                    int oldCount = _pornItemDataTable.Rows.Count;
+                    _pornItemDataTable.Clear();
+                    _pornDB.FillPornItemsDataTable(ref _pornItemDataTable);
+                    int newCount = _pornItemDataTable.Rows.Count;
+                    //如果有变化，但是前后的行数相同，则表示可能没有读取到最新的数据
+                    //所以使用新的连接再次读取
+                    //该修改用于修正原来代码中，网页里面过滤了图片，主界面也提示过滤了若干图片
+                    //但是防护记录中却为空的错误
+                    if (oldCount == newCount)
+                    {
+                        log.Info("Old count is equal to new count of porn items, fill the porn itmes with new connection!");
+                        //PornDatabase pd = new PornDatabase();
+                        using (PornDatabase pd = new PornDatabase())
+                        {
+                            pd.FillPornItemsDataTable(ref _pornItemDataTable);
+                        }
+                    }
+                    //_sqliteDataAdapter.Fill(_pornItemDataTable);
+                    log.Debug("Count of porn items: " + _pornItemDataTable.Rows.Count);
                 }
-                //_sqliteDataAdapter.Fill(_pornItemDataTable);
-                log.Debug("Count of porn items: " + _pornItemDataTable.Rows.Count);
             }
+            catch(Exception exp)
+            { log.Error(exp.ToString()); }
         }
 
         public void AddRow(string info, PornDatabase.PornItemType itype, PornDatabase.PornItemStatus status)

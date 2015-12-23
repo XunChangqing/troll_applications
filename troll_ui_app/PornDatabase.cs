@@ -48,7 +48,7 @@ namespace troll_ui_app
     //{
     //    public DomainUpdateLogItem[] Logs { get; set; }
     //}
-    public class PornDatabase
+    public class PornDatabase : IDisposable
     {
         static readonly string webToken = "masa417";
         static readonly ILog log = Log.Get();
@@ -189,6 +189,10 @@ namespace troll_ui_app
             //    SQLiteCommandBuilder cmdBuilder = new SQLiteCommandBuilder(BlockedPagesDataAdapter);
             //    BlockedPagesDataAdapter.Fill(BlockedPagesTable);
             //}
+        }
+        public void Dispose()
+        {
+            PornDBConnection.Dispose();
         }
         ~PornDatabase()
         {
