@@ -252,11 +252,11 @@ namespace troll_ui_app
             //    log.Info("Real Binding Success, Enable Auth!");
             //    WechatForm.TurnOnAuth();
             //}
-            if (Properties.Settings.Default.openid == "" ||
-                Properties.Settings.Default.userNickname == "")
-            {
-                WechatForm.GetInstance().Show();
-            }
+            //if (Properties.Settings.Default.openid == "" ||
+            //    Properties.Settings.Default.userNickname == "")
+            //{
+            //    WechatForm.GetInstance().Show();
+            //}
             if (_needToBeHide)
                 Hide();
         }

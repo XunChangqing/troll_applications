@@ -140,22 +140,22 @@ namespace troll_ui_app
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
-                bool bindingSuccess = true;
-                if (Properties.Settings.Default.openid == "" ||
-                    Properties.Settings.Default.userNickname == "")
-                {
-                    WechatForm bindingForm = WechatForm.GetInstance();
-                    //bindingForm.ShowDialog();
-                    //使用以下一行也可以
-                    //WechatSingleInstanceController controller = new WechatSingleInstanceController();
-                    //controller.Run(args);
-                    Application.Run(bindingForm);
-                    bindingSuccess = bindingForm.BindingSuccess;
-                    RealBindingSucess = bindingForm.BindingSuccess;
-                }
+                //bool bindingSuccess = true;
+                //if (Properties.Settings.Default.openid == "" ||
+                //    Properties.Settings.Default.userNickname == "")
+                //{
+                //    WechatForm bindingForm = WechatForm.GetInstance();
+                //    //bindingForm.ShowDialog();
+                //    //使用以下一行也可以
+                //    //WechatSingleInstanceController controller = new WechatSingleInstanceController();
+                //    //controller.Run(args);
+                //    Application.Run(bindingForm);
+                //    bindingSuccess = bindingForm.BindingSuccess;
+                //    RealBindingSucess = bindingForm.BindingSuccess;
+                //}
 
-                if (bindingSuccess)
-                {
+                //if (bindingSuccess)
+                //{
                     InitForBusinessLogic();
                     Application.ApplicationExit += OnApplicationExit;
                     //MainForm mainform = new MainForm(args);
@@ -163,7 +163,7 @@ namespace troll_ui_app
                     SingleInstanceController controller = new SingleInstanceController();
                     controller.Run(args);
                     CleanUp();
-                }
+                //}
                 log.Info("Exit from Main!");
             }
             catch (Exception e)
