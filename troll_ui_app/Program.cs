@@ -22,6 +22,9 @@ using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 using Microsoft.Win32;
 using Microsoft.VisualBasic.ApplicationServices;
+using Troll.Proxy.Helpers;
+using System.Windows.Forms;
+using System.Data;
 
 namespace troll_ui_app
 {
@@ -320,9 +323,9 @@ namespace troll_ui_app
             {
                 RegistryKey reg = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", true);
                 if ((int)reg.GetValue("ProxyEnable") == 1 && reg.GetValue("ProxyServer").ToString().Contains("http=127.0.0.1:8090"))
-                    return true;
+                { reg.Close(); return true; }
                 else
-                    return false;
+                { reg.Close(); return false; }
             }
             catch(Exception e)
             {
@@ -347,7 +350,12 @@ namespace troll_ui_app
                 {
                     if (!GetProxy())
                     {
-                        SystemProxyHelper.EnableProxyHTTP("127.0.0.1", 8090);
+                        if (System.Environment.OSVersion.Version.Major <= 6 && System.Environment.OSVersion.Version.Minor <= 1)
+                        {
+                            TrollProxyHelper.SetHttpProxy("127.0.0.1", 8090);
+                        }
+                        else
+                            SystemProxyHelper.SetHttpProxy("127.0.0.1", 8090);
                         FireFoxHelper.AddFirefox();
                     }
                 }
@@ -382,8 +390,16 @@ namespace troll_ui_app
                         //在关机时，不能refresh，否则会导致无法修改成功，其他时候则要刷新，否则会导致无法刷新
                         if (kCloseReason == CloseReason.WindowsShutDown)
                         {
-                            log.Info("Disable proxy without Refresh!");
-                            SystemProxyHelper.DisableAllProxyWithourRestoreAndRefresh();
+                            if (System.Environment.OSVersion.Version.Major <= 6 && System.Environment.OSVersion.Version.Minor <= 1)
+                            {
+                                log.Info("Win7 Disable proxy on Exit!");
+                                TrollProxyHelper.RemoveHttpProxyWithRefresh();
+                            }
+                            else
+                            {
+                                log.Info("Disable proxy without Refresh!");
+                                SystemProxyHelper.DisableAllProxyWithourRestoreAndRefresh();
+                            }
                             //int tryTimes = 10;
                             //while (tryTimes-- > 0)
                             //{
@@ -401,8 +417,16 @@ namespace troll_ui_app
                         }
                         else
                         {
-                            log.Info("Disable proxy with Refresh!");
-                            SystemProxyHelper.DisableAllProxyWithourRestore();
+                            if (System.Environment.OSVersion.Version.Major <= 6 && System.Environment.OSVersion.Version.Minor <= 1)
+                            {
+                                log.Info("Win7 Disable proxy!");
+                                TrollProxyHelper.RemoveHttpProxy();
+                            }
+                            else
+                            {
+                                log.Info("Disable proxy with Refresh!");
+                                SystemProxyHelper.DisableAllProxyWithourRestore();
+                            }
                         }
                         FireFoxHelper.RemoveFirefox();
                     }
