@@ -129,9 +129,9 @@ namespace troll_ui_app
             Controls.Add(mainPanelControl);
 
             _mainContextMenuTrip = new System.Windows.Forms.ContextMenuStrip();
-            ToolStripItem openMainPanel = _mainContextMenuTrip.Items.Add("打开主界面");
+            ToolStripItem openMainPanel = _mainContextMenuTrip.Items.Add("打开主界面");  
+            ToolStripItem openProtection = _mainContextMenuTrip.Items.Add("防护中心");
             ToolStripItem quitItem = _mainContextMenuTrip.Items.Add("退出");
-            ToolStripItem openProtection = _mainContextMenuTrip.Items.Add("设置防护功能和查看防护记录");
             openMainPanel.Click += openMainPanelOnClick;
             quitItem.Click += quitItemOnClick;
             openProtection.Click += openProtectionOnClick;

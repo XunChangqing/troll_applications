@@ -45,6 +45,8 @@ namespace troll_ui_app
         Label wechatStatusIcon;
         TextButton checkUpdateBtn;
 
+        TextButton qqGroupLabel;
+
         Label edgeAboveStatusPanel;
         Label edgeBelowStatusPanel;
 
@@ -53,6 +55,9 @@ namespace troll_ui_app
         ToolStripMenuItem openAllScan;
         ToolStripMenuItem openFastScan;
         ToolStripMenuItem openCustomScan;
+
+        string qqGroupNum = "514824046";
+
 
         public enum ScanType { FastScan, AllScan, CustomScan };
         public class ScanEventArgs
@@ -280,6 +285,20 @@ namespace troll_ui_app
             versionLabel.ForeColor = Color.FromArgb(0x5e, 0x5e, 0x5e);
             statusPanel.Controls.Add(versionLabel);
 
+            qqGroupLabel = new TextButton();
+            //qqGroupLabel.AutoSize = true;
+            qqGroupLabel.Text = "反馈QQ群："+ qqGroupNum;
+            qqGroupLabel.Font = new System.Drawing.Font("微软雅黑", 11, GraphicsUnit.Pixel);
+            qqGroupLabel.ForeColor = Color.FromArgb(0x5e, 0x5e, 0x5e);
+            qqGroupLabel.HoverColor = Color.FromArgb(0xff, 0xa4, 0x05);
+            //qqGroupLabel.Location = new Point(, statusPanel.Height / 2 - wechatStatusIcon.Height / 2);
+            ToolTip qqGroupTip = new ToolTip();
+            qqGroupTip.AutoPopDelay = 32000;
+            qqGroupTip.InitialDelay = 10;
+            qqGroupTip.SetToolTip(qqGroupLabel, "复制QQ群号");
+            qqGroupLabel.Click += qqGroupLabelOnClick;
+            statusPanel.Controls.Add(qqGroupLabel);
+
             wechatStatusIcon = new Label();
             //wechatStatusIcon.Image = Properties.Resources.wechatauth;
             wechatStatusIcon.Image = Properties.Resources.wechatnotauth;
@@ -403,6 +422,13 @@ namespace troll_ui_app
             //UpdateInfoForm.GetInstance().WindowState = FormWindowState.Normal;
         }
 
+        void qqGroupLabelOnClick(object sender, EventArgs e)
+        {
+            //复制qq群号到剪贴板
+            Clipboard.SetDataObject(qqGroupNum);
+            MessageBox.Show("QQ群号已复制，反馈群欢迎您的到来！");
+        }
+
         public void EnterScanStatus(string desc)
         {
             guradNormalPanel.Visible = false;
@@ -446,7 +472,8 @@ namespace troll_ui_app
             }
 
             checkUpdateBtn.Location = new Point(statusPanel.Width / 2 - checkUpdateBtn.Width / 2, statusPanel.Height/2 - checkUpdateBtn.Height/2);
-            versionLabel.Location = new Point(24, statusPanel.Height / 2 - versionLabel.Height / 2);
+            versionLabel.Location = new Point(10, statusPanel.Height / 2 - versionLabel.Height / 2);
+            qqGroupLabel.Location = new Point(versionLabel.Width+20, statusPanel.Height / 2 - wechatStatusIcon.Height / 2);
             wechatStatusLabel.Location = new Point(wechatStatusIcon.Location.X - wechatStatusLabel.Width, statusPanel.Height / 2 - wechatStatusLabel.Height / 2);
 
             allScanLabel.Location = new Point(allScanBtn.Location.X + allScanBtn.Width / 2 - allScanLabel.Width / 2, allScanBtn.Location.Y+allScanBtn.Height);
