@@ -131,8 +131,10 @@ namespace troll_ui_app
             _mainContextMenuTrip = new System.Windows.Forms.ContextMenuStrip();
             ToolStripItem openMainPanel = _mainContextMenuTrip.Items.Add("打开主界面");
             ToolStripItem quitItem = _mainContextMenuTrip.Items.Add("退出");
+            ToolStripItem openProtection = _mainContextMenuTrip.Items.Add("设置防护功能和查看防护记录");
             openMainPanel.Click += openMainPanelOnClick;
             quitItem.Click += quitItemOnClick;
+            openProtection.Click += openProtectionOnClick;
 
             _mainNotifyIcon = new NotifyIcon();
             _mainNotifyIcon.ContextMenuStrip = _mainContextMenuTrip;
@@ -234,6 +236,12 @@ namespace troll_ui_app
         void openMainPanelOnClick(object sender, EventArgs e)
         {
             ShowMainForm();
+        }
+        void openProtectionOnClick(object sender, EventArgs e)
+        {
+            scanPanelControl.Visible = false;
+            _protectionPanelControl.Visible = true;
+            ShowMainForm();        
         }
 
         void MainFormOnLoad(object sender, EventArgs e)

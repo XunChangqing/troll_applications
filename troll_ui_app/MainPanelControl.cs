@@ -48,6 +48,12 @@ namespace troll_ui_app
         Label edgeAboveStatusPanel;
         Label edgeBelowStatusPanel;
 
+        ContextMenuStrip mainPanelRightClickMenu;
+        ToolStripMenuItem openProtectionPanel;
+        ToolStripMenuItem openAllScan;
+        ToolStripMenuItem openFastScan;
+        ToolStripMenuItem openCustomScan;
+
         public enum ScanType { FastScan, AllScan, CustomScan };
         public class ScanEventArgs
         {
@@ -300,6 +306,19 @@ namespace troll_ui_app
             MainForm.Instance.TargetProcessedProgress.ProgressChanged += TargetProcessedProgressOnProgressChanged;
             //Paint += MainPanelOnPaint;
             //RefreshWechatInfo();
+
+            mainPanelRightClickMenu = new ContextMenuStrip();
+            openProtectionPanel = new ToolStripMenuItem("设置防护功能和查看防护记录");
+            openAllScan = new ToolStripMenuItem("扫描所有磁盘上的图片和视频");
+            openFastScan = new ToolStripMenuItem("扫描上网记录中的图片");
+            openCustomScan = new ToolStripMenuItem("扫描指定文件夹内的图片和视频");
+            openProtectionPanel.Click += mainFuncBtnOnClick;
+            openAllScan.Click += allScanBtnOnClick;
+            openFastScan.Click += fastScanBtnOnClick;
+            openCustomScan.Click += customScanBtnOnClick;
+            mainPanelRightClickMenu.Items.AddRange(new ToolStripItem[] { openProtectionPanel, openAllScan, openFastScan, openCustomScan });
+            this.ContextMenuStrip = mainPanelRightClickMenu;
+
         }
 
         void wechatBindingBtnOnClick(object sender, EventArgs e)
