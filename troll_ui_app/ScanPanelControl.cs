@@ -40,6 +40,10 @@ namespace troll_ui_app
         Panel _footerPanel;
         //CheckBox _autoShutdownCheckBox;
         //Label _autoShutdownDescLabel;
+
+        CheckBox _checkAll;
+        CheckBox _unCheckAll;
+
         public LocalScan _localScan;
 
         int _totalTargetNum;
@@ -278,7 +282,52 @@ namespace troll_ui_app
             _confirmBtn.Click += _confirmBtnOnClick;
 
             Disposed += ScanPanelControlOnDisposed;
+
+            _checkAll = new CheckBox();
+            _checkAll.AutoSize = true;          
+            //_checkAll.Size = new System.Drawing.Size(115, 22);
+            _checkAll.Text = "选中全部扫描项";
+            _checkAll.BackColor = Color.FromArgb(0xf8, 0xf8, 0xf8);
+            //_checkAll.UseVisualStyleBackColor = true;
+            _footerPanel.Controls.Add(_checkAll);
+            _checkAll.Location = new System.Drawing.Point(40, _footerPanel.Height / 2 - _checkAll.Height / 2);
+            _checkAll.CheckedChanged += _checkAllOnChanged;
+            //_checkAll.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+
+            _unCheckAll = new CheckBox();
+            _unCheckAll.AutoSize = true;          
+            //_checkAll.Size = new System.Drawing.Size(115, 22);
+            _unCheckAll.Text = "不选中扫描项";
+            _unCheckAll.BackColor = Color.FromArgb(0xf8, 0xf8, 0xf8);
+            //_checkAll.UseVisualStyleBackColor = true;
+            _footerPanel.Controls.Add(_unCheckAll);
+            _unCheckAll.Location = new System.Drawing.Point(_checkAll.Location.X + _checkAll.Width + 40, _footerPanel.Height / 2 - _unCheckAll.Height / 2);
+            _unCheckAll.CheckedChanged += _unCheckAllOnChanged;
+            _unCheckAll.Checked = true;
         }
+
+        void _checkAllOnChanged(object sender, EventArgs e)
+        {
+            if (_unCheckAll.Checked && _checkAll.Checked)
+                _unCheckAll.Checked = false;
+            if (_pornItemResultView._ifCheckAll == false)
+            {
+                _pornItemResultView._ifCheckAll = true;
+                _pornItemResultView.UpdateScanedItemCheckStatus();
+            }   
+        }
+
+        void _unCheckAllOnChanged(object sender, EventArgs e)
+        {
+            if (_unCheckAll.Checked && _checkAll.Checked)
+                _checkAll.Checked = false;
+            if (_pornItemResultView._ifCheckAll == true)
+            {
+                _pornItemResultView._ifCheckAll = false;
+                _pornItemResultView.UpdateScanedItemCheckStatus();
+            }         
+        }
+
 
         void ScanPanelControlOnDisposed(object sender, EventArgs e)
         {

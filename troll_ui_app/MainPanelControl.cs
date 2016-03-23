@@ -426,7 +426,7 @@ namespace troll_ui_app
         {
             //复制qq群号到剪贴板
             Clipboard.SetDataObject(qqGroupNum);
-            MessageBox.Show("QQ群号已复制，反馈群欢迎您的到来！");
+            MessageBox.Show("QQ群号已复制，反馈群期待您的到来！");
         }
 
         public void EnterScanStatus(string desc)
@@ -473,7 +473,7 @@ namespace troll_ui_app
 
             checkUpdateBtn.Location = new Point(statusPanel.Width / 2 - checkUpdateBtn.Width / 2, statusPanel.Height/2 - checkUpdateBtn.Height/2);
             versionLabel.Location = new Point(10, statusPanel.Height / 2 - versionLabel.Height / 2);
-            qqGroupLabel.Location = new Point(versionLabel.Width+20, statusPanel.Height / 2 - wechatStatusIcon.Height / 2);
+            qqGroupLabel.Location = new Point(versionLabel.Location.X + versionLabel.Width + 20, statusPanel.Height / 2 - qqGroupLabel.Height / 2);
             wechatStatusLabel.Location = new Point(wechatStatusIcon.Location.X - wechatStatusLabel.Width, statusPanel.Height / 2 - wechatStatusLabel.Height / 2);
 
             allScanLabel.Location = new Point(allScanBtn.Location.X + allScanBtn.Width / 2 - allScanLabel.Width / 2, allScanBtn.Location.Y+allScanBtn.Height);
