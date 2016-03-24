@@ -24,9 +24,8 @@ namespace troll_ui_app
         PictureBox _previewPictureBox;
         DataTable _pornItemDataTable;
 
-        
-
-        public bool _ifCheckAll = false;
+        public enum ScannedItemCheckState { All, None, FromCache };
+        public ScannedItemCheckState _checkState = ScannedItemCheckState.FromCache;
 
         bool _viewProtectionLogs;
         //是否总是显示最新的一个目标
@@ -115,16 +114,40 @@ namespace troll_ui_app
             { log.Error(exp.ToString()); }
         }
 
-        public void AddRow(string info, PornDatabase.PornItemType itype, PornDatabase.PornItemStatus status)
+        public void AddRow(string info, PornDatabase.PornItemType itype, bool if_from_cache, PornDatabase.PornItemStatus status)
         {
             DataRow dr = _pornItemDataTable.NewRow();
             if(!_viewProtectionLogs)
-                dr.SetField<bool>("checked", _ifCheckAll);
+            {
+                switch (_checkState)
+                {
+                    case ScannedItemCheckState.None :
+                        dr.SetField<bool>("checked", false);
+                        break;
+                    case ScannedItemCheckState.All :
+                        dr.SetField<bool>("checked", true);
+                        break;
+                    case ScannedItemCheckState.FromCache :
+                        if (if_from_cache)
+                            dr.SetField<bool>("checked", true);
+                        else
+                            dr.SetField<bool>("checked", false);
+                        break;
+                    default :
+                        dr.SetField<bool>("checked", false);
+                        break;
+                }
+            }
+                
+            //if (!_viewProtectionLogs)
+            //    if (if_from_cache)
+            //        dr.SetField<bool>("checked", _ifCheckFromCache);
             dr.SetField<string>("info", info);
             //dr.SetField<string>("desc", "12");
             dr.SetField<PornDatabase.PornItemStatus>("status", status);
             dr.SetField<PornDatabase.PornItemType>("item_type", itype);
             dr.SetField<DateTime>("created_at", DateTime.Now);
+            dr.SetField<bool>("if_from_cache", if_from_cache);
             _pornItemDataTable.Rows.Add(dr);
             if (_showLastestItem)
             {
@@ -133,11 +156,28 @@ namespace troll_ui_app
             }
         }
 
-        public void UpdateScanedItemCheckStatus()
+        public void UpdateScanedItemCheckStates()
         {
             foreach (DataRow dr in  _pornItemDataTable.Rows)
-                dr.SetField<bool>("checked", _ifCheckAll);
+                switch (_checkState)
+                {
+                    case ScannedItemCheckState.All :
+                        dr.SetField<bool>("checked", true);
+                        break;
+                    case ScannedItemCheckState.None :
+                        dr.SetField<bool>("checked", false);
+                        break;
+                    case ScannedItemCheckState.FromCache :
+                        if (dr.Field<bool>("if_from_cache"))
+                            dr.SetField<bool>("checked", true);
+                        else
+                            dr.SetField<bool>("checked", false);
+                        break;
+                    default :
+                        break;
+                }
         }
+
 
 
         public int ClearCheckedFiles()

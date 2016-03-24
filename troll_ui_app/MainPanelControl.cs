@@ -295,7 +295,7 @@ namespace troll_ui_app
             ToolTip qqGroupTip = new ToolTip();
             qqGroupTip.AutoPopDelay = 32000;
             qqGroupTip.InitialDelay = 10;
-            qqGroupTip.SetToolTip(qqGroupLabel, "复制QQ群号");
+            qqGroupTip.SetToolTip(qqGroupLabel, "点击复制QQ群号");
             qqGroupLabel.Click += qqGroupLabelOnClick;
             statusPanel.Controls.Add(qqGroupLabel);
 
@@ -327,10 +327,10 @@ namespace troll_ui_app
             //RefreshWechatInfo();
 
             mainPanelRightClickMenu = new ContextMenuStrip();
-            openProtectionPanel = new ToolStripMenuItem("设置防护功能和查看防护记录");
-            openAllScan = new ToolStripMenuItem("扫描所有磁盘上的图片和视频");
-            openFastScan = new ToolStripMenuItem("扫描上网记录中的图片");
-            openCustomScan = new ToolStripMenuItem("扫描指定文件夹内的图片和视频");
+            openProtectionPanel = new ToolStripMenuItem("防护中心");
+            openAllScan = new ToolStripMenuItem("全盘扫描");
+            openFastScan = new ToolStripMenuItem("上网记录扫描");
+            openCustomScan = new ToolStripMenuItem("自定义扫描");
             openProtectionPanel.Click += mainFuncBtnOnClick;
             openAllScan.Click += allScanBtnOnClick;
             openFastScan.Click += fastScanBtnOnClick;

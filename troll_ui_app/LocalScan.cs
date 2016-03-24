@@ -37,6 +37,7 @@ namespace troll_ui_app
             public string TargetFilePath { get; set; }
             //public PornClassifier.ImageType TargetType { get; set; }
             public PornDatabase.PornItemType ItemType { get; set; }
+            public bool if_from_cache { get; set; }
         }
         public event EventHandler<ScanProgress> ScanProgressChanged;
         public event EventHandler ScanComplete;
@@ -96,6 +97,7 @@ namespace troll_ui_app
                     npro.Percentage = 0;
                     npro.TargetFilePath = null;
                     npro.Description = "正在准备上网记录扫描";
+                    npro.if_from_cache = true;
                     _scanProgressReport.Report(npro);
                 }
                 PercentageOffset = 0;
@@ -125,7 +127,7 @@ namespace troll_ui_app
             _scanPauseEvent.Set();
             _scanCancellationTokenSource = new CancellationTokenSource();
             _scanTask = Task.Factory.StartNew(()=> {
-                if(_scanProgressReport!=null)
+                if (_scanProgressReport != null)
                 {
                     ScanProgress npro = new ScanProgress();
                     npro.Percentage = 0;
@@ -212,7 +214,7 @@ namespace troll_ui_app
 
                         foreach(FileInfo finfo in fileinfos)
                         {
-                            AnalysisFile(finfo.FullName, ct, pauseEvent, progress, 0, 1, false);
+                            AnalysisFile(finfo.FullName, ct, pauseEvent, progress, 0, 1, false, false);
                         }
                     }
                 }
@@ -244,7 +246,7 @@ namespace troll_ui_app
 
                     foreach(FileInfo finfo in allFileInfos)
                     {
-                        AnalysisFile(finfo.FullName, ct, pauseEvent, progress, num, tcount, false);
+                        AnalysisFile(finfo.FullName, ct, pauseEvent, progress, num, tcount, false, false);
                     }
                     num++;
                 }
@@ -309,7 +311,7 @@ namespace troll_ui_app
                 int num = 0;
                 foreach (var file in totalfiles)
                 {
-                    AnalysisFile(file.FullName, ct, pauseEvent, progress, num, tcount, true);
+                    AnalysisFile(file.FullName, ct, pauseEvent, progress, num, tcount, true, true);
                     num++;
                 }
             }
@@ -331,7 +333,7 @@ namespace troll_ui_app
                 int num = 0;
                 foreach (var file in totalfiles)
                 {
-                    AnalysisFile(file, ct, pauseEvent, progress, num, tcount, false);
+                    AnalysisFile(file, ct, pauseEvent, progress, num, tcount, false, false);
                     num++;
                 }
             }
@@ -341,7 +343,7 @@ namespace troll_ui_app
             }
         }
 
-        void AnalysisFile(string file, CancellationToken ct, ManualResetEvent pauseEvent, IProgress<ScanProgress> progress, int num, int tcount, bool onlyImage)
+        void AnalysisFile(string file, CancellationToken ct, ManualResetEvent pauseEvent, IProgress<ScanProgress> progress, int num, int tcount, bool onlyImage, bool if_fast_scan)
         {
             log.Info("Scan: " + file);
             Exception classifyException;
@@ -363,6 +365,7 @@ namespace troll_ui_app
                 npro.TargetFilePath = file;
                 npro.Description = "正在扫描：" + npro.TargetFilePath;
                 npro.ItemType = itype;
+                npro.if_from_cache = if_fast_scan;
                 progress.Report(npro);
             }
             pauseEvent.WaitOne();

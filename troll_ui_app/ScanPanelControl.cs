@@ -41,8 +41,9 @@ namespace troll_ui_app
         //CheckBox _autoShutdownCheckBox;
         //Label _autoShutdownDescLabel;
 
-        CheckBox _checkAll;
-        CheckBox _unCheckAll;
+        RadioButton _checkAll;
+        RadioButton _unCheckAll;
+        RadioButton _checkCache;
 
         public LocalScan _localScan;
 
@@ -283,49 +284,73 @@ namespace troll_ui_app
 
             Disposed += ScanPanelControlOnDisposed;
 
-            _checkAll = new CheckBox();
-            _checkAll.AutoSize = true;          
+            _checkCache = new RadioButton();
+            _checkCache.AutoSize = true;
             //_checkAll.Size = new System.Drawing.Size(115, 22);
-            _checkAll.Text = "选中全部扫描项";
-            _checkAll.BackColor = Color.FromArgb(0xf8, 0xf8, 0xf8);
+            _checkCache.Text = "默认";
+            _checkCache.BackColor = Color.FromArgb(0xf8, 0xf8, 0xf8);
             //_checkAll.UseVisualStyleBackColor = true;
-            _footerPanel.Controls.Add(_checkAll);
-            _checkAll.Location = new System.Drawing.Point(40, _footerPanel.Height / 2 - _checkAll.Height / 2);
-            _checkAll.CheckedChanged += _checkAllOnChanged;
-            //_checkAll.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            _footerPanel.Controls.Add(_checkCache);
+            _checkCache.Location = new System.Drawing.Point(40, _footerPanel.Height / 2 - _checkCache.Height / 2);
+            _checkCache.CheckedChanged += _checkCacheOnChanged;
+            _checkCache.Checked = true;
 
-            _unCheckAll = new CheckBox();
+            _unCheckAll = new RadioButton();
             _unCheckAll.AutoSize = true;          
             //_checkAll.Size = new System.Drawing.Size(115, 22);
-            _unCheckAll.Text = "不选中扫描项";
+            _unCheckAll.Text = "全不选";
             _unCheckAll.BackColor = Color.FromArgb(0xf8, 0xf8, 0xf8);
             //_checkAll.UseVisualStyleBackColor = true;
             _footerPanel.Controls.Add(_unCheckAll);
-            _unCheckAll.Location = new System.Drawing.Point(_checkAll.Location.X + _checkAll.Width + 40, _footerPanel.Height / 2 - _unCheckAll.Height / 2);
+            _unCheckAll.Location = new System.Drawing.Point(_checkCache.Location.X + _checkCache.Width + 40, _footerPanel.Height / 2 - _unCheckAll.Height / 2);
             _unCheckAll.CheckedChanged += _unCheckAllOnChanged;
-            _unCheckAll.Checked = true;
+            _unCheckAll.Checked = false;
+
+            _checkAll = new RadioButton();
+            _checkAll.AutoSize = true;
+            //_checkAll.Size = new System.Drawing.Size(115, 22);
+            _checkAll.Text = "全选";
+            _checkAll.BackColor = Color.FromArgb(0xf8, 0xf8, 0xf8);
+            //_checkAll.UseVisualStyleBackColor = true;
+            _footerPanel.Controls.Add(_checkAll);
+            _checkAll.Location = new System.Drawing.Point(_unCheckAll.Location.X + _unCheckAll.Width + 40, _footerPanel.Height / 2 - _checkAll.Height / 2);
+            _checkAll.CheckedChanged += _checkAllOnChanged;
+            _checkAll.Checked = false;
+            ToolTip checkAllWarning = new ToolTip();
+            checkAllWarning.AutoPopDelay = 32000;
+            checkAllWarning.InitialDelay = 10;
+            checkAllWarning.IsBalloon = true;
+            checkAllWarning.ToolTipTitle = "注意：";
+            checkAllWarning.ToolTipIcon = ToolTipIcon.Warning;
+            checkAllWarning.SetToolTip(_checkAll, "全选扫描结果可能会包括您需要的照片或视频，请检查后再点击“一键处理”");
+            //_checkAll.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
         }
 
         void _checkAllOnChanged(object sender, EventArgs e)
         {
-            if (_unCheckAll.Checked && _checkAll.Checked)
-                _unCheckAll.Checked = false;
-            if (_pornItemResultView._ifCheckAll == false)
+            if (_checkAll.Checked)
             {
-                _pornItemResultView._ifCheckAll = true;
-                _pornItemResultView.UpdateScanedItemCheckStatus();
-            }   
+                _pornItemResultView._checkState = PornItemTableViewWithPreview.ScannedItemCheckState.All;
+                _pornItemResultView.UpdateScanedItemCheckStates();
+            }
         }
 
         void _unCheckAllOnChanged(object sender, EventArgs e)
         {
-            if (_unCheckAll.Checked && _checkAll.Checked)
-                _checkAll.Checked = false;
-            if (_pornItemResultView._ifCheckAll == true)
+            if (_unCheckAll.Checked)
             {
-                _pornItemResultView._ifCheckAll = false;
-                _pornItemResultView.UpdateScanedItemCheckStatus();
-            }         
+                _pornItemResultView._checkState = PornItemTableViewWithPreview.ScannedItemCheckState.None;
+                _pornItemResultView.UpdateScanedItemCheckStates();
+            }     
+        }
+
+        void _checkCacheOnChanged(object sender, EventArgs e)
+        {
+            if (_checkCache.Checked)
+            {
+                _pornItemResultView._checkState = PornItemTableViewWithPreview.ScannedItemCheckState.FromCache;
+                _pornItemResultView.UpdateScanedItemCheckStates();
+            }
         }
 
 
@@ -436,7 +461,7 @@ namespace troll_ui_app
                 if (e.ItemType != PornDatabase.PornItemType.Undefined)
                 {
                     _totalPornNum++;
-                    _pornItemResultView.AddRow(e.TargetFilePath, e.ItemType,
+                    _pornItemResultView.AddRow(e.TargetFilePath, e.ItemType, e.if_from_cache,
                         PornDatabase.PornItemStatus.Normal);
                 }
             }

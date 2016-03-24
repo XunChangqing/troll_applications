@@ -69,7 +69,7 @@ namespace troll_ui_app
         static readonly String kPornPagesCountSelect = "select count(*) from porn_pages where domain_name='{0}'";
         static readonly String kPornPagesDelete = "delete from porn_pages where domain_name='{0}'";
 
-        static readonly string kPornItemInsertOrReplace = "insert or replace into porn_items (info, item_type, desc, status) values ('{0}','{1}','{2}','{3}')";
+        static readonly string kPornItemInsertOrReplace = "insert or replace into porn_items (info, item_type, desc, status, if_from_cache) values ('{0}','{1}','{2}','{3}' '{4}')";
         static readonly string kPornItemDeleteAll = "delete from porn_items";
 
         static readonly string kForbiddenItemInsertOrReplace = "insert or replace into forbidden_items (info, item_type, desc, status) values ('{0}','{1}','{2}', '{3}')";
@@ -496,7 +496,7 @@ namespace troll_ui_app
                     //"create table blocked_pages(id integer primary key autoincrement, url text not null, created_at datetime default current_timestamp);" +
                     //"create index blocked_pages_created_at_index on blocked_pages(created_at);" +
                                     String sql =
-                    "create table porn_items(id integer primary key autoincrement, info text not null, item_type integer not null default 0, desc text, status integer not null default 0, created_at datetime default current_timestamp);" + 
+                    "create table porn_items(id integer primary key autoincrement, info text not null, item_type integer not null default 0, desc text, status integer not null default 0, created_at datetime default current_timestamp, if_from_cache bool default false);" + 
                     "create index porn_items_created_at_index on porn_items(created_at);" +
                     "create table forbidden_items(id integer primary key autoincrement, info text not null, item_type integer not null default 0, desc text, status integer not null default 0, created_at datetime default current_timestamp, CONSTRAINT unq UNIQUE (info, item_type));" + 
                     "create table porn_pages(id integer primary key autoincrement, domain_name text not null, page_url text not null, porn_pic_url text not null, created_at datetime default current_timestamp, unique(page_url, porn_pic_url));" +

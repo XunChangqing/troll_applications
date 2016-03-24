@@ -131,6 +131,7 @@ namespace troll_ui_app
 
             Columns["id"].Visible = false;
             Columns["desc"].Visible = false;
+            Columns["if_from_cache"].Visible = false;
             //Columns["status"].ReadOnly = true;
             Columns["status"].Visible = false;
             if (_withCheckCol)
