@@ -18,6 +18,9 @@ namespace troll_ui_app
         static readonly ILog log = Log.Get();
         static readonly int scanBtnTopPadding = 84;
         static readonly int scanBtnBottomPadding = 106;
+
+        public static System.Timers.Timer BindingDetectTimer = new System.Timers.Timer();
+        public static TimeSpan BindingDetectTimeLeft = TimeSpan.Zero;
         //public delegate void ScanEventHandler(object sender, ScanEventArgs e);
         //public event ScanEventHandler ScanEvent;
         TitleBarControl titleBar;
@@ -31,6 +34,7 @@ namespace troll_ui_app
         TextButton wechatBindingBtn;
         PictureBox wechatHeadImage;
         Label wechatNickname;
+        TextButton wechatAuthCancelBtn;
 
         Panel scanningPanel;
         Label scanningLabel;
@@ -314,6 +318,19 @@ namespace troll_ui_app
             statusPanel.Controls.Add(wechatStatusLabel);
             wechatStatusLabel.SizeChanged += wechatStatusLabelOnSizeChanged;
 
+            wechatAuthCancelBtn = new TextButton();
+            wechatAuthCancelBtn.AutoSize = true;
+            wechatAuthCancelBtn.Text = "取消微信授权";
+            wechatAuthCancelBtn.Font = new System.Drawing.Font("微软雅黑", 11, GraphicsUnit.Pixel);
+            wechatAuthCancelBtn.ForeColor = Color.FromArgb(0xee, 0x00, 0x00);
+            wechatAuthCancelBtn.HoverColor = Color.FromArgb(0xff, 0xa4, 0x05);
+            ToolTip wechatAuthCancelTip = new ToolTip();
+            wechatAuthCancelTip.AutoPopDelay = 32000;
+            wechatAuthCancelTip.InitialDelay = 10;
+            wechatAuthCancelTip.SetToolTip(wechatAuthCancelBtn, "立刻取消微信授权");           
+            wechatAuthCancelBtn.Click += wechatAuthCancelBtnOnClick;
+            statusPanel.Controls.Add(wechatAuthCancelBtn);
+
             Controls.Add(titleBar);
             Controls.Add(statusPanel);
 
@@ -343,15 +360,23 @@ namespace troll_ui_app
         void wechatBindingBtnOnClick(object sender, EventArgs e)
         {
             WechatForm.GetInstance().Show();
+            //StartBindingDetect();
+        }
+        public static void StartBindingDetect()
+        {
+            BindingDetectTimeLeft = TimeSpan.FromMinutes(2);
+            BindingDetectTimer.Start();
         }
         public void RefreshWechatInfo()
         {
-            if(Program.RealBindingSucess)
+            if (Program.RealBindingSucess)
             {
                 wechatNickname.Text = Properties.Settings.Default.userNickname;
+                wechatHeadImage.ImageLocation = Program.AppLocalDir + "UserHeadImage";
                 wechatNickname.Visible = true;
                 wechatHeadImage.Visible = true;
                 wechatBindingBtn.Visible = false;
+                BindingDetectTimer.Stop();
             }
         }
         void wechatStatusLabelOnSizeChanged(object sender, EventArgs e)
@@ -405,11 +430,13 @@ namespace troll_ui_app
             {
                 wechatStatusLabel.Text = "微信已授权 "+authExpiredTimeLeft.ToString();
                 wechatStatusIcon.Image = Properties.Resources.wechatauth;
+                wechatAuthCancelBtn.Visible = true;
             }
             else
             { 
                 wechatStatusLabel.Text = "微信未授权";
                 wechatStatusIcon.Image = Properties.Resources.wechatnotauth;
+                wechatAuthCancelBtn.Visible = false;
             }
         }
 
@@ -428,6 +455,13 @@ namespace troll_ui_app
             Clipboard.SetDataObject(qqGroupNum);
             MessageBox.Show("QQ群号已复制，反馈群期待您的到来！");
         }
+
+        void wechatAuthCancelBtnOnClick(object sender, EventArgs e)
+        {
+            WechatForm.AuthExpiredTimeLeft = TimeSpan.Zero;
+        }
+
+        
 
         public void EnterScanStatus(string desc)
         {
@@ -457,6 +491,8 @@ namespace troll_ui_app
             wechatNickname.Location = new Point(wechatHeadImage.Location.X+wechatHeadImage.Width+2,
                 wechatHeadImage.Location.Y+wechatHeadImage.Height/2-wechatNickname.Height/2);
 
+            wechatAuthCancelBtn.Visible = false;
+
             if (Properties.Settings.Default.openid == "" ||
                 Properties.Settings.Default.userNickname == "")
             {
@@ -475,6 +511,7 @@ namespace troll_ui_app
             versionLabel.Location = new Point(10, statusPanel.Height / 2 - versionLabel.Height / 2);
             qqGroupLabel.Location = new Point(versionLabel.Location.X + versionLabel.Width + 20, statusPanel.Height / 2 - qqGroupLabel.Height / 2);
             wechatStatusLabel.Location = new Point(wechatStatusIcon.Location.X - wechatStatusLabel.Width, statusPanel.Height / 2 - wechatStatusLabel.Height / 2);
+            wechatAuthCancelBtn.Location = new Point(wechatStatusLabel.Location.X - wechatAuthCancelBtn.Width - 55, statusPanel.Height / 2 - wechatAuthCancelBtn.Height / 2);
 
             allScanLabel.Location = new Point(allScanBtn.Location.X + allScanBtn.Width / 2 - allScanLabel.Width / 2, allScanBtn.Location.Y+allScanBtn.Height);
             fastScanLabel.Location = new Point(fastScanBtn.Location.X + fastScanBtn.Width / 2 - fastScanLabel.Width / 2, fastScanBtn.Location.Y+fastScanBtn.Height);
@@ -490,6 +527,19 @@ namespace troll_ui_app
             viewScanningBtn.Location = new Point(0, scanningLabel.Height);
             //guradNormalPanel.Visible = false;
             scanningPanel.Visible = false;
+
+            BindingDetectTimer = new System.Timers.Timer(500);
+            BindingDetectTimer.AutoReset = true;
+            BindingDetectTimer.Enabled = false;
+            BindingDetectTimer.Elapsed += BindingDectectTimerOnElapsed;
+            WechatForm.StartAuthDetect();
+        }
+        static void BindingDectectTimerOnElapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            BindingDetectTimeLeft = BindingDetectTimeLeft.Subtract(TimeSpan.FromSeconds(0.5));
+            MainForm.Instance.mainPanelControl.RefreshWechatInfo();
+            if (BindingDetectTimeLeft <= TimeSpan.Zero)
+                BindingDetectTimer.Stop();      
         }
         void mainFuncBtnOnMouseLeave(object sender, EventArgs e)
         {

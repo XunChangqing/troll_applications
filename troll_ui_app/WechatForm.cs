@@ -31,6 +31,11 @@ namespace troll_ui_app
         public static DateTime LastAuthDateTime = DateTime.MinValue;
         public static TimeSpan AuthExpiredTimeLeft = TimeSpan.Zero;
         static System.Timers.Timer AuthExpiredTimer = new System.Timers.Timer();
+
+        static System.Timers.Timer AuthDetectTimer = new System.Timers.Timer();
+        public static TimeSpan AuthDetectTimeLeft = TimeSpan.Zero;
+
+
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HTCAPTION = 0x2;
         [DllImport("User32.dll")]
@@ -54,6 +59,12 @@ namespace troll_ui_app
             AuthExpiredTimer.Enabled = false;
             AuthExpiredTimer.Elapsed += AuthExpiredTimerOnElapsed;
             UpdateMainFormAuthStatus = new UpdateMainFormAuthStatusDelegate(UpdateMainFormAuthStatusMethod);
+            //MainForm.Instance.mainPanelControl.Invoke(UpdateMainFormAuthStatus);
+
+            AuthDetectTimer = new System.Timers.Timer(500);
+            AuthDetectTimer.AutoReset = true;
+            AuthDetectTimer.Enabled = false;
+            AuthDetectTimer.Elapsed += AuthDectectTimerOnElapsed;
         }
 
         static void AuthExpiredTimerOnElapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -66,6 +77,32 @@ namespace troll_ui_app
         delegate void UpdateMainFormAuthStatusDelegate();
         static UpdateMainFormAuthStatusDelegate UpdateMainFormAuthStatus;
 
+        static void AuthDectectTimerOnElapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            AuthDetectTimeLeft = AuthDetectTimeLeft.Subtract(TimeSpan.FromSeconds(0.5));
+            //MainForm.Instance.mainPanelControl.RefreshWechatInfo();
+            if (AuthDetectTimeLeft <= TimeSpan.Zero )
+                //每次只能启动一个timer
+                AuthDetectTimer.Stop();
+            else if (AuthExpiredTimeLeft > TimeSpan.Zero)
+            {
+                AuthDetectTimer.Stop();
+                AuthExpiredTimer.Start();
+            }
+            else
+            {
+                CancellationTokenSource cts = new CancellationTokenSource();
+                bool networkException = false;
+                DateTime n = UpdateAuth(cts.Token, out networkException);
+                if (n.AddMinutes(20) > DateTime.Now)
+                {
+                    TurnOnAuth();
+                    return;
+                }
+            }
+            //MainForm.Instance.mainPanelControl.Invoke(UpdateMainFormAuthStatus);         
+        }
+
         static void UpdateMainFormAuthStatusMethod()
         {
             MainForm.Instance.mainPanelControl.UpdateAuthStatus(AuthExpiredTimeLeft);
@@ -73,7 +110,7 @@ namespace troll_ui_app
         static public void TurnOnAuth()
         {
             //AuthExpiredTimeLeft = TimeSpan.FromSeconds(40);
-            AuthExpiredTimeLeft = TimeSpan.FromHours(2);
+            AuthExpiredTimeLeft = TimeSpan.FromHours(0.5);
             MainForm.Instance.mainPanelControl.UpdateAuthStatus(AuthExpiredTimeLeft);
             AuthExpiredTimer.Start();
         }
@@ -108,12 +145,19 @@ namespace troll_ui_app
                 else
                 {
                     Task t = SendAuthRequestNotificationAsync();
+                    StartAuthDetect();
                     AutoCloseMessageBox.ShowMessage(-1, "执行此操作需要微信绑定者进行授权！\n请按照公众号提示操作后重试！");
                     //MessageBox.Show("执行此操作需要微信绑定者点击公众号授权按钮进行授权！\n请在公众号菜单中点击授权按钮后重试！",
-                    //    "操作未授权", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    //    "操作未授权", MessageBoxButtons.OK, MessageBoxIcon.Error);               
                     return false;
                 }
             }
+        }
+        public static void StartAuthDetect()
+        {
+            AuthDetectTimeLeft = TimeSpan.FromMinutes(2);
+            //MainForm.Instance.mainPanelControl.UpdateAuthStatus(AuthExpiredTimeLeft);
+            AuthDetectTimer.Start();
         }
         public static DateTime UpdateAuth(CancellationToken cancellationToken, out bool networkException)
         {
@@ -482,6 +526,8 @@ namespace troll_ui_app
         private void WechatForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             //stop task, otherwise it will get the openid forever
+            MainPanelControl.StartBindingDetect();
+            StartAuthDetect();
             cancellationTokenSource.Cancel();
         }
 

@@ -194,14 +194,29 @@ namespace troll_ui_app
         void MainFormOnFormClosing(object sender, FormClosingEventArgs e)
         {
             log.Info("MainForm Closing: " + e.CloseReason.ToString());
+
+            //下列代码用于查看关闭原因
+            //System.Text.StringBuilder messageBoxCS = new System.Text.StringBuilder();
+            //messageBoxCS.AppendFormat("{0} = {1}", "CloseReason", e.CloseReason);
+            //messageBoxCS.AppendLine();
+            //messageBoxCS.AppendFormat("{0} = {1}", "Cancel", e.Cancel);
+            //messageBoxCS.AppendLine();
+            //MessageBox.Show(messageBoxCS.ToString(), "FormClosing Event");
             //if (!(e.CloseReason == CloseReason.) !ForceToQuit && !WechatForm.Auth())
-            if (e.CloseReason == CloseReason.UserClosing || e.CloseReason == CloseReason.TaskManagerClosing)
+
+
+            if (e.CloseReason == CloseReason.TaskManagerClosing)
             //|| e.CloseReason == CloseReason.WindowsShutDown)
             {
                 if (!WechatForm.Auth())
                 {
                     e.Cancel = true;
                 }
+            }
+            else if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                Hide();
             }
             else if (e.CloseReason == CloseReason.WindowsShutDown)
                 Program.kCloseReason = e.CloseReason;
@@ -239,9 +254,16 @@ namespace troll_ui_app
         }
         void openProtectionOnClick(object sender, EventArgs e)
         {
-            scanPanelControl.Visible = false;
-            _protectionPanelControl.Visible = true;
-            ShowMainForm();        
+            
+            if (WechatForm.Auth())
+            {
+                scanPanelControl.Visible = false;
+                _protectionPanelControl.Visible = true;
+                ShowMainForm();
+            }
+            //scanPanelControl.Visible = false;
+            //_protectionPanelControl.Visible = true;
+            //ShowMainForm();        
         }
 
         void MainFormOnLoad(object sender, EventArgs e)
