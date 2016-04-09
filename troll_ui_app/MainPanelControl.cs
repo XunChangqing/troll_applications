@@ -60,6 +60,9 @@ namespace troll_ui_app
         ToolStripMenuItem openFastScan;
         ToolStripMenuItem openCustomScan;
 
+        ToolTip bindingSuggest;
+        ErrorProvider notBindingErrorProvider;
+
         string qqGroupNum = "514824046";
 
 
@@ -355,6 +358,13 @@ namespace troll_ui_app
             mainPanelRightClickMenu.Items.AddRange(new ToolStripItem[] { openProtectionPanel, openAllScan, openFastScan, openCustomScan });
             this.ContextMenuStrip = mainPanelRightClickMenu;
 
+            bindingSuggest = new ToolTip();
+            bindingSuggest.AutoPopDelay = 32000;
+            bindingSuggest.InitialDelay = 10;
+            bindingSuggest.IsBalloon = true;
+            bindingSuggest.ToolTipTitle = "请立刻绑定微信：";
+            bindingSuggest.ToolTipIcon = ToolTipIcon.Info;
+            bindingSuggest.SetToolTip(wechatBindingBtn, "绑定微信后，将只有绑定人可以设置和关闭山妖卫士，建议您立刻绑定！");
         }
 
         void wechatBindingBtnOnClick(object sender, EventArgs e)
@@ -533,6 +543,13 @@ namespace troll_ui_app
             BindingDetectTimer.Enabled = false;
             BindingDetectTimer.Elapsed += BindingDectectTimerOnElapsed;
             WechatForm.StartAuthDetect();
+
+            if (wechatBindingBtn.Visible == true)
+            {
+                notBindingErrorProvider = new ErrorProvider();
+                notBindingErrorProvider.BlinkStyle = ErrorBlinkStyle.AlwaysBlink;
+                notBindingErrorProvider.SetError(wechatBindingBtn, "微信未绑定");
+            }
         }
         static void BindingDectectTimerOnElapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
