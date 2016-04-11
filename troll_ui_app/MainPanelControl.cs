@@ -469,6 +469,7 @@ namespace troll_ui_app
         void wechatAuthCancelBtnOnClick(object sender, EventArgs e)
         {
             WechatForm.AuthExpiredTimeLeft = TimeSpan.Zero;
+            WechatForm.StartAuthDetect();
         }
 
         
