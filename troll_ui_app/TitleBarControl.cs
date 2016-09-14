@@ -152,7 +152,7 @@ namespace troll_ui_app
             title.AutoSize = true;
             //title.BackColor = Color.Yellow;
             title.BackColor = Color.Transparent;
-            title.Text = "山妖卫士";
+            title.Text = Properties.Resources.ProductionName;
             //title.MinimumSize = new Size(0, titleBarHeight);
             //title.TextAlign = ContentAlignment.MiddleCenter;
             //title.Location = new Point(logo.Location.X + logo.Width, 0);

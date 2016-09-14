@@ -182,7 +182,7 @@ namespace troll_ui_app
         {
             InitializeComponent();
             Icon = Properties.Resources.icon_main_icon;
-            Text = "山妖卫士";
+            Text = Properties.Resources.ProductionName;
             MouseDown += MouseDownMove;
             titleLabel.MouseDown += MouseDownMove;
 

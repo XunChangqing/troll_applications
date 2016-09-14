@@ -96,7 +96,7 @@ namespace troll_ui_app
         public MainForm(string[] args)
         {
             Instance = this;
-            Text = "山妖卫士";
+            Text = Properties.Resources.ProductionName;
             //ForceToQuit = false;
             Icon = Properties.Resources.icon_main_icon;
 

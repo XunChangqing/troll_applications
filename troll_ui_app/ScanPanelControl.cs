@@ -428,7 +428,7 @@ namespace troll_ui_app
                     ignore = dr == DialogResult.Yes;
                 }
                 Status = ScanStatus.FastScan;
-                SetTitle("山妖卫士-上网记录扫描");
+                SetTitle(Properties.Resources.ProductionName+"-上网记录扫描");
                 InitForNewScan();
                 MainForm.Instance.mainPanelControl.EnterScanStatus("正在进行上网记录扫描...");
                 MainForm.Instance.SlideWindow(this);
@@ -459,7 +459,7 @@ namespace troll_ui_app
                     ignore = dr == DialogResult.Yes;
                 }
                 Status = ScanStatus.AllScan;
-                SetTitle("山妖卫士-全盘扫描");
+                SetTitle(Properties.Resources.ProductionName+"-全盘扫描");
                 InitForNewScan();
                 MainForm.Instance.mainPanelControl.EnterScanStatus("正在进行全盘扫描...");
                 MainForm.Instance.SlideWindow(this);
@@ -489,7 +489,7 @@ namespace troll_ui_app
                         //MainForm.Instance.scanPanelControl.StartCustomScan(folderDialog.SelectedPath);
 
                         Status = ScanStatus.CustomScan;
-                        SetTitle("山妖卫士-自定义扫描");
+                        SetTitle(Properties.Resources.ProductionName+"-自定义扫描");
                         InitForNewScan();
                         MainForm.Instance.mainPanelControl.EnterScanStatus("正在进行自定义扫描...");
                         MainForm.Instance.SlideWindow(this);

@@ -138,7 +138,7 @@
       <Value Profile="(Default)">http://www.shanyaows.com/faq.html#whywechatbinding</Value>
     </Setting>
     <Setting Name="forbiddenRedirectUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://www.shanyaows.com/forbidden.html</Value>
+      <Value Profile="(Default)">http://www.moe.edu.cn/</Value>
     </Setting>
     <Setting Name="lastFastLocalScanDateTime" Type="System.DateTime" Scope="User">
       <Value Profile="(Default)" />

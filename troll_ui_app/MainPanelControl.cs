@@ -118,7 +118,7 @@ namespace troll_ui_app
 
             guardDescLabel = new Label();
             guardDescLabel.AutoSize = true;
-            guardDescLabel.Text = "山妖卫士正在守护您的电脑";
+            guardDescLabel.Text = Properties.Resources.ProductionName+"正在守护您的电脑";
             guardDescLabel.Font = new System.Drawing.Font("微软雅黑", 22, GraphicsUnit.Pixel);
             guardDescLabel.ForeColor = Color.White;
             guradNormalPanel.Controls.Add(guardDescLabel);

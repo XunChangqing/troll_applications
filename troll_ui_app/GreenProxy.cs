@@ -188,7 +188,7 @@ namespace troll_ui_app
                             SolidBrush solidBrush = new SolidBrush(Color.Azure);
                             g.FillRectangle(solidBrush, 0, 0, bm.Width, bm.Height);
                             SolidBrush stringBrush = new SolidBrush(Color.CadetBlue);
-                            g.DrawString("山妖卫士", new Font("微软雅黑", bm.Width / 10, GraphicsUnit.Pixel), stringBrush, new Point(0, 0));
+                            g.DrawString(Properties.Resources.ProductionName, new Font("微软雅黑", bm.Width / 10, GraphicsUnit.Pixel), stringBrush, new Point(0, 0));
                             g.Flush();
                         }
                     }
@@ -432,7 +432,7 @@ namespace troll_ui_app
                 PornDB.InsertBlockedPage(FullRequestUri);
                 //SocketBP.Send403();
                 //SocketBP.SendMasaHttpForbidden("I Love You!");
-                SocketBP.SendMasaHttpForbidden(Properties.Settings.Default.forbiddenRedirectUrl, "<h1>该网页包含不良信息，已被山妖卫士屏蔽！</h1>");
+                SocketBP.SendMasaHttpForbidden(Properties.Settings.Default.forbiddenRedirectUrl, "<h1>该网页包含不良信息，已被"+Properties.Resources.ProductionName+"屏蔽！</h1>");
                 //SocketBP.SendHttpError();
                 State.NextStep = AbortRequest;
                 log.Info("Block request in tmp black list: " + RequestLine.URI);

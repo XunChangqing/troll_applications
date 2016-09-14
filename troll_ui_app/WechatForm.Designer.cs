@@ -71,7 +71,7 @@
             this.titleLabel.Name = "titleLabel";
             this.titleLabel.Size = new System.Drawing.Size(53, 12);
             this.titleLabel.TabIndex = 4;
-            this.titleLabel.Text = "山妖卫士";
+            this.titleLabel.Text = Properties.Resources.ProductionName;
             // 
             // WechatForm
             // 
