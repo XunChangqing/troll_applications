@@ -23,6 +23,11 @@ namespace troll_ui_app
         PornDataGridView _dataGridView;
         PictureBox _previewPictureBox;
         DataTable _pornItemDataTable;
+
+        
+
+        public bool _ifCheckAll = false;
+
         bool _viewProtectionLogs;
         //是否总是显示最新的一个目标
         bool _showLastestItem = false;
@@ -64,6 +69,7 @@ namespace troll_ui_app
             //_pornItemBindingSource.DataSource = _pornItemDataTable;
             if(_viewProtectionLogs)
                 PornDatabase.TableChangedProgress.ProgressChanged += TableChangedProgressOnProgressChanged;
+
         }
 
         public void Clear()
@@ -113,7 +119,7 @@ namespace troll_ui_app
         {
             DataRow dr = _pornItemDataTable.NewRow();
             if(!_viewProtectionLogs)
-                dr.SetField<bool>("checked", true);
+                dr.SetField<bool>("checked", _ifCheckAll);
             dr.SetField<string>("info", info);
             //dr.SetField<string>("desc", "12");
             dr.SetField<PornDatabase.PornItemStatus>("status", status);
@@ -126,6 +132,13 @@ namespace troll_ui_app
                 catch (Exception exp) { log.Error(exp.ToString()); }
             }
         }
+
+        public void UpdateScanedItemCheckStatus()
+        {
+            foreach (DataRow dr in  _pornItemDataTable.Rows)
+                dr.SetField<bool>("checked", _ifCheckAll);
+        }
+
 
         public int ClearCheckedFiles()
         {

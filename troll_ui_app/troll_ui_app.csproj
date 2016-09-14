@@ -182,6 +182,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ProxyRoutines.cs" />
+    <Compile Include="ProxySettings.cs" />
     <Compile Include="SafeFileEnumerator.cs" />
     <Compile Include="ScanPanelControl.cs">
       <SubType>UserControl</SubType>
